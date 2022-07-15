@@ -1,0 +1,15 @@
+{
+  "name": "code-cell-web-component",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.rwth-aachen.de:learntech-lufgi9/bama/code-cell-web-component.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
