@@ -11,5 +11,8 @@
     "url": "git@git.rwth-aachen.de:learntech-lufgi9/bama/code-cell-web-component.git"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "lit": "^2.2.7"
+  }
 }
