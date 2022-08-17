@@ -17,7 +17,9 @@
     "build": "tsc && vite build"
   },
   "dependencies": {
+    "@codemirror/lang-javascript": "^6.0.2",
     "@open-wc/scoped-elements": "^2.0.0-next.6",
+    "codemirror": "^6.0.1",
     "lit": "^2.2.7",
     "webwriter-lit": "^0.1.25",
     "webwriter-model": "^0.1.25"
