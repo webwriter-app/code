@@ -1,13 +1,10 @@
 import { LitElementWw } from "webwriter-lit"
 import { property, query, customElement } from "lit/decorators.js"
 import { EditorView, basicSetup } from "codemirror"
+import { EditorState } from "@codemirror/state"
 import { javascript } from "@codemirror/lang-javascript"
 import { style } from "./ww-codewidget-css"
 import { html } from "lit"
-import "./exercises/fillTheBlanks/cw-filltheblanks"
-import "./exercises/codeSkeleton/cw-codeskeleton"
-import "./exercises/buggyCode/cw-buggycode"
-
 @customElement("ww-codewidget")
 export default class CodeWidget extends LitElementWw {
 
@@ -15,26 +12,68 @@ export default class CodeWidget extends LitElementWw {
   editable = false;
 
   @property({ type: String, reflect: true, attribute: true })
-  exercise: string = "";
+  currentExercise: string = "";
 
-  private _onClick(exercise: string) {
-    this.exercise = exercise;
-    this.editable = false;
-  }
+  @property({ type: Array })
+  exercises = [
+    {
+      type: "filltheblanks",
+      description: "Fill the blanks"
+    },
+    {
+      type: "codeSkeleton",
+      description: "Code skeleton"
+    },
+    {
+      type: "buggyCode",
+      description: "Buggy code"
+    },
+    {
+      type: "findTheBug",
+      description: "Find the bug"
+    }
+  ]
 
   static styles = style;
 
   render() {
     return html`
-
-      <div>
+      <div class="box">
         <h1>Wählen Sie einen Aufgabentypen</h1>
-        <list>
-          <button @click=${() => this._onClick("filltheblanks")}> Aufgabe 1 </button>
-          <button @click=${() => this._onClick("codeSkeleton")}> Aufgabe 2 </button>
-          <button @click=${() => this._onClick("buggyCode")}> Aufgabe 3 </button>
-        </list>
+        <div class="list">
+          ${this.exercises.map(exercise => html` 
+            <button @click=${() => this._onClick(exercise.type)}> ${exercise.description} </button>
+          `)}
         </div>
-            `
+      </div>`
+  }
+
+  private _onClick(exercise: string) {
+    this.currentExercise = exercise;
+
+
+    let startState = EditorState.create({
+      doc: this.currentExercise,
+      extensions: [basicSetup, javascript()]
+    })
+    const codeMirror = this._createCodeMirror(startState);
+    console.log(this.querySelector('#shadow-root'));
+    this.editable = false;
+  }
+
+
+  /*   private _createExercise(exercise: string) {
+      this.exercises.push({
+        type: exercise,
+        description: "New exercise"
+      });
+    } */
+
+  _createCodeMirror(startState: EditorState) {
+    let view = new EditorView({
+      state: startState,
+      //parent: document.body//.querySelector('#shadow-root') as Element,
+    })
+    return view;
   }
 }

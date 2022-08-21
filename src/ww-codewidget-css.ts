@@ -4,7 +4,7 @@ div {
  display: none;
 }
 
-:host([editable]) div{
+:host([editable]) .box{
   display: flex;
   flex-direction: column;
   align-items: left;
@@ -17,7 +17,7 @@ div {
   padding: 10px;
 }
 
-list {
+.list{
   display: flex;
   flex-direction: row;
   align-items: left;
