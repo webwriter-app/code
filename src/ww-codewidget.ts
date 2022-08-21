@@ -11,26 +11,37 @@ export default class CodeWidget extends LitElementWw {
   @property({ type: Boolean, reflect: true, attribute: true })
   editable = false;
 
-  @property({ type: String, reflect: true, attribute: true })
-  currentExercise: string = "";
+  @property({ type: Number, reflect: true, attribute: true })
+  currentExercise = -1;
 
   @property({ type: Array })
   exercises = [
     {
-      type: "filltheblanks",
-      description: "Fill the blanks"
+      description: "Fill the blanks",
+      editorStates: {
+        doc: `\n\nfillTheBlanks\n\n`,
+        extensions: [basicSetup, javascript()]
+      }
     },
     {
-      type: "codeSkeleton",
-      description: "Code skeleton"
+      description: "Code skeleton",
+      editorStates: {
+        doc: `\n\ncodeSkeleton\n\n`,
+        extensions: [basicSetup, javascript()]
+      }
+    }, {
+      description: "Buggy code",
+      editorStates: {
+        doc: `\n\nbuggyCode\n\n`,
+        extensions: [basicSetup, javascript()]
+      }
     },
     {
-      type: "buggyCode",
-      description: "Buggy code"
-    },
-    {
-      type: "findTheBug",
-      description: "Find the bug"
+      description: "Find the bug",
+      editorStates: {
+        doc: `\n\findTheBug\n\n`,
+        extensions: [basicSetup, javascript()]
+      }
     }
   ]
 
@@ -38,41 +49,54 @@ export default class CodeWidget extends LitElementWw {
 
   render() {
     return html`
-      <div class="box">
-        <h1>Wählen Sie einen Aufgabentypen</h1>
-        <div class="list">
-          ${this.exercises.map(exercise => html` 
-            <button @click=${() => this._onClick(exercise.type)}> ${exercise.description} </button>
-          `)}
+        <div class="box">
+          <div class="exercises">
+            <h1>Wählen Sie einen Aufgabentypen</h1>
+            <div class="list">
+              ${this.exercises.map((exercise, index) => html`
+              <button @click=${() => this._onClick(index)}> ${exercise.description} </button>
+              `)}
+            </div>
+          </div>
+          <button class="newExercise" @click=${() => this._createExercise("Test", "\n\nDocTest\n\n", [basicSetup,
+            javascript()])}>
+            +
+          </button>
         </div>
-      </div>`
+        </div>
+        <div class="codeWrapper">
+        </div>`
   }
 
-  private _onClick(exercise: string) {
-    this.currentExercise = exercise;
-
-
-    let startState = EditorState.create({
-      doc: this.currentExercise,
-      extensions: [basicSetup, javascript()]
+  _createExercise(description: string, doc: any, extensions: Array<any>) {
+    this.exercises.push({
+      description: description,
+      editorStates: {
+        doc: doc,
+        extensions: extensions
+      }
     })
-    const codeMirror = this._createCodeMirror(startState);
-    console.log(this.querySelector('#shadow-root'));
-    this.editable = false;
+    this.requestUpdate();
   }
 
+  _onClick(exercise: number) {
+    if (this.editable) {
+      this.currentExercise = exercise;
+      let editorState = this.exercises[exercise].editorStates;
 
-  /*   private _createExercise(exercise: string) {
-      this.exercises.push({
-        type: exercise,
-        description: "New exercise"
+      let startState = EditorState.create({
+        doc: `${editorState.doc}`,
+        extensions: editorState.extensions
       });
-    } */
+      this._createCodeMirror(startState);
+      this.editable = false;
+    }
+  }
 
   _createCodeMirror(startState: EditorState) {
     let view = new EditorView({
       state: startState,
-      //parent: document.body//.querySelector('#shadow-root') as Element,
+      parent: this.shadowRoot?.querySelector(".codeWrapper") as HTMLElement,
     })
     return view;
   }

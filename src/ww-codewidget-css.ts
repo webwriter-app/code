@@ -1,13 +1,14 @@
 import { css } from "lit"
 export const style = css`
-div {
- display: none;
+.box {
+  display:none;
 }
 
 :host([editable]) .box{
   display: flex;
-  flex-direction: column;
-  align-items: left;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   border-style: solid;
   border-width: 1px;
   border-radius: 5px;
@@ -48,5 +49,15 @@ button:hover {
 
 button:active {
   background-color: #ddd;
+}
+
+.exercises{
+  display: flex;
+  flex-direction: column
+}
+
+.newExercise {
+  width: 40px;
+  height: 40px;
 }
 `;
