@@ -1,30 +1,44 @@
 import { css } from "lit"
 export const style = css`
-.box {
-  display:none;
-}
 
-:host([editable]) .box{
+.Wrapper {
+  z-index: -1;
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  align-items: top;
   justify-content: space-between;
   border-style: solid;
   border-width: 1px;
   border-radius: 5px;
   border-color: #ddd;
   background-color: #fafafa;
-  margin: 10px;
+  margin-left: 50px;
+  margin-right: 50px;
   padding: 10px;
+  padding-left: 50px;
 }
 
-.list{
+.chooseExercise {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.createExercise {
+  display: flex;
+  flex-direction: column;
+}
+
+.exerciseList{
   display: flex;
   flex-direction: row;
   align-items: left;
+  flex-wrap: wrap;
+  width: 80%;
 }
 
-h1 {
+.header {
+  margin-top: 0;
   font-size: 1em;
   font-weight: bold;
   font-family: "Roboto Mono", monospace;
@@ -32,10 +46,12 @@ h1 {
 
 button {
   border-style: solid;
+  min-height: 40px;
   border-width: 1px;
   border-radius: 5px;
   border-color: #ccc;
   background-color: #fafafa;
+  margin-top: 10px;
   margin-right: 5px;
   margin-left: 0px;
   padding: 5px;
@@ -53,11 +69,13 @@ button:active {
 
 .exercises{
   display: flex;
-  flex-direction: column
+  flex-direction: column;
+  width: 50%;
 }
 
 .newExercise {
-  width: 40px;
-  height: 40px;
+  margin-top: 0px;
+  width: 45px;
+  height: 45px;
 }
 `;
