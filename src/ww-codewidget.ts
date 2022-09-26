@@ -5,7 +5,6 @@ import { EditorState } from "@codemirror/state"
 import { javascript } from "@codemirror/lang-javascript"
 import { style } from "./ww-codewidget-css"
 import { html } from "lit"
-import { Ref, createRef, ref } from 'lit/directives/ref.js';
 
 
 @customElement("ww-codewidget")
@@ -31,10 +30,17 @@ export default class CodeWidget extends LitElementWw {
     "Buggy Code",
   ];
 
-  descriptionRef: Ref<HTMLInputElement> = createRef();
-  languageRef: Ref<HTMLInputElement> = createRef();
-  exerciseTypeRef: Ref<HTMLInputElement> = createRef();
-  codeRef: Ref<HTMLInputElement> = createRef();
+  @property()
+  exerciseDescription = "";
+
+  @property({ type: String, reflect: true })
+  exerciseLanguage = "a";
+
+  @property()
+  exerciseType = "";
+
+  @property()
+  exerciseCode = "";
 
   render() {
     return html`
@@ -69,54 +75,47 @@ export default class CodeWidget extends LitElementWw {
     <h1 class="header">Aufgabe erstellen:</h1>
     <div class="description">
       <label>Beschreibung:</label>
-      <input type="text" ${ref(this.descriptionRef)} placeholder="Beschreibung" />
+      <input type="text" @change=${(e: any) => { this.exerciseDescription = e.srcElement.value }} placeholder="Beschreibung" />
     </div>
     <div class="exerciseType">
       <label>Aufgabentyp:</label>
       <select>
         ${this.exerciseTypes.map((exerciseType) => html`
-        <option ${ref(this.exerciseTypeRef)} value=${exerciseType}>${exerciseType}</option>
+        <option @change=${(e: any) => { this.exerciseType = e.srcElement.value }} value=${exerciseType}>${exerciseType}</option>
         `)}
       </select>
     </div>
         <div class="extensions">
           <div class="language">
                 <label>Language:</label>
-                <input type="radio" ${ref(this.languageRef)} value="javascript">Javascript</input>
+                <input type="radio" @change=${(e: any) => { this.exerciseLanguage = e.srcElement.value }} value=${this.exerciseLanguage}>Javascript
           </div>
         </div>
         <div class="code">
           <label>Code:</label>
-          <textarea ${ref(this.codeRef)}></textarea>
+          <textarea @change=${(e: any) => { this.exerciseCode = e.srcElement.value }}></textarea>
         </div>
-        <button @click=${() => {
-
-        this.createExercise(
-          this.descriptionRef?.value?.value as string,
-          this.exerciseTypeRef?.value?.value as string,
-          this.codeRef.value?.value, [
-          basicSetup, javascript()]
-        );
-        this.showExerciseCreation = false;
-      }
+        <button @click=${this.createExercise}
       }>
     Aufgabe hinzufügen
-      </button>`;
+      </button>
+      </div>`;
   };
 
-  createExercise(description: string, exerciseType: string, doc: any, extensions: Array<any>) {
+  private createExercise() {
     this.exercises.push({
-      description: description,
-      exerciseType: exerciseType,
+      description: this.exerciseDescription,
+      exerciseType: this.exerciseType,
       editorStates: {
-        doc: doc,
-        extensions: extensions
+        doc: this.exerciseCode,
+        extensions: [basicSetup, javascript()]
       }
     })
+    this.showExerciseCreation = false;
     this.requestUpdate();
   }
 
-  switchToExercise(exercise: number) {
+  private switchToExercise(exercise: number) {
     if (this.editable) {
       this.currentExercise = exercise;
       let editorState = this.exercises[exercise].editorStates;
@@ -129,7 +128,7 @@ export default class CodeWidget extends LitElementWw {
     }
   }
 
-  createCodeMirror(startState: EditorState) {
+  private createCodeMirror(startState: EditorState) {
     let view = new EditorView({
       state: startState,
       parent: this.shadowRoot?.querySelector(".codeWrapper") as HTMLElement,
