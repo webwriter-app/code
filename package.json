@@ -18,14 +18,28 @@
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.0.2",
+    "@codemirror/state": "^6.1.2",
+    "@codemirror/view": "^6.2.5",
     "@open-wc/scoped-elements": "^2.0.0-next.6",
     "codemirror": "^6.0.1",
+    "codemirror-readonly-ranges": "^0.1.0-alpha.1",
+    "fs": "^0.0.1-security",
+    "js-yaml": "^4.1.0",
     "lit": "^2.2.7",
+    "range-analyzer": "^0.1.1-alpha.2",
+    "tslib": "^2.4.0",
     "webwriter-lit": "^0.1.25",
     "webwriter-model": "^0.1.25"
   },
   "devDependencies": {
-    "typescript": "^4.6.4",
+    "@types/node": "^18.7.21",
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "eslint": "^8.24.0",
+    "eslint-config-standard-with-typescript": "^23.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.3.0",
+    "eslint-plugin-promise": "^6.0.1",
+    "typescript": "^4.8.3",
     "vite": "^3.0.0"
   }
 }
