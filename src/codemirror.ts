@@ -9,21 +9,9 @@ import { lintKeymap } from '@codemirror/lint';
 import readOnlyRangesExtension from 'codemirror-readonly-ranges'
 
 
-const getReadOnlyRanges = (targetState: EditorState): Array<{ from: number | undefined, to: number | undefined }> => {
-    return [
-        {
-            from: undefined, //same as: targetState.doc.line(0).from or 0
-            to: targetState.doc.line(3).to
-        },
-        {
-            from: targetState.doc.line(targetState.doc.lines).from,
-            to: undefined // same as: targetState.doc.line(targetState.doc.lines).to
-        }
-    ]
-}
+
 
 export const mySetup = /*@__PURE__*/(() => [
-    //readOnlyRangesExtension(getReadOnlyRanges),
     lineNumbers(),
     highlightActiveLineGutter(),
     highlightSpecialChars(),

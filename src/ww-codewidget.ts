@@ -31,6 +31,12 @@ export default class CodeWidget extends LitElementWw {
     "Fill The Blanks",
     "Code Skeleton",
     "Buggy Code",
+    "Code From Scratch",
+    "Code Baseline",
+    "Find The Bug",
+    "Compiling Error",
+    "Code Interpretation",
+    "Keyword Use",
   ];
 
   @property()
@@ -77,7 +83,7 @@ export default class CodeWidget extends LitElementWw {
 
   createExerciseTemplate() {
     return html`
-    <div class="createExercise">
+    <div class="createExercise">y
       <h1 class="header">Aufgabe erstellen:</h1>
       <div class="description">
         <label>Beschreibung:</label>
@@ -97,13 +103,16 @@ export default class CodeWidget extends LitElementWw {
       <div class="extensions">
         <div class="language">
           <label>Language:</label>
-          <input type="radio" @change=${(e: any) => { this.exerciseLanguage = e.srcElement.value }}
-          value=${this.exerciseLanguage}>Javascript
-        </div>
+          <fieldset>
+    <legend>Select a language:</legend>
+    <div>
+    <input type="radio" id="javascript" @change=${(e: any) => { this.exerciseLanguage = e.srcElement.value }}
+          value=${this.exerciseLanguage}>
+      <label for="javascript">Javascript</label>
+    </div>
+    </fieldset>
       </div>
-      <div class="code" @change=${()=>{
-        console.log("Test");
-      }}></div>
+      <div class="code"></div>
       <button @click=${() => {this.createExercise();}}>
         Aufgabe hinzufügen
       </button>
@@ -111,7 +120,6 @@ export default class CodeWidget extends LitElementWw {
   };
 
   private exerciseCreationCodeMirror() {
-    console.log(this.codeMirror);
     if(this.codeMirror instanceof EditorView) this.codeMirror.dispatch({changes: {from: 0, to: this.codeMirror.state.doc.length, insert: this.exerciseType}})
     else this.codeMirror = this.createCodeMirror(this.exerciseType, mySetup, this.renderRoot.querySelector(".code"));
     this.codeMirror.focus();
@@ -120,6 +128,7 @@ export default class CodeWidget extends LitElementWw {
   private createExercise() {
     this.selectedFrom = this.codeMirror.state.selection.main.from;
     this.selectedTo = this.codeMirror.state.selection.main.to;
+    this.codeMirror.dispatch
     this.exercises.push({
       description: this.exerciseDescription,
       exerciseType: this.exerciseType,
