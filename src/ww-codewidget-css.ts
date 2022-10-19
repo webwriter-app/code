@@ -18,6 +18,20 @@ export const style = css`
   padding-left: 50px;
 }
 
+.disableButton {
+  align-items: center;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 20px;
+}
+
+.codeEditor {
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 5px;
+  border-color: #ddd;
+}
+
 .chooseExercise {
   display: flex;
   flex-direction: row;
@@ -77,5 +91,13 @@ button:active {
   margin-top: 0px;
   width: 45px;
   height: 45px;
+}
+
+#autocompletionEnabled {
+  background-color: #fafafa;
+}
+
+#autocompletionDisabled {
+  background-color: #ddd;
 }
 `;

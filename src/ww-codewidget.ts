@@ -1,14 +1,17 @@
 import { LitElementWw } from "webwriter-lit"
 import { property, customElement } from "lit/decorators.js"
 import { EditorView } from "codemirror"
-import { EditorState, Extension } from "@codemirror/state"
+import { EditorState, Extension, StateEffect, Compartment } from "@codemirror/state"
 import { javascript } from "@codemirror/lang-javascript"
+import { python } from "@codemirror/lang-python"
 import { style } from "./ww-codewidget-css"
 import { html } from "lit"
-import { parseExercise } from "./parser"
 import { mySetup } from "./codemirror"
 import readOnlyRangesExtension from 'codemirror-readonly-ranges'
+import { autocompletion } from '@codemirror/autocomplete';
 
+
+//part=action einfügen
 
 @customElement("ww-codewidget")
 export default class CodeWidget extends LitElementWw {
@@ -18,13 +21,22 @@ export default class CodeWidget extends LitElementWw {
   editable = false;
 
   @property({ type: Number, reflect: true, attribute: true })
-  currentExercise = -1;
+  currentExercise = 1;
 
   @property({ type: Boolean, reflect: true, attribute: true })
   showExerciseCreation = false;
 
   @property({ type: Array })
-  exercises: any[] = [];
+  exercises: any[] = [
+    {
+      description: "Test",
+      exerciseType: "Test",
+      editorStates: {
+        doc: "Test",
+        extensions: [mySetup, javascript(), autocompletion()]
+      }
+    }
+  ];
 
   @property({ type: Array })
   exerciseTypes = [
@@ -42,8 +54,8 @@ export default class CodeWidget extends LitElementWw {
   @property()
   exerciseDescription = "";
 
-  @property({ type: String, reflect: true })
-  exerciseLanguage = "a";
+  @property({ type: String })
+  exerciseLanguage = "javascript";
 
   @property()
   exerciseType = "Fill The Blanks";
@@ -52,124 +64,134 @@ export default class CodeWidget extends LitElementWw {
   codeMirror: EditorView;
 
   @property()
-  selectedFrom = 0;
+  disabledLines: any[] = [];
 
   @property()
-  selectedTo = 0;
+  autocompletionEnabled = true;
+
+
+  language = new Compartment();
+  autocompletion = new Compartment();
 
   render() {
     return html`
       ${this.editable ? html`
         <div class="Wrapper">
-          ${!this.showExerciseCreation ? this.chooseExerciseTemplate() : this.createExerciseTemplate()}
-        </div>`: html``}
-        <div class="codeWrapper"></div>
-    `;
+          ${this.exerciseCreationTemplate()}
+        </div>` : html``}
+        <div id="codeWrapper"></div>`;
   }
 
-  chooseExerciseTemplate() {
-    return html`
-      <div class="chooseExercise">
-        <div class="exercises">
-          <h1 class="header"> Wählen / Erstellen Sie eine Aufgabe </h1>
-          <div class="exerciseList">
-            ${this.exercises.map((exercise, index) => html`
-            <button @click=${() => this.switchToExercise(index)}> ${exercise.description} </button>`)}
-          </div>
-        </div>
-        <button button class="newExercise" @click=${() => { this.showExerciseCreation = true; }}>+</button>
-      </div>`;
-  };
-
-  createExerciseTemplate() {
-    return html`
-    <div class="createExercise">y
-      <h1 class="header">Aufgabe erstellen:</h1>
-      <div class="description">
-        <label>Beschreibung:</label>
-        <input type="text" @change=${(e: any) => { this.exerciseDescription = e.srcElement.value }}
-        placeholder="Beschreibung" />
-      </div>
-      <div class="exerciseType">
-        <label>Aufgabentyp:</label>
-        ${this.exerciseTypes.map((exerciseType) => html`
-          <button @click=${
-            (e: any) => { 
-            this.exerciseType = e.srcElement.value;           
-            this.exerciseCreationCodeMirror();
-            }} value=${exerciseType}>${exerciseType}</button>
-          `)}
-      </div>
-      <div class="extensions">
-        <div class="language">
-          <label>Language:</label>
-          <fieldset>
-    <legend>Select a language:</legend>
-    <div>
-    <input type="radio" id="javascript" @change=${(e: any) => { this.exerciseLanguage = e.srcElement.value }}
-          value=${this.exerciseLanguage}>
-      <label for="javascript">Javascript</label>
-    </div>
-    </fieldset>
-      </div>
-      <div class="code"></div>
-      <button @click=${() => {this.createExercise();}}>
-        Aufgabe hinzufügen
-      </button>
-    </div>`;
-  };
-
-  private exerciseCreationCodeMirror() {
-    if(this.codeMirror instanceof EditorView) this.codeMirror.dispatch({changes: {from: 0, to: this.codeMirror.state.doc.length, insert: this.exerciseType}})
-    else this.codeMirror = this.createCodeMirror(this.exerciseType, mySetup, this.renderRoot.querySelector(".code"));
+  firstUpdated() {
+    this.codeMirror = this.createCodeMirror(this.shadowRoot?.getElementById('code'));
     this.codeMirror.focus();
   }
 
-  private createExercise() {
-    this.selectedFrom = this.codeMirror.state.selection.main.from;
-    this.selectedTo = this.codeMirror.state.selection.main.to;
-    this.codeMirror.dispatch
-    this.exercises.push({
-      description: this.exerciseDescription,
-      exerciseType: this.exerciseType,
-      editorStates: {
-        doc: this.codeMirror.state.doc,
-        extensions: [mySetup.concat(readOnlyRangesExtension(this.getReadOnlyRanges)), javascript()]
-      }
-    })
-    this.codeMirror.destroy();
-    this.codeMirror = undefined;
-    this.showExerciseCreation = false;
-    this.requestUpdate();
+  exerciseCreationTemplate() {
+    return html`
+    <div class="createExercise">
+      ${this.exerciseChoiceTemplate()}
+      ${this.languageChoiceTemplate()}
+      ${this.editorFeatureTemplate()}
+      <div id="code"></div>
+      <button @click=${() => {
+        this.switchToExercise(this.currentExercise)
+      }}>Aufgabe hinzufügen</button>
+    </div>`;
+  };
+
+  editorFeatureTemplate() {
+    return html`
+      <div>
+        <button class="disableButton"
+        @click=${() => { this.disableLine() }}>Disable editing</button>
+      <label class="container">Autocompletion
+      <input type="checkbox" checked @change=${() => { this.disableAutocomplete() }}>
+    </div>
+    `;
   }
+
+  exerciseChoiceTemplate() {
+    return html`
+    <h1 class="header">Aufgabe erstellen:</h1>
+      Wählen Sie einen Aufgabentypen:
+     <div class="exerciseType">
+        ${this.exerciseTypes.map(
+      (exerciseType) => html`
+           <button @click=${(e: any) => {
+          this.exerciseType = e.srcElement.value;
+          this.switchExerciseCodeMirror();
+        }
+        } value=${exerciseType}>${exerciseType}</button>
+          `)}
+      </div>`;
+  }
+
+  languageChoiceTemplate() {
+    return html`
+    <div class="extensions">
+    <div class="language">
+      <fieldset>
+        <legend>Wählen Sie eine Sprache:</legend>
+        <div>
+        <input name="language" checked type="radio" id="javascript" @change=${() => { this.changeCodeMirrorLanguage("Javascript") }} 
+              value=javascript>Javascript
+          <input name="language" type="radio" id="python" @change=${() => { this.changeCodeMirrorLanguage("Python") }}
+              value=python>Python
+        </div>
+      </fieldset>
+    </div>
+  </div>`;
+  }
+
+  private disableLine() {
+    this.disabledLines.push({ from: this.codeMirror.state.selection.main.from, to: this.codeMirror.state.selection.main.to });
+  }
+
+  private changeCodeMirrorLanguage(lang: String) {
+    if (lang === "Javascript") {
+      this.codeMirror.dispatch({ effects: this.language.reconfigure(javascript()) });
+    } else {
+      this.codeMirror.dispatch({ effects: this.language.reconfigure(python()) });
+    }
+    this.codeMirror.focus();
+  }
+
+
+  private disableAutocomplete() {
+    this.autocompletionEnabled = !this.autocompletionEnabled;
+    if (this.autocompletionEnabled) {
+      this.codeMirror.dispatch({ effects: this.autocompletion.reconfigure(autocompletion()) });
+    } else {
+      this.codeMirror.dispatch({ effects: this.autocompletion.reconfigure([]) });
+    }
+    this.codeMirror.focus();
+  }
+
+  private switchExerciseCodeMirror() {
+    this.codeMirror.dispatch({ changes: { from: 0, to: this.codeMirror.state.doc.length, insert: this.exerciseType } })
+    this.codeMirror.focus();
+  }
+
 
   getReadOnlyRanges = (targetState: EditorState): Array<{ from: number | undefined, to: number | undefined }> => {
-    return [
-        {
-            from: this.selectedFrom,
-            to: this.selectedTo
-        }
-    ]
-}
-
-  private switchToExercise(exercise: number) {
-    if (this.editable) {
-      this.editable = false;
-      this.currentExercise = exercise;
-      let editorState = this.exercises[this.currentExercise].editorStates;
-      this.codeMirror = this.createCodeMirror(editorState.doc, editorState.extensions, this.renderRoot?.querySelector(".codeWrapper"));
-      this.codeMirror.focus();
-    }
+    return this.disabledLines;
   }
 
-  private createCodeMirror(initialDoc: String, initialExtensions: Extension, parentObject: any) {
-    let view = new EditorView({
+  private switchToExercise(exercise: number) {
+    this.editable = false;
+    this.currentExercise = exercise;
+    this.shadowRoot?.getElementById('codeWrapper')?.append(this.codeMirror.dom);
+    this.codeMirror.focus();
+  }
+
+  private createCodeMirror(parentObject: any) {
+    return new EditorView({
       state: EditorState.create({
-        doc: `${initialDoc}`,
-        extensions: [initialExtensions],
+        doc: ``,
+        extensions: [mySetup, this.language.of(javascript()), this.autocompletion.of(autocompletion())]
       }),
       parent: parentObject,
     })
-    return view;
   }
 }
