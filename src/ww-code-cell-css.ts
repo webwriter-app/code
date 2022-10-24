@@ -2,7 +2,6 @@ import { css } from "lit"
 export const style = css`
 
 .Wrapper {
-  z-index: -1;
   display: flex;
   flex-direction: column;
   align-items: top;

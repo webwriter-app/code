@@ -4,7 +4,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   build: {
     lib: {
-      entry: 'src/ww-codewidget.ts',
+      entry: 'src/ww-code-cell.ts',
       formats: ['es']
     },
     rollupOptions: {

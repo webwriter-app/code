@@ -24,7 +24,7 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/ww-codewidget-css.ts"
+    "src/ww-code-cell-css.ts"
   ],
   "references": [
     {

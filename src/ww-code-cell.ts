@@ -1,10 +1,10 @@
-import { LitElementWw } from "webwriter-lit"
+import { LitElementWw } from "@webwriter/lit"
 import { property, customElement } from "lit/decorators.js"
 import { EditorView } from "codemirror"
-import { EditorState, Extension, StateEffect, Compartment } from "@codemirror/state"
+import { EditorState, Compartment } from "@codemirror/state"
 import { javascript } from "@codemirror/lang-javascript"
 import { python } from "@codemirror/lang-python"
-import { style } from "./ww-codewidget-css"
+import { style } from "./ww-code-cell-css"
 import { html } from "lit"
 import { mySetup } from "./codemirror"
 import readOnlyRangesExtension from 'codemirror-readonly-ranges'
@@ -13,8 +13,8 @@ import { autocompletion } from '@codemirror/autocomplete';
 
 //part=action einfügen
 
-@customElement("ww-codewidget")
-export default class CodeWidget extends LitElementWw {
+@customElement("ww-code-cell")
+export default class CodeCell extends LitElementWw {
   static styles = style;
 
   @property({ type: Boolean, reflect: true, attribute: true })
@@ -64,14 +64,11 @@ export default class CodeWidget extends LitElementWw {
   codeMirror: EditorView;
 
   @property()
-  disabledLines: any[] = [];
-
-  @property()
   autocompletionEnabled = true;
-
 
   language = new Compartment();
   autocompletion = new Compartment();
+  disabledLines = new Compartment();
 
   render() {
     return html`
@@ -156,7 +153,6 @@ export default class CodeWidget extends LitElementWw {
     }
     this.codeMirror.focus();
   }
-
 
   private disableAutocomplete() {
     this.autocompletionEnabled = !this.autocompletionEnabled;
