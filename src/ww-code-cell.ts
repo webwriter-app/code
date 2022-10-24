@@ -142,13 +142,12 @@ export default class CodeCell extends LitElementWw {
 
   editorFeatureTemplate() {
     return html`
-      <div>
       <sl-divider></sl-divider>
+      <div class="editorFeature">
       <sl-button
         @click=${() => { }}>Disable editing</sl-button>
-      <label class="container">Autocompletion
-      <sl-checkbox checked @change=${() => { this.disableAutocomplete() }}></sl-checkbox>
-    </div>
+      <sl-checkbox checked @change=${() => { this.disableAutocomplete() }}>Autocompletion</sl-checkbox>
+      </div>
     `;
   }
 

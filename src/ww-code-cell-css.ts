@@ -22,10 +22,14 @@ export const style = css`
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
+  align-items: center;
 }
 
-.createExercise {
+.editorFeature {
   display: flex;
-  flex-direction: column
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  padding-bottom: 10px;
 }
 `;
