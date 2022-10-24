@@ -92,11 +92,10 @@ export default class CodeCell extends LitElementWw {
 
   render() {
     return html`
-      ${this.editable ? html`
-        <div class="Wrapper">
-          ${this.exerciseCreationTemplate()}
-        </div>` : html``} 
-        <div id="codeWrapper"></div>`;
+    <div class="Wrapper">
+      ${this.editable ? html`${this.exerciseCreationTemplate()}` : html``} 
+      <div id="code"></div>
+    </div>`;
   }
 
   firstUpdated() {
@@ -112,7 +111,6 @@ export default class CodeCell extends LitElementWw {
         ${this.exerciseLanguageTemplate()}
       </div>
       ${this.editorFeatureTemplate()}
-      <div id="code"></div>
       </div>`;
   };
 
