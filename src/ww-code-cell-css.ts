@@ -32,4 +32,12 @@ export const style = css`
   align-items: center;
   padding-bottom: 10px;
 }
+
+.cm-editor {
+  border-radius: 5px;
+}
+.cm-gutters {
+  border-radius: 5px;
+
+}
 `;
