@@ -46,6 +46,7 @@ export default class CodeCell extends LitElementWw {
 
   @property({ type: Array })
   exerciseTypes = [
+    "None",
     "Fill The Blanks",
     "Code Skeleton",
     "Buggy Code",
@@ -57,14 +58,11 @@ export default class CodeCell extends LitElementWw {
     "Keyword Use",
   ];
 
-  @property()
-  exerciseDescription = "";
-
   @property({ type: String })
   exerciseLanguage = "Javascript";
 
   @property({ type: String })
-  exerciseType = "Fill The Blanks";
+  exerciseType = "None";
 
   @property({ type: EditorView })
   codeMirror: EditorView;
@@ -142,9 +140,8 @@ export default class CodeCell extends LitElementWw {
     return html`
       <sl-divider></sl-divider>
       <div class="editorFeature">
-      <sl-button
-        @click=${() => { }}>Disable editing</sl-button>
-      <sl-checkbox checked @change=${() => { this.disableAutocomplete() }}>Autocompletion</sl-checkbox>
+        <sl-button @click=${() => { }}>Disable editing</sl-button>
+        <sl-checkbox checked @sl-change=${() => { this.disableAutocomplete() }}>Autocompletion</sl-checkbox>
       </div>
     `;
   }
@@ -180,16 +177,9 @@ export default class CodeCell extends LitElementWw {
     this.codeMirror.focus();
   }
 
-
   /*   getReadOnlyRanges = (targetState: EditorState): Array<{ from: number | undefined, to: number | undefined }> => {
       return this.disabledLines;
     } */
-
-  private switchToExercise(exercise: number) {
-    this.editable = false;
-    this.shadowRoot?.getElementById('codeWrapper')?.append(this.codeMirror.dom);
-    this.codeMirror.focus();
-  }
 
   private createCodeMirror(parentObject: any) {
     return new EditorView({
