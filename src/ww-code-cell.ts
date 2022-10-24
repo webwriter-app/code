@@ -1,3 +1,4 @@
+import "@shoelace-style/shoelace/dist/themes/light.css"
 import { LitElementWw } from "@webwriter/lit"
 import { property, customElement } from "lit/decorators.js"
 import { EditorView } from "codemirror"
@@ -9,6 +10,14 @@ import { html } from "lit"
 import { mySetup } from "./codemirror"
 import readOnlyRangesExtension from 'codemirror-readonly-ranges'
 import { autocompletion } from '@codemirror/autocomplete';
+import SlInput from "@shoelace-style/shoelace/dist/components/input/input.js"
+import SlCheckbox from "@shoelace-style/shoelace/dist/components/checkbox/checkbox"
+import SlDropdown from "@shoelace-style/shoelace/dist/components/dropdown/dropdown"
+import SlMenu from "@shoelace-style/shoelace/dist/components/menu/menu"
+import SlMenuItem from "@shoelace-style/shoelace/dist/components/menu-item/menu-item"
+import SlButton from "@shoelace-style/shoelace/dist/components/button/button"
+import SlDivider from "@shoelace-style/shoelace/dist/components/divider/divider"
+
 
 
 //part=action einfügen
@@ -18,10 +27,7 @@ export default class CodeCell extends LitElementWw {
   static styles = style;
 
   @property({ type: Boolean, reflect: true, attribute: true })
-  editable = false;
-
-  @property({ type: Number, reflect: true, attribute: true })
-  currentExercise = 1;
+  editable = true;
 
   @property({ type: Boolean, reflect: true, attribute: true })
   showExerciseCreation = false;
@@ -55,9 +61,9 @@ export default class CodeCell extends LitElementWw {
   exerciseDescription = "";
 
   @property({ type: String })
-  exerciseLanguage = "javascript";
+  exerciseLanguage = "Javascript";
 
-  @property()
+  @property({ type: String })
   exerciseType = "Fill The Blanks";
 
   @property({ type: EditorView })
@@ -70,12 +76,26 @@ export default class CodeCell extends LitElementWw {
   autocompletion = new Compartment();
   disabledLines = new Compartment();
 
+
+  static get scopedElements() {
+    return {
+      "sl-input": SlInput,
+      "sl-checkbox": SlCheckbox,
+      "sl-dropdown": SlDropdown,
+      "sl-menu": SlMenu,
+      "sl-menu-item": SlMenuItem,
+      "sl-button": SlButton,
+      "sl-divider": SlDivider,
+    };
+  }
+
+
   render() {
     return html`
       ${this.editable ? html`
         <div class="Wrapper">
           ${this.exerciseCreationTemplate()}
-        </div>` : html``}
+        </div>` : html``} 
         <div id="codeWrapper"></div>`;
   }
 
@@ -87,68 +107,61 @@ export default class CodeCell extends LitElementWw {
   exerciseCreationTemplate() {
     return html`
     <div class="createExercise">
-      ${this.exerciseChoiceTemplate()}
-      ${this.languageChoiceTemplate()}
+      <div class="exerciseChoice">
+        ${this.exerciseTypeTemplate()}
+        ${this.exerciseLanguageTemplate()}
+      </div>
       ${this.editorFeatureTemplate()}
       <div id="code"></div>
-      <button @click=${() => {
-        this.switchToExercise(this.currentExercise)
-      }}>Aufgabe hinzufügen</button>
-    </div>`;
+      </div>`;
   };
+
+  exerciseTypeTemplate() {
+    return html`
+        <sl-dropdown label="exerciseType">
+          <sl-button slot="trigger" caret>${this.exerciseType}</sl-button>
+          <sl-menu>
+            ${this.exerciseTypes.map((exerciseType) => html`
+              <sl-menu-item @click=${(e: any) => { this.switchExerciseCodeMirror(exerciseType); }}>
+                ${exerciseType}
+              </sl-menu-item>`)}   
+          </sl-menu>
+        </sl-dropdown>`;
+  }
+
+  exerciseLanguageTemplate() {
+    return html`
+      <sl-dropdown label="Language">
+        <sl-button slot="trigger" caret>${this.exerciseLanguage}</sl-button>
+        <sl-menu>
+          <sl-menu-item @click=${() => this.changeCodeMirrorLanguage("Javascript")}>Javascript</sl-menu-item>
+          <sl-menu-item @click=${() => this.changeCodeMirrorLanguage("Python")} >Python</sl-menu-item>
+        </sl-menu>
+      </sl-dropdown>`;
+  }
 
   editorFeatureTemplate() {
     return html`
       <div>
-        <button class="disableButton"
-        @click=${() => { this.disableLine() }}>Disable editing</button>
+      <sl-divider></sl-divider>
+      <sl-button
+        @click=${() => { }}>Disable editing</sl-button>
       <label class="container">Autocompletion
-      <input type="checkbox" checked @change=${() => { this.disableAutocomplete() }}>
+      <sl-checkbox checked @change=${() => { this.disableAutocomplete() }}></sl-checkbox>
     </div>
     `;
   }
 
-  exerciseChoiceTemplate() {
-    return html`
-    <h1 class="header">Aufgabe erstellen:</h1>
-      Wählen Sie einen Aufgabentypen:
-     <div class="exerciseType">
-        ${this.exerciseTypes.map(
-      (exerciseType) => html`
-           <button @click=${(e: any) => {
-          this.exerciseType = e.srcElement.value;
-          this.switchExerciseCodeMirror();
-        }
-        } value=${exerciseType}>${exerciseType}</button>
-          `)}
-      </div>`;
-  }
-
-  languageChoiceTemplate() {
-    return html`
-    <div class="extensions">
-    <div class="language">
-      <fieldset>
-        <legend>Wählen Sie eine Sprache:</legend>
-        <div>
-        <input name="language" checked type="radio" id="javascript" @change=${() => { this.changeCodeMirrorLanguage("Javascript") }} 
-              value=javascript>Javascript
-          <input name="language" type="radio" id="python" @change=${() => { this.changeCodeMirrorLanguage("Python") }}
-              value=python>Python
-        </div>
-      </fieldset>
-    </div>
-  </div>`;
-  }
-
-  private disableLine() {
-    this.disabledLines.push({ from: this.codeMirror.state.selection.main.from, to: this.codeMirror.state.selection.main.to });
-  }
+  /*   private disableLine() {
+      this.disabledLines.push({ from: this.codeMirror.state.selection.main.from, to: this.codeMirror.state.selection.main.to });
+    } */
 
   private changeCodeMirrorLanguage(lang: String) {
     if (lang === "Javascript") {
+      this.exerciseLanguage = "Javascript";
       this.codeMirror.dispatch({ effects: this.language.reconfigure(javascript()) });
     } else {
+      this.exerciseLanguage = "Python";
       this.codeMirror.dispatch({ effects: this.language.reconfigure(python()) });
     }
     this.codeMirror.focus();
@@ -164,19 +177,19 @@ export default class CodeCell extends LitElementWw {
     this.codeMirror.focus();
   }
 
-  private switchExerciseCodeMirror() {
+  private switchExerciseCodeMirror(exerciseType: string) {
+    this.exerciseType = exerciseType;
     this.codeMirror.dispatch({ changes: { from: 0, to: this.codeMirror.state.doc.length, insert: this.exerciseType } })
     this.codeMirror.focus();
   }
 
 
-  getReadOnlyRanges = (targetState: EditorState): Array<{ from: number | undefined, to: number | undefined }> => {
-    return this.disabledLines;
-  }
+  /*   getReadOnlyRanges = (targetState: EditorState): Array<{ from: number | undefined, to: number | undefined }> => {
+      return this.disabledLines;
+    } */
 
   private switchToExercise(exercise: number) {
     this.editable = false;
-    this.currentExercise = exercise;
     this.shadowRoot?.getElementById('codeWrapper')?.append(this.codeMirror.dom);
     this.codeMirror.focus();
   }
