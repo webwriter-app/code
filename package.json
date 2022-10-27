@@ -32,8 +32,7 @@
     "js-yaml": "^4.1.0",
     "lit": "^2.2.7",
     "range-analyzer": "^0.1.1-alpha.2",
-    "tslib": "^2.4.0",
-    "webwriter-model": "^0.1.25"
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@types/node": "^18.7.21",
