@@ -97,6 +97,7 @@ export default class CodeCell extends LitElementWw {
       ${this.codeRunnable ? html`
       <div id="runCode">
         <sl-button @click=${() => this.runCode()}>></sl-button>
+        <sl-button @click=${() => this.clearCode()}>Clear</sl-button>
       </div>` : html``}
     </div>`;
   }
@@ -153,17 +154,29 @@ export default class CodeCell extends LitElementWw {
 
   private runCode() {
     const code = this.codeMirror.state.doc.toString();
-    const result = eval(code);
-    console.log(result);
-    console.log(this.codeMirror.state.doc.lines)
+    let result;
+    try { result = eval(code); }
+    catch (e) { console.log(e); result = e };
+    if (!result) result = "No code found"
     this.codeMirror.dispatch({
       changes: {
         from: this.codeMirror.state.doc.length,
         to: this.codeMirror.state.doc.length,
-        insert: "\n// Ergebnis: " + result.toString()
+        insert: "\n// Result: " + result.toString()
       }
     });
   }
+
+  private clearCode() {
+    this.codeMirror.dispatch({
+      changes: {
+        from: 0,
+        to: this.codeMirror.state.doc.length,
+        insert: ""
+      }
+    });
+  }
+
 
   private changeCodeMirrorLanguage(lang: String) {
     if (lang === "Javascript") {
