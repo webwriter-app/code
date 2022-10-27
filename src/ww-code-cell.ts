@@ -8,7 +8,6 @@ import { python } from "@codemirror/lang-python"
 import { style } from "./ww-code-cell-css"
 import { html } from "lit"
 import { mySetup } from "./codemirror"
-import readOnlyRangesExtension from 'codemirror-readonly-ranges'
 import { autocompletion } from '@codemirror/autocomplete';
 import SlInput from "@shoelace-style/shoelace/dist/components/input/input.js"
 import SlCheckbox from "@shoelace-style/shoelace/dist/components/checkbox/checkbox"
@@ -19,7 +18,6 @@ import SlButton from "@shoelace-style/shoelace/dist/components/button/button"
 import SlDivider from "@shoelace-style/shoelace/dist/components/divider/divider"
 
 
-
 //part=action einfügen
 
 @customElement("ww-code-cell")
@@ -28,9 +26,6 @@ export default class CodeCell extends LitElementWw {
 
   @property({ type: Boolean, reflect: true, attribute: true })
   editable = true;
-
-  @property({ type: Boolean, reflect: true, attribute: true })
-  showExerciseCreation = false;
 
   @property({ type: Array })
   exercises: any[] = [
@@ -46,14 +41,14 @@ export default class CodeCell extends LitElementWw {
 
   @property({ type: Array })
   exerciseTypes = [
-    "None",
+    "Kein Aufgabentyp",
     "Fill The Blanks",
     "Code Skeleton",
     "Buggy Code",
     "Code From Scratch",
     "Code Baseline",
     "Find The Bug",
-    "Compiling Error",
+    "Compiling Errors",
     "Code Interpretation",
     "Keyword Use",
   ];
@@ -62,7 +57,7 @@ export default class CodeCell extends LitElementWw {
   exerciseLanguage = "Javascript";
 
   @property({ type: String })
-  exerciseType = "None";
+  exerciseType = "Kein Aufgabentyp";
 
   @property({ type: EditorView })
   codeMirror: EditorView;
@@ -70,9 +65,15 @@ export default class CodeCell extends LitElementWw {
   @property()
   autocompletionEnabled = true;
 
+  @property()
+  showDisableButton = true;
+
+  @property()
+  codeRunnable = true;
+
   language = new Compartment();
   autocompletion = new Compartment();
-  disabledLines = new Compartment();
+  readOnlyRanges = new Compartment();
 
 
   static get scopedElements() {
@@ -93,6 +94,10 @@ export default class CodeCell extends LitElementWw {
     <div class="Wrapper">
       ${this.editable ? html`${this.exerciseCreationTemplate()}` : html``} 
       <div id="code"></div>
+      ${this.codeRunnable ? html`
+      <div id="runCode">
+        <sl-button @click=${() => this.runCode()}>></sl-button>
+      </div>` : html``}
     </div>`;
   }
 
@@ -115,7 +120,7 @@ export default class CodeCell extends LitElementWw {
   exerciseTypeTemplate() {
     return html`
         <sl-dropdown label="exerciseType">
-          <sl-button slot="trigger" caret>${this.exerciseType}</sl-button>
+          <sl-button slot="trigger" caret class="dropdown">${this.exerciseType}</sl-button>
           <sl-menu>
             ${this.exerciseTypes.map((exerciseType) => html`
               <sl-menu-item @click=${(e: any) => { this.switchExerciseCodeMirror(exerciseType); }}>
@@ -128,7 +133,7 @@ export default class CodeCell extends LitElementWw {
   exerciseLanguageTemplate() {
     return html`
       <sl-dropdown label="Language">
-        <sl-button slot="trigger" caret>${this.exerciseLanguage}</sl-button>
+        <sl-button slot="trigger" caret class="dropdown">${this.exerciseLanguage}</sl-button>
         <sl-menu>
           <sl-menu-item @click=${() => this.changeCodeMirrorLanguage("Javascript")}>Javascript</sl-menu-item>
           <sl-menu-item @click=${() => this.changeCodeMirrorLanguage("Python")} >Python</sl-menu-item>
@@ -140,15 +145,25 @@ export default class CodeCell extends LitElementWw {
     return html`
       <sl-divider></sl-divider>
       <div class="editorFeature">
-        <sl-button @click=${() => { }}>Disable editing</sl-button>
-        <sl-checkbox checked @sl-change=${() => { this.disableAutocomplete() }}>Autocompletion</sl-checkbox>
+        ${this.showDisableButton ? html`<sl-button @click=${() => { /*this.disableRange()*/ }} class="dropdown">Disable editing</sl-button>` : html``}
+        <sl-checkbox checked @sl-change=${() => { this.disableAutocomplete() }} class="dropdown">Autocompletion</sl-checkbox>
       </div>
     `;
   }
 
-  /*   private disableLine() {
-      this.disabledLines.push({ from: this.codeMirror.state.selection.main.from, to: this.codeMirror.state.selection.main.to });
-    } */
+  private runCode() {
+    const code = this.codeMirror.state.doc.toString();
+    const result = eval(code);
+    console.log(result);
+    console.log(this.codeMirror.state.doc.lines)
+    this.codeMirror.dispatch({
+      changes: {
+        from: this.codeMirror.state.doc.length,
+        to: this.codeMirror.state.doc.length,
+        insert: "\n// Ergebnis: " + result.toString()
+      }
+    });
+  }
 
   private changeCodeMirrorLanguage(lang: String) {
     if (lang === "Javascript") {
@@ -173,13 +188,47 @@ export default class CodeCell extends LitElementWw {
 
   private switchExerciseCodeMirror(exerciseType: string) {
     this.exerciseType = exerciseType;
-    this.codeMirror.dispatch({ changes: { from: 0, to: this.codeMirror.state.doc.length, insert: this.exerciseType } })
+    this.codeMirror.dispatch({
+      changes: {
+        from: 0,
+        to: this.codeMirror.state.doc.length,
+        insert: (this.exerciseType !== "Kein Aufgabentyp" ? this.exerciseType : "")
+      }
+    })
     this.codeMirror.focus();
+    switch (exerciseType) {
+      case "Kein Aufgabentyp":
+        this.showDisableButton = true;
+        break;
+      case "Fill The Blanks":
+        this.showDisableButton = true;
+        break;
+      case "Code Skeleton":
+        this.showDisableButton = true;
+        break;
+      case "Buggy Code":
+        this.showDisableButton = true;
+        break;
+      case "Code From Scratch":
+        this.showDisableButton = true;
+        break;
+      case "Code Baseline":
+        this.showDisableButton = true;
+        break;
+      case "Find The Bug":
+        this.showDisableButton = true;
+        break;
+      case "Compiling Errors":
+        this.showDisableButton = false;
+        break;
+      case "Code Interpretation":
+        this.showDisableButton = false;
+        break;
+      case "Keyword Use":
+        this.showDisableButton = true;
+        break;
+    }
   }
-
-  /*   getReadOnlyRanges = (targetState: EditorState): Array<{ from: number | undefined, to: number | undefined }> => {
-      return this.disabledLines;
-    } */
 
   private createCodeMirror(parentObject: any) {
     return new EditorView({
@@ -190,4 +239,5 @@ export default class CodeCell extends LitElementWw {
       parent: parentObject,
     })
   }
+
 }

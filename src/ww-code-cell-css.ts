@@ -25,6 +25,14 @@ export const style = css`
   align-items: center;
 }
 
+.dropdown {
+  width: 180px;
+}
+
+.red_back{
+  background-color: red;
+}
+
 .editorFeature {
   display: flex;
   flex-direction: row;
@@ -38,6 +46,7 @@ export const style = css`
 }
 .cm-gutters {
   border-radius: 5px;
-
 }
+
+
 `;
