@@ -94,7 +94,7 @@ export default class CodeCell extends LitElementWw {
     <div class="Wrapper">
       ${this.editable ? html`${this.exerciseCreationTemplate()}` : html``} 
       <div id="code"></div>
-      ${this.codeRunner ? html`
+      ${this.codeRunner() ? html`
       <div id="runCode">
         <sl-button @click=${() => this.runCode()}>></sl-button>
         <sl-button @click=${() => this.clearCode()}>Clear</sl-button>
