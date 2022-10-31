@@ -69,7 +69,7 @@ export default class CodeCell extends LitElementWw {
   showDisableButton = true;
 
   @property()
-  codeRunnable = true;
+  private codeRunner = this.executeJavascript;
 
   language = new Compartment();
   autocompletion = new Compartment();
@@ -94,7 +94,7 @@ export default class CodeCell extends LitElementWw {
     <div class="Wrapper">
       ${this.editable ? html`${this.exerciseCreationTemplate()}` : html``} 
       <div id="code"></div>
-      ${this.codeRunnable ? html`
+      ${this.codeRunner ? html`
       <div id="runCode">
         <sl-button @click=${() => this.runCode()}>></sl-button>
         <sl-button @click=${() => this.clearCode()}>Clear</sl-button>
@@ -152,17 +152,26 @@ export default class CodeCell extends LitElementWw {
     `;
   }
 
-  private runCode() {
+  private executeJavascript(code: string) {
+    try {
+      if (eval(code) === undefined) {
+        return "undefined";
+      } else if (eval(code) === null) {
+        return "null";
+      }
+      return eval(code);
+    } catch (e) {
+      return e;
+    }
+  }
+
+  private async runCode() {
     const code = this.codeMirror.state.doc.toString();
-    let result;
-    try { result = eval(code); }
-    catch (e) { console.log(e); result = e };
-    if (!result) result = "No code found"
     this.codeMirror.dispatch({
       changes: {
         from: this.codeMirror.state.doc.length,
         to: this.codeMirror.state.doc.length,
-        insert: "\n// Result: " + result.toString()
+        insert: "\n// Result: " + await this.codeRunner(code).toString()
       }
     });
   }
@@ -181,9 +190,11 @@ export default class CodeCell extends LitElementWw {
   private changeCodeMirrorLanguage(lang: String) {
     if (lang === "Javascript") {
       this.exerciseLanguage = "Javascript";
+      this.codeRunner = this.executeJavascript;
       this.codeMirror.dispatch({ effects: this.language.reconfigure(javascript()) });
     } else {
       this.exerciseLanguage = "Python";
+      this.codeRunner = () => null;
       this.codeMirror.dispatch({ effects: this.language.reconfigure(python()) });
     }
     this.codeMirror.focus();
