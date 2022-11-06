@@ -60,7 +60,7 @@ export default class CodeCell extends LitElementWw {
   exerciseType = "Kein Aufgabentyp";
 
   @property({ type: EditorView })
-  codeMirror: EditorView;
+  codeMirror: EditorView = new EditorView();
 
   @property()
   autocompletionEnabled = true;
@@ -94,7 +94,7 @@ export default class CodeCell extends LitElementWw {
     <div class="Wrapper">
       ${this.editable ? html`${this.exerciseCreationTemplate()}` : html``} 
       <div id="code"></div>
-      ${this.codeRunner() ? html`
+      ${this.codeRunner("") ? html`
       <div id="runCode">
         <sl-button @click=${() => this.runCode()}>></sl-button>
         <sl-button @click=${() => this.clearCode()}>Clear</sl-button>
@@ -124,7 +124,7 @@ export default class CodeCell extends LitElementWw {
           <sl-button slot="trigger" caret class="dropdown">${this.exerciseType}</sl-button>
           <sl-menu>
             ${this.exerciseTypes.map((exerciseType) => html`
-              <sl-menu-item @click=${(e: any) => { this.switchExerciseCodeMirror(exerciseType); }}>
+              <sl-menu-item @click=${() => { this.switchExerciseCodeMirror(exerciseType) }}>
                 ${exerciseType}
               </sl-menu-item>`)}   
           </sl-menu>

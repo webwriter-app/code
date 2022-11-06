@@ -2,6 +2,7 @@
   "compilerOptions": {
     "moduleResolution": "node",
     "module": "ESNext",
+    "target": "es6",
     "lib": [
       "ES2020",
       "DOM",
@@ -24,11 +25,6 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/ww-code-cell-css.ts"
   ],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ]
+  "references": []
 }

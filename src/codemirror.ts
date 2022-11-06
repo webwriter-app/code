@@ -4,10 +4,10 @@ import { EditorState } from '@codemirror/state';
 import { foldGutter, indentOnInput, syntaxHighlighting, defaultHighlightStyle, bracketMatching, foldKeymap } from '@codemirror/language';
 import { history, defaultKeymap, historyKeymap } from '@codemirror/commands';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
-import { closeBrackets, autocompletion, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
+import { closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
 import { lintKeymap } from '@codemirror/lint';
-import readOnlyRangesExtension from 'codemirror-readonly-ranges'
-import { HighlightStyle } from "@codemirror/language"
+//import readOnlyRangesExtension from 'codemirror-readonly-ranges'
+//import { HighlightStyle } from "@codemirror/language"
 import { indentationMarkers } from '@replit/codemirror-indentation-markers';
 import { oneDarkTheme } from "@codemirror/theme-one-dark";
 
