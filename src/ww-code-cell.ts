@@ -9,6 +9,8 @@ import { style } from "./ww-code-cell-css"
 import { html } from "lit"
 import { mySetup } from "./codemirror"
 import { autocompletion } from '@codemirror/autocomplete';
+import { underlineSelection } from "./underline"
+import readOnlyRangesExtension from 'codemirror-readonly-ranges'
 import SlInput from "@shoelace-style/shoelace/dist/components/input/input.js"
 import SlCheckbox from "@shoelace-style/shoelace/dist/components/checkbox/checkbox"
 import SlDropdown from "@shoelace-style/shoelace/dist/components/dropdown/dropdown"
@@ -41,16 +43,16 @@ export default class CodeCell extends LitElementWw {
 
   @property({ type: Array })
   exerciseTypes = [
-    "Kein Aufgabentyp",
-    "Fill The Blanks",
-    "Code Skeleton",
-    "Buggy Code",
-    "Code From Scratch",
-    "Code Baseline",
-    "Find The Bug",
-    "Compiling Errors",
-    "Code Interpretation",
-    "Keyword Use",
+    { name: "Kein Aufgabentyp", value: "Test" },
+    { name: "Fill The Blanks", value: "Test" },
+    { name: "Code Skeleton", value: "Test" },
+    { name: "Buggy Code", value: "Test" },
+    { name: "Code From Scratch", value: "Test" },
+    { name: "Code Baseline", value: "Test" },
+    { name: "Find The Bug", value: "Test" },
+    { name: "Compiling Errors", value: "Test" },
+    { name: "Code Interpretation", value: "Test" },
+    { name: "Keyword Use", value: "Test" },
   ];
 
   @property({ type: String })
@@ -70,6 +72,9 @@ export default class CodeCell extends LitElementWw {
 
   @property()
   private codeRunner = this.executeJavascript;
+
+  @property()
+  private disabledLines: Array<number> = [];
 
   language = new Compartment();
   autocompletion = new Compartment();
@@ -124,8 +129,8 @@ export default class CodeCell extends LitElementWw {
           <sl-button slot="trigger" caret class="dropdown">${this.exerciseType}</sl-button>
           <sl-menu>
             ${this.exerciseTypes.map((exerciseType) => html`
-              <sl-menu-item @click=${() => { this.switchExerciseCodeMirror(exerciseType) }}>
-                ${exerciseType}
+              <sl-menu-item @click=${() => { this.switchExerciseCodeMirror(exerciseType.name) }}>
+                ${exerciseType.name}
               </sl-menu-item>`)}   
           </sl-menu>
         </sl-dropdown>`;
@@ -146,7 +151,7 @@ export default class CodeCell extends LitElementWw {
     return html`
       <sl-divider></sl-divider>
       <div class="editorFeature">
-        ${this.showDisableButton ? html`<sl-button @click=${() => { /*this.disableRange()*/ }} class="dropdown">Disable editing</sl-button>` : html``}
+        ${this.showDisableButton ? html`<sl-button @click=${() => { this.disableEditing() }} class="dropdown">Disable editing</sl-button>` : html``}
         <sl-checkbox checked @sl-change=${() => { this.disableAutocomplete() }} class="dropdown">Autocompletion</sl-checkbox>
       </div>
     `;
@@ -185,7 +190,6 @@ export default class CodeCell extends LitElementWw {
       }
     });
   }
-
 
   private changeCodeMirrorLanguage(lang: String) {
     if (lang === "Javascript") {
@@ -254,11 +258,52 @@ export default class CodeCell extends LitElementWw {
     }
   }
 
+  private async disableEditing() {
+    const state = this.codeMirror.state;
+    state.selection.ranges.forEach((range) => {
+      const currentline = state.doc.lineAt(range.head).number;
+      if (!this.disabledLines.includes(currentline)) {
+        this.disabledLines.push(currentline);
+        underlineSelection(this.codeMirror, [{ from: state.doc.line(currentline).from, to: state.doc.line(currentline).to }], true);
+      } else {
+        // dirty fix
+        this.disabledLines = this.disabledLines.filter((line) => line !== currentline);
+        this.codeMirror.dispatch({
+          changes: {
+            from: state.doc.line(currentline).from,
+            to: state.doc.line(currentline).to,
+            insert: ""
+          }
+        })
+        this.codeMirror.dispatch({
+          changes: {
+            from: state.doc.line(currentline).from,
+            to: undefined,
+            insert: state.doc.line(currentline).text
+          }
+        })
+      }
+    });
+    this.codeMirror.dispatch({ effects: this.readOnlyRanges.reconfigure(readOnlyRangesExtension(this.getReadOnlyRanges)) });
+  }
+
+
+
+  private getReadOnlyRanges = (targetState: EditorState): Array<{ from: number | undefined, to: number | undefined }> => {
+    return this.disabledLines.map((line) => {
+      return { from: targetState.doc.line(line).from, to: targetState.doc.line(line).to };
+    });
+  };
+
   private createCodeMirror(parentObject: any) {
     return new EditorView({
       state: EditorState.create({
-        doc: ``,
-        extensions: [mySetup, this.language.of(javascript()), this.autocompletion.of(autocompletion())]
+        doc: `\n\n`,
+        extensions: [
+          mySetup,
+          this.language.of(javascript()),
+          this.autocompletion.of(autocompletion()),
+          this.readOnlyRanges.of(readOnlyRangesExtension(this.getReadOnlyRanges))]
       }),
       parent: parentObject,
     })

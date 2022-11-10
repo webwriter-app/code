@@ -16,6 +16,7 @@ export const style = css`
   padding: 10px;
   padding-left: 50px;
   padding-right: 50px;
+  min-width: 400px;
 }
 
 .exerciseChoice {
