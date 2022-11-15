@@ -206,7 +206,6 @@ export default class CodeCell extends LitElementWw {
       ${this.codeRunner("") && this.showCodeRunButton ? html`
       <div id="runCode">
         <sl-button @click=${() => this.runCode()}>></sl-button>
-   <!--   <sl-button @click=${() => this.clearCode()}>Clear</sl-button> -->
       </div>` : html``}
     </div>`;
   }
@@ -293,16 +292,6 @@ export default class CodeCell extends LitElementWw {
     });
   }
 
-  /*   private clearCode() {
-      this.codeMirror.dispatch({
-        changes: {
-          from: 0,
-          to: this.codeMirror.state.doc.length,
-          insert: ""
-        }
-      });
-    } */
-
   private changeCodeMirrorLanguage(language: any) {
     this.exerciseLanguage = language;
     this.codeRunner = this.exerciseLanguage.executionFunction;
@@ -312,11 +301,7 @@ export default class CodeCell extends LitElementWw {
 
   private toggleAutocompletion() {
     this.autocompletionEnabled = !this.autocompletionEnabled;
-    if (this.autocompletionEnabled) {
-      this.codeMirror.dispatch({ effects: this.autocompletion.reconfigure(autocompletion()) });
-    } else {
-      this.codeMirror.dispatch({ effects: this.autocompletion.reconfigure([]) });
-    }
+    this.codeMirror.dispatch({ effects: this.autocompletion.reconfigure(this.autocompletionEnabled ? autocompletion() : []) });
     this.codeMirror.focus();
   }
 
