@@ -43,23 +43,113 @@ export default class CodeCell extends LitElementWw {
 
   @property({ type: Array })
   exerciseTypes = [
-    { name: "Kein Aufgabentyp", value: "Test" },
-    { name: "Fill The Blanks", value: "Test" },
-    { name: "Code Skeleton", value: "Test" },
-    { name: "Buggy Code", value: "Test" },
-    { name: "Code From Scratch", value: "Test" },
-    { name: "Code Baseline", value: "Test" },
-    { name: "Find The Bug", value: "Test" },
-    { name: "Compiling Errors", value: "Test" },
-    { name: "Code Interpretation", value: "Test" },
-    { name: "Keyword Use", value: "Test" },
+    {
+      name: "Kein Aufgabentyp",
+      templateText: "",
+      features:
+      {
+        showDisableButton: true,
+        showCodeRunButton: true,
+      }
+    },
+    {
+      name: "Fill The Blanks",
+      templateText:
+        `//Fill in the blanks\nconst array = [1,2,3]; \n array.map((element) => { \n  return _________ \n}); \n\nfunction double(a) {\n return a * 2; \n}`,
+      features:
+      {
+        showDisableButton: true,
+        showCodeRunButton: true,
+      }
+    },
+    {
+      name: "Code Skeleton",
+      templateText:
+        `//Complete the function\nfunction isEven(variable) {\n\n}`,
+      features:
+      {
+        showDisableButton: true,
+        showCodeRunButton: true,
+      }
+    },
+    {
+      name: "Buggy Code",
+      templateText: "//Find and fix the bug\nconst array = [1,2,3]; \n array.map((element) => { \n  return element * 2 \n}); \n\nfunction double(a) {\n return a * 2; \n}",
+      features:
+      {
+        showDisableButton: true,
+        showCodeRunButton: false,
+      }
+    },
+    {
+      name: "Code From Scratch",
+      templateText: "/* Please code following task from scratch: \n--Task--\n*/",
+      features:
+      {
+        showDisableButton: true,
+        showCodeRunButton: true,
+      }
+    },
+    {
+      name: "Code Baseline",
+      templateText: "//Improve the code\nfunction add(a,b){\n let c = a; \n for( let i = 0; i < b; i++ ){ \n  c = c + 1; \n };\nreturn c;\n}",
+      features:
+      {
+        showDisableButton: true,
+        showCodeRunButton: true,
+      }
+    },
+    {
+      name: "Find The Bug",
+      templateText: "//Find the bug in the following code\nfunction add(a,b){\n let c = a; \n for( let i = 0; i > b; i++ ){ \n  c = c + 1; \n };\nreturn c;\n}",
+      features:
+      {
+        showDisableButton: true,
+        showCodeRunButton: false,
+      }
+    },
+    {
+      name: "Compiling Errors",
+      templateText: "//Explain the following error\nconst a = 5;\n a.map(object => {\n return a + 1;\n})\n// Result: TypeError: a.map is not a function",
+      features:
+      {
+        showDisableButton: true,
+        showCodeRunButton: false,
+      }
+    },
+    {
+      name: "Code Interpretation",
+      templateText: "//Explain the following code\nconst array = [1,2,3];\nconst newArray = array.map(element => element * 2);\nconsole.log(newArray);",
+      features:
+      {
+        showDisableButton: true,
+        showCodeRunButton: false,
+      }
+    },
+    {
+      name: "Keyword Use",
+      templateText: "//Use an if-else statement to check if a variable is a string\nfunction isString(variable) {\n\n}",
+      features:
+      {
+        showDisableButton: true,
+        showCodeRunButton: true,
+      }
+    },
   ];
 
   @property({ type: String })
   exerciseLanguage = "Javascript";
 
-  @property({ type: String })
-  exerciseType = "Kein Aufgabentyp";
+  @property({ type: String, reflect: true, attribute: true })
+  exerciseType = {
+    name: "Kein Aufgabentyp",
+    templateText: "",
+    features:
+    {
+      showDisableButton: true,
+      showCodeRunButton: true,
+    }
+  };
 
   @property({ type: EditorView })
   codeMirror: EditorView = new EditorView();
@@ -67,8 +157,11 @@ export default class CodeCell extends LitElementWw {
   @property()
   autocompletionEnabled = true;
 
-  @property()
+  @property({ attribute: true })
   showDisableButton = true;
+
+  @property({ attribute: true })
+  showCodeRunButton = true;
 
   @property()
   private codeRunner = this.executeJavascript;
@@ -99,10 +192,10 @@ export default class CodeCell extends LitElementWw {
     <div class="Wrapper">
       ${this.editable ? html`${this.exerciseCreationTemplate()}` : html``} 
       <div id="code"></div>
-      ${this.codeRunner("") ? html`
+      ${this.codeRunner("") && this.showCodeRunButton ? html`
       <div id="runCode">
         <sl-button @click=${() => this.runCode()}>></sl-button>
-        <sl-button @click=${() => this.clearCode()}>Clear</sl-button>
+   <!--   <sl-button @click=${() => this.clearCode()}>Clear</sl-button> -->
       </div>` : html``}
     </div>`;
   }
@@ -126,10 +219,10 @@ export default class CodeCell extends LitElementWw {
   exerciseTypeTemplate() {
     return html`
         <sl-dropdown label="exerciseType">
-          <sl-button slot="trigger" caret class="dropdown">${this.exerciseType}</sl-button>
+          <sl-button slot="trigger" caret class="dropdown">${this.exerciseType.name}</sl-button>
           <sl-menu>
             ${this.exerciseTypes.map((exerciseType) => html`
-              <sl-menu-item @click=${() => { this.switchExerciseCodeMirror(exerciseType.name) }}>
+              <sl-menu-item @click=${() => { this.switchExerciseCodeMirror(exerciseType) }}>
                 ${exerciseType.name}
               </sl-menu-item>`)}   
           </sl-menu>
@@ -151,8 +244,9 @@ export default class CodeCell extends LitElementWw {
     return html`
       <sl-divider></sl-divider>
       <div class="editorFeature">
-        ${this.showDisableButton ? html`<sl-button @click=${() => { this.disableEditing() }} class="dropdown">Disable editing</sl-button>` : html``}
-        <sl-checkbox checked @sl-change=${() => { this.disableAutocomplete() }} class="dropdown">Autocompletion</sl-checkbox>
+        ${this.showDisableButton ? html`<sl-button @click=${() => { this.disableLine() }} class="dropdown">Disable line</sl-button>` : html``}
+        <sl-checkbox checked @sl-change=${() => { this.toggleAutocompletion() }} class="dropdown">Autocompletion</sl-checkbox>
+        <sl-button @click=${() => { this.toggleRunCode() }} class="dropdown">Toggle code running</sl-button>
       </div>
     `;
   }
@@ -172,24 +266,26 @@ export default class CodeCell extends LitElementWw {
 
   private async runCode() {
     const code = this.codeMirror.state.doc.toString();
+    const doc = this.codeMirror.state.doc
     this.codeMirror.dispatch({
       changes: {
-        from: this.codeMirror.state.doc.length,
-        to: this.codeMirror.state.doc.length,
+        from: doc.length,
+        to: doc.length,
         insert: "\n// Result: " + await this.codeRunner(code).toString()
       }
     });
   }
 
-  private clearCode() {
-    this.codeMirror.dispatch({
-      changes: {
-        from: 0,
-        to: this.codeMirror.state.doc.length,
-        insert: ""
-      }
-    });
-  }
+
+  /*   private clearCode() {
+      this.codeMirror.dispatch({
+        changes: {
+          from: 0,
+          to: this.codeMirror.state.doc.length,
+          insert: ""
+        }
+      });
+    } */
 
   private changeCodeMirrorLanguage(lang: String) {
     if (lang === "Javascript") {
@@ -204,7 +300,7 @@ export default class CodeCell extends LitElementWw {
     this.codeMirror.focus();
   }
 
-  private disableAutocomplete() {
+  private toggleAutocompletion() {
     this.autocompletionEnabled = !this.autocompletionEnabled;
     if (this.autocompletionEnabled) {
       this.codeMirror.dispatch({ effects: this.autocompletion.reconfigure(autocompletion()) });
@@ -214,51 +310,25 @@ export default class CodeCell extends LitElementWw {
     this.codeMirror.focus();
   }
 
-  private switchExerciseCodeMirror(exerciseType: string) {
+  private toggleRunCode() {
+    this.showCodeRunButton = !this.showCodeRunButton;
+  };
+
+  private switchExerciseCodeMirror(exerciseType: any) {
     this.exerciseType = exerciseType;
+    this.showCodeRunButton = exerciseType.features.showCodeRunButton;
     this.codeMirror.dispatch({
       changes: {
         from: 0,
         to: this.codeMirror.state.doc.length,
-        insert: (this.exerciseType !== "Kein Aufgabentyp" ? this.exerciseType : "")
+        insert: this.exerciseType.templateText
       }
     })
     this.codeMirror.focus();
-    switch (exerciseType) {
-      case "Kein Aufgabentyp":
-        this.showDisableButton = true;
-        break;
-      case "Fill The Blanks":
-        this.showDisableButton = true;
-        break;
-      case "Code Skeleton":
-        this.showDisableButton = true;
-        break;
-      case "Buggy Code":
-        this.showDisableButton = true;
-        break;
-      case "Code From Scratch":
-        this.showDisableButton = true;
-        break;
-      case "Code Baseline":
-        this.showDisableButton = true;
-        break;
-      case "Find The Bug":
-        this.showDisableButton = true;
-        break;
-      case "Compiling Errors":
-        this.showDisableButton = false;
-        break;
-      case "Code Interpretation":
-        this.showDisableButton = false;
-        break;
-      case "Keyword Use":
-        this.showDisableButton = true;
-        break;
-    }
+    this.showDisableButton = this.exerciseType.features.showDisableButton;
   }
 
-  private async disableEditing() {
+  private async disableLine() {
     const state = this.codeMirror.state;
     state.selection.ranges.forEach((range) => {
       const currentline = state.doc.lineAt(range.head).number;
