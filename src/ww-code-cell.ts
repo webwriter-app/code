@@ -138,8 +138,22 @@ export default class CodeCell extends LitElementWw {
     },
   ];
 
-  @property({ type: String })
-  exerciseLanguage = "Javascript";
+  @property({ type: Array })
+  exerciseLanguages = [
+    {
+      name: "JavaScript",
+      executionFunction: this.executeJavascript,
+      highlightExtensions: javascript(),
+    },
+    {
+      name: "Python",
+      executionFunction: this.executePython,
+      highlightExtensions: python(),
+    }
+  ];
+
+  @property()
+  exerciseLanguage = this.exerciseLanguages[0];
 
   @property({ type: String, reflect: true, attribute: true })
   exerciseType = this.exerciseTypes[0];
@@ -229,10 +243,11 @@ export default class CodeCell extends LitElementWw {
   exerciseLanguageTemplate() {
     return html`
       <sl-dropdown part="action" label="Language">
-        <sl-button slot="trigger" caret class="dropdown">${this.exerciseLanguage}</sl-button>
+        <sl-button slot="trigger" caret class="dropdown">${this.exerciseLanguage.name}</sl-button>
         <sl-menu>
-          <sl-menu-item @click=${() => this.changeCodeMirrorLanguage("Javascript")}>Javascript</sl-menu-item>
-          <sl-menu-item @click=${() => this.changeCodeMirrorLanguage("Python")} >Python</sl-menu-item>
+          ${this.exerciseLanguages.map((exerciseLanguage) => html`
+            <sl-menu-item @click=${() => this.changeCodeMirrorLanguage(exerciseLanguage)}>${exerciseLanguage.name}</sl-menu-item>
+          `)}
         </sl-menu>
       </sl-dropdown>`;
   }
@@ -243,10 +258,8 @@ export default class CodeCell extends LitElementWw {
       <div part="action" class="editorFeature">
         ${this.showDisableButton ? html`<sl-button @click=${() => { this.disableLine() }} class="dropdown">Disable line</sl-button>` : html``}
         <sl-checkbox checked @sl-change=${() => { this.toggleAutocompletion() }} class="dropdown">Autocompletion</sl-checkbox>
-        ${this.codeRunner("") ? html`
-          <sl-button @click=${() => { this.toggleRunCode() }} class="dropdown">Toggle code running</sl-button>`
-        : html``}
         <sl-button @click=${() => { this.toggleTheme() }} class="dropdown">Toggle theme</sl-button>
+        ${this.codeRunner("") ? html`<sl-button @click=${() => { this.toggleRunCode() }} class="dropdown">Toggle code running</sl-button>` : html``}
       </div>
     `;
   }
@@ -262,6 +275,10 @@ export default class CodeCell extends LitElementWw {
     } catch (e) {
       return e;
     }
+  }
+
+  private executePython() {
+    return null
   }
 
   private async runCode() {
@@ -286,16 +303,10 @@ export default class CodeCell extends LitElementWw {
       });
     } */
 
-  private changeCodeMirrorLanguage(lang: String) {
-    if (lang === "Javascript") {
-      this.exerciseLanguage = "Javascript";
-      this.codeRunner = this.executeJavascript;
-      this.codeMirror.dispatch({ effects: this.language.reconfigure(javascript()) });
-    } else {
-      this.exerciseLanguage = "Python";
-      this.codeRunner = () => null;
-      this.codeMirror.dispatch({ effects: this.language.reconfigure(python()) });
-    }
+  private changeCodeMirrorLanguage(language: any) {
+    this.exerciseLanguage = language;
+    this.codeRunner = this.exerciseLanguage.executionFunction;
+    this.codeMirror.dispatch({ effects: this.language.reconfigure(this.exerciseLanguage.highlightExtensions) });
     this.codeMirror.focus();
   }
 
