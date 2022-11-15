@@ -180,6 +180,9 @@ export default class CodeCell extends LitElementWw {
     };
   }
 
+  focus() {
+    this.codeMirror?.focus()
+  }
 
   render() {
     return html`
@@ -212,7 +215,7 @@ export default class CodeCell extends LitElementWw {
 
   exerciseTypeTemplate() {
     return html`
-        <sl-dropdown label="exerciseType">
+        <sl-dropdown part="action" label="exerciseType">
           <sl-button slot="trigger" caret class="dropdown">${this.exerciseType.name}</sl-button>
           <sl-menu>
             ${this.exerciseTypes.map((exerciseType) => html`
@@ -225,7 +228,7 @@ export default class CodeCell extends LitElementWw {
 
   exerciseLanguageTemplate() {
     return html`
-      <sl-dropdown label="Language">
+      <sl-dropdown part="action" label="Language">
         <sl-button slot="trigger" caret class="dropdown">${this.exerciseLanguage}</sl-button>
         <sl-menu>
           <sl-menu-item @click=${() => this.changeCodeMirrorLanguage("Javascript")}>Javascript</sl-menu-item>
@@ -237,10 +240,12 @@ export default class CodeCell extends LitElementWw {
   editorFeatureTemplate() {
     return html`
       <sl-divider></sl-divider>
-      <div class="editorFeature">
+      <div part="action" class="editorFeature">
         ${this.showDisableButton ? html`<sl-button @click=${() => { this.disableLine() }} class="dropdown">Disable line</sl-button>` : html``}
         <sl-checkbox checked @sl-change=${() => { this.toggleAutocompletion() }} class="dropdown">Autocompletion</sl-checkbox>
-        <sl-button @click=${() => { this.toggleRunCode() }} class="dropdown">Toggle code running</sl-button>
+        ${this.codeRunner("") ? html`
+          <sl-button @click=${() => { this.toggleRunCode() }} class="dropdown">Toggle code running</sl-button>`
+        : html``}
         <sl-button @click=${() => { this.toggleTheme() }} class="dropdown">Toggle theme</sl-button>
       </div>
     `;
