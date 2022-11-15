@@ -1,5 +1,5 @@
 import { EditorView, Decoration, DecorationSet } from "@codemirror/view"
-import { StateField, StateEffect, Compartment } from "@codemirror/state"
+import { StateField, StateEffect } from "@codemirror/state"
 
 const addHighlight = StateEffect.define<{ from: number, to: number }>({
     map: ({ from, to }, change) => ({ from: change.mapPos(from), to: change.mapPos(to) })
@@ -32,7 +32,6 @@ const highlightTheme = EditorView.baseTheme({
 
 export function highlightSelection(view: EditorView, lines: Array<any>) {
     let effects: StateEffect<any>[];
-    const test = new Compartment();
     effects = lines.map(({ from, to }) => addHighlight.of({ from, to }))
 
     if (!view.state.field(highlightField, false))

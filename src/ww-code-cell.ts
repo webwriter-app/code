@@ -3,11 +3,9 @@ import { LitElementWw } from "@webwriter/lit"
 import { property, customElement } from "lit/decorators.js"
 import { EditorView } from "codemirror"
 import { EditorState, Compartment } from "@codemirror/state"
-import { javascript } from "@codemirror/lang-javascript"
-import { python } from "@codemirror/lang-python"
 import { style } from "./ww-code-cell-css"
 import { html } from "lit"
-import { mySetup } from "./codemirror"
+import { mySetup } from "./codemirror-setup"
 import { autocompletion } from '@codemirror/autocomplete';
 import { highlightSelection } from "./highlight"
 import { oneDarkTheme } from "@codemirror/theme-one-dark";
@@ -19,7 +17,8 @@ import SlMenu from "@shoelace-style/shoelace/dist/components/menu/menu"
 import SlMenuItem from "@shoelace-style/shoelace/dist/components/menu-item/menu-item"
 import SlButton from "@shoelace-style/shoelace/dist/components/button/button"
 import SlDivider from "@shoelace-style/shoelace/dist/components/divider/divider"
-
+import { javascriptModule } from "./languageModules/javascriptModule"
+import { pythonModule } from "./languageModules/pythonModule"
 
 //part=action einfügen
 
@@ -29,18 +28,6 @@ export default class CodeCell extends LitElementWw {
 
   @property({ type: Boolean, reflect: true, attribute: true })
   editable = true;
-
-  @property({ type: Array })
-  exercises: any[] = [
-    {
-      description: "Test",
-      exerciseType: "Test",
-      editorStates: {
-        doc: "Test",
-        extensions: [mySetup, javascript(), autocompletion()]
-      }
-    }
-  ];
 
   @property({ type: Array })
   exerciseTypes = [
@@ -138,30 +125,28 @@ export default class CodeCell extends LitElementWw {
     },
   ];
 
+  @property({ type: String, reflect: true, attribute: true })
+  exerciseType = this.exerciseTypes[0];
+
   @property({ type: Array })
   exerciseLanguages = [
-    {
-      name: "JavaScript",
-      executionFunction: this.executeJavascript,
-      highlightExtensions: javascript(),
-    },
-    {
-      name: "Python",
-      executionFunction: this.executePython,
-      highlightExtensions: python(),
-    }
+    javascriptModule,
+    pythonModule
   ];
 
   @property()
   exerciseLanguage = this.exerciseLanguages[0];
 
-  @property({ type: String, reflect: true, attribute: true })
-  exerciseType = this.exerciseTypes[0];
-
   @property({ type: EditorView })
   codeMirror: EditorView = new EditorView();
 
   @property()
+  private codeRunner = this.exerciseLanguage.executionFunction;
+
+  @property()
+  private disabledLines: Array<number> = [];
+
+  @property({ attribute: true })
   autocompletionEnabled = true;
 
   @property({ attribute: true })
@@ -169,12 +154,6 @@ export default class CodeCell extends LitElementWw {
 
   @property({ attribute: true })
   showCodeRunButton = true;
-
-  @property()
-  private codeRunner = this.executeJavascript;
-
-  @property()
-  private disabledLines: Array<number> = [];
 
   language = new Compartment();
   autocompletion = new Compartment();
@@ -263,22 +242,6 @@ export default class CodeCell extends LitElementWw {
     `;
   }
 
-  private executeJavascript(code: string) {
-    try {
-      if (eval(code) === undefined) {
-        return "undefined";
-      } else if (eval(code) === null) {
-        return "null";
-      }
-      return eval(code);
-    } catch (e) {
-      return e;
-    }
-  }
-
-  private executePython() {
-    return null
-  }
 
   private async runCode() {
     const code = this.codeMirror.state.doc.toString();
@@ -312,6 +275,7 @@ export default class CodeCell extends LitElementWw {
 
   private toggleRunCode() {
     this.showCodeRunButton = !this.showCodeRunButton;
+    this.codeMirror.focus();
   };
 
   private switchExerciseCodeMirror(exerciseType: any) {
@@ -357,8 +321,6 @@ export default class CodeCell extends LitElementWw {
     this.codeMirror.dispatch({ effects: this.readOnlyRanges.reconfigure(readOnlyRangesExtension(this.getReadOnlyRanges)) });
   }
 
-
-
   private getReadOnlyRanges = (targetState: EditorState): Array<{ from: number | undefined, to: number | undefined }> => {
     return this.disabledLines.map((line) => {
       return { from: targetState.doc.line(line).from, to: targetState.doc.line(line).to };
@@ -371,7 +333,7 @@ export default class CodeCell extends LitElementWw {
         doc: `\n\n`,
         extensions: [
           mySetup,
-          this.language.of(javascript()),
+          this.language.of(this.exerciseLanguage.highlightExtensions),
           this.autocompletion.of(autocompletion()),
           this.theme.of(oneDarkTheme),
           this.readOnlyRanges.of(readOnlyRangesExtension(this.getReadOnlyRanges))],
