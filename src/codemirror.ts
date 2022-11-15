@@ -6,15 +6,9 @@ import { history, defaultKeymap, historyKeymap, indentWithTab } from '@codemirro
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
 import { closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
 import { lintKeymap } from '@codemirror/lint';
-//import readOnlyRangesExtension from 'codemirror-readonly-ranges'
-//import { HighlightStyle } from "@codemirror/language"
 import { indentationMarkers } from '@replit/codemirror-indentation-markers';
-import { oneDarkTheme } from "@codemirror/theme-one-dark";
-
-
 
 export const mySetup = /*@__PURE__*/(() => [
-    oneDarkTheme,
     indentationMarkers(),
     lineNumbers(),
     highlightActiveLineGutter(),

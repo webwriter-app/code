@@ -9,7 +9,8 @@ import { style } from "./ww-code-cell-css"
 import { html } from "lit"
 import { mySetup } from "./codemirror"
 import { autocompletion } from '@codemirror/autocomplete';
-import { underlineSelection } from "./underline"
+import { highlightSelection } from "./highlight"
+import { oneDarkTheme } from "@codemirror/theme-one-dark";
 import readOnlyRangesExtension from 'codemirror-readonly-ranges'
 import SlInput from "@shoelace-style/shoelace/dist/components/input/input.js"
 import SlCheckbox from "@shoelace-style/shoelace/dist/components/checkbox/checkbox"
@@ -44,7 +45,7 @@ export default class CodeCell extends LitElementWw {
   @property({ type: Array })
   exerciseTypes = [
     {
-      name: "Kein Aufgabentyp",
+      name: "No exercise type",
       templateText: "",
       features:
       {
@@ -55,7 +56,7 @@ export default class CodeCell extends LitElementWw {
     {
       name: "Fill The Blanks",
       templateText:
-        `//Fill in the blanks\nconst array = [1,2,3]; \n array.map((element) => { \n  return _________ \n}); \n\nfunction double(a) {\n return a * 2; \n}`,
+        `//Fill in the blanks\nconst array = [1,2,3]; \n  array.map((element) => { \n  return _________ \n}); \n\nfunction double(a) {\n return a * 2; \n}`,
       features:
       {
         showDisableButton: true,
@@ -141,15 +142,7 @@ export default class CodeCell extends LitElementWw {
   exerciseLanguage = "Javascript";
 
   @property({ type: String, reflect: true, attribute: true })
-  exerciseType = {
-    name: "Kein Aufgabentyp",
-    templateText: "",
-    features:
-    {
-      showDisableButton: true,
-      showCodeRunButton: true,
-    }
-  };
+  exerciseType = this.exerciseTypes[0];
 
   @property({ type: EditorView })
   codeMirror: EditorView = new EditorView();
@@ -172,6 +165,7 @@ export default class CodeCell extends LitElementWw {
   language = new Compartment();
   autocompletion = new Compartment();
   readOnlyRanges = new Compartment();
+  theme = new Compartment();
 
 
   static get scopedElements() {
@@ -247,6 +241,7 @@ export default class CodeCell extends LitElementWw {
         ${this.showDisableButton ? html`<sl-button @click=${() => { this.disableLine() }} class="dropdown">Disable line</sl-button>` : html``}
         <sl-checkbox checked @sl-change=${() => { this.toggleAutocompletion() }} class="dropdown">Autocompletion</sl-checkbox>
         <sl-button @click=${() => { this.toggleRunCode() }} class="dropdown">Toggle code running</sl-button>
+        <sl-button @click=${() => { this.toggleTheme() }} class="dropdown">Toggle theme</sl-button>
       </div>
     `;
   }
@@ -275,7 +270,6 @@ export default class CodeCell extends LitElementWw {
       }
     });
   }
-
 
   /*   private clearCode() {
       this.codeMirror.dispatch({
@@ -310,6 +304,11 @@ export default class CodeCell extends LitElementWw {
     this.codeMirror.focus();
   }
 
+  private toggleTheme() {
+    this.codeMirror.dispatch({ effects: this.theme.reconfigure(this.theme.get(this.codeMirror.state) === oneDarkTheme ? ([]) : oneDarkTheme) });
+    this.codeMirror.focus();
+  }
+
   private toggleRunCode() {
     this.showCodeRunButton = !this.showCodeRunButton;
   };
@@ -334,7 +333,7 @@ export default class CodeCell extends LitElementWw {
       const currentline = state.doc.lineAt(range.head).number;
       if (!this.disabledLines.includes(currentline)) {
         this.disabledLines.push(currentline);
-        underlineSelection(this.codeMirror, [{ from: state.doc.line(currentline).from, to: state.doc.line(currentline).to }], true);
+        highlightSelection(this.codeMirror, [{ from: state.doc.line(currentline).from, to: state.doc.line(currentline).to }]);
       } else {
         // dirty fix
         this.disabledLines = this.disabledLines.filter((line) => line !== currentline);
@@ -373,7 +372,8 @@ export default class CodeCell extends LitElementWw {
           mySetup,
           this.language.of(javascript()),
           this.autocompletion.of(autocompletion()),
-          this.readOnlyRanges.of(readOnlyRangesExtension(this.getReadOnlyRanges))]
+          this.theme.of(oneDarkTheme),
+          this.readOnlyRanges.of(readOnlyRangesExtension(this.getReadOnlyRanges))],
       }),
       parent: parentObject,
     })
