@@ -256,7 +256,6 @@ export default class CodeCell extends LitElementWw {
 
   private async runCode() {
     const code = this.codeMirror.state.doc.toString();
-    const doc = this.codeMirror.state.doc;
     const codeResult = await this.codeRunner(code).toString();
     this.codeResult = codeResult;
   }
@@ -289,13 +288,15 @@ export default class CodeCell extends LitElementWw {
     this.exerciseType = exerciseType;
     this.showCodeRunButton = exerciseType.features.showCodeRunButton;
     this.showDisableButton = this.exerciseType.features.showDisableButton;
+    this.codeResult = "";
+    console.log(this.codeResult)
     this.codeMirror.dispatch({
       changes: {
         from: 0,
         to: this.codeMirror.state.doc.length,
         insert: this.exerciseType.templateText
       }
-    })
+    });
     this.codeMirror.focus();
   }
 
