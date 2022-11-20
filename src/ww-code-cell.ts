@@ -17,6 +17,7 @@ import SlMenu from "@shoelace-style/shoelace/dist/components/menu/menu"
 import SlMenuItem from "@shoelace-style/shoelace/dist/components/menu-item/menu-item"
 import SlButton from "@shoelace-style/shoelace/dist/components/button/button"
 import SlDivider from "@shoelace-style/shoelace/dist/components/divider/divider"
+import SlCard from "@shoelace-style/shoelace/dist/components/card/card"
 import { javascriptModule } from "./languageModules/javascriptModule"
 import { pythonModule } from "./languageModules/pythonModule"
 
@@ -47,7 +48,7 @@ export default class CodeCell extends LitElementWw {
       features:
       {
         showDisableButton: true,
-        showCodeRunButton: true,
+        showCodeRunButton: false,
       }
     },
     {
@@ -155,6 +156,9 @@ export default class CodeCell extends LitElementWw {
   @property({ attribute: true })
   showCodeRunButton = true;
 
+  @property()
+  codeResult: String = "";
+
   language = new Compartment();
   autocompletion = new Compartment();
   readOnlyRanges = new Compartment();
@@ -170,6 +174,7 @@ export default class CodeCell extends LitElementWw {
       "sl-menu-item": SlMenuItem,
       "sl-button": SlButton,
       "sl-divider": SlDivider,
+      "sl-card": SlCard,
     };
   }
 
@@ -185,6 +190,12 @@ export default class CodeCell extends LitElementWw {
       ${this.codeRunner("") && this.showCodeRunButton ? html`
       <div id="runCode">
         <sl-button @click=${() => this.runCode()}>></sl-button>
+      </div>` : html``}
+      ${this.codeResult !== "" ? html`
+      <div class="codeResult">
+        <sl-card class="card">
+          <div>Result: ${this.codeResult}</div>
+          </sl-card>
       </div>` : html``}
     </div>`;
   }
@@ -237,22 +248,17 @@ export default class CodeCell extends LitElementWw {
         ${this.showDisableButton ? html`<sl-button @click=${() => { this.disableLine() }} class="dropdown">Disable line</sl-button>` : html``}
         <sl-checkbox checked @sl-change=${() => { this.toggleAutocompletion() }} class="dropdown">Autocompletion</sl-checkbox>
         <sl-button @click=${() => { this.toggleTheme() }} class="dropdown">Toggle theme</sl-button>
+        <sl-button @click=${() => this.codeResult = ""} class=dropdown>Clear result</sl-button>
         ${this.codeRunner("") ? html`<sl-button @click=${() => { this.toggleRunCode() }} class="dropdown">Toggle code running</sl-button>` : html``}
       </div>
     `;
   }
 
-
   private async runCode() {
     const code = this.codeMirror.state.doc.toString();
-    const doc = this.codeMirror.state.doc
-    this.codeMirror.dispatch({
-      changes: {
-        from: doc.length,
-        to: doc.length,
-        insert: "\n// Result: " + await this.codeRunner(code).toString()
-      }
-    });
+    const doc = this.codeMirror.state.doc;
+    const codeResult = await this.codeRunner(code).toString();
+    this.codeResult = codeResult;
   }
 
   private changeCodeMirrorLanguage(language: any) {
@@ -278,9 +284,11 @@ export default class CodeCell extends LitElementWw {
     this.codeMirror.focus();
   };
 
+
   private switchExerciseCodeMirror(exerciseType: any) {
     this.exerciseType = exerciseType;
     this.showCodeRunButton = exerciseType.features.showCodeRunButton;
+    this.showDisableButton = this.exerciseType.features.showDisableButton;
     this.codeMirror.dispatch({
       changes: {
         from: 0,
@@ -289,7 +297,6 @@ export default class CodeCell extends LitElementWw {
       }
     })
     this.codeMirror.focus();
-    this.showDisableButton = this.exerciseType.features.showDisableButton;
   }
 
   private async disableLine() {
@@ -300,7 +307,7 @@ export default class CodeCell extends LitElementWw {
         this.disabledLines.push(currentline);
         highlightSelection(this.codeMirror, [{ from: state.doc.line(currentline).from, to: state.doc.line(currentline).to }]);
       } else {
-        // dirty fix
+        // dirty fix to remove the highlight
         this.disabledLines = this.disabledLines.filter((line) => line !== currentline);
         this.codeMirror.dispatch({
           changes: {

@@ -4,6 +4,7 @@ export const style = css`
 .Wrapper {
   display: flex;
   flex-direction: column;
+  font-family: monospace;
   align-items: top;
   justify-content: space-between;
   border-style: solid;
@@ -29,11 +30,6 @@ export const style = css`
 .dropdown {
   width: 180px;
 }
-
-.red_back{
-  background-color: red;
-}
-
 .editorFeature {
   display: flex;
   flex-direction: row;
@@ -49,5 +45,16 @@ export const style = css`
   border-radius: 5px;
 }
 
+.codeResult {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.card {
+  display:flex;
+  min-width: 180px;
+  justify-content: center;
+}
 
 `;
