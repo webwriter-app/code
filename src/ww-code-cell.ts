@@ -187,16 +187,19 @@ export default class CodeCell extends LitElementWw {
     <div class="Wrapper">
       ${this.editable ? html`${this.exerciseCreationTemplate()}` : html``} 
       <div id="code"></div>
+      <div class="codeExecutionWrapper">
       ${this.codeRunner("") && this.showCodeRunButton ? html`
       <div id="runCode">
         <sl-button @click=${() => this.runCode()}>></sl-button>
       </div>` : html``}
       ${this.codeResult !== "" ? html`
-      <div class="codeResult">
         <sl-card class="card">
-          <div>Result: ${this.codeResult}</div>
-          </sl-card>
-      </div>` : html``}
+          Result: ${this.codeResult}
+          <div slot="footer">
+          <sl-button @click=${() => this.codeResult = ""}>Clear</sl-button>
+          </div>
+        </sl-card>` : html``}
+      </div>
     </div>`;
   }
 
@@ -212,7 +215,7 @@ export default class CodeCell extends LitElementWw {
         ${this.exerciseTypeTemplate()}
         ${this.exerciseLanguageTemplate()}
       </div>
-      ${this.editorFeatureTemplate()}
+      ${this.editorFeaturesTemplate()}
       </div>`;
   };
 
@@ -241,15 +244,14 @@ export default class CodeCell extends LitElementWw {
       </sl-dropdown>`;
   }
 
-  editorFeatureTemplate() {
+  editorFeaturesTemplate() {
     return html`
       <sl-divider></sl-divider>
-      <div part="action" class="editorFeature">
+      <div part="action" class="editorFeatures">
         ${this.showDisableButton ? html`<sl-button @click=${() => { this.disableLine() }} class="dropdown">Disable line</sl-button>` : html``}
-        <sl-checkbox checked @sl-change=${() => { this.toggleAutocompletion() }} class="dropdown">Autocompletion</sl-checkbox>
-        <sl-button @click=${() => { this.toggleTheme() }} class="dropdown">Toggle theme</sl-button>
-        <sl-button @click=${() => this.codeResult = ""} class=dropdown>Clear result</sl-button>
         ${this.codeRunner("") ? html`<sl-button @click=${() => { this.toggleRunCode() }} class="dropdown">Toggle code running</sl-button>` : html``}
+        <sl-button @click=${() => { this.toggleTheme() }} class="dropdown">Toggle theme</sl-button>
+        <sl-checkbox checked @sl-change=${() => { this.toggleAutocompletion() }} class="dropdown">Autocompletion</sl-checkbox>
       </div>
     `;
   }

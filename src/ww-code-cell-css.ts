@@ -20,6 +20,12 @@ export const style = css`
   min-width: 400px;
 }
 
+.codeExecutionWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .exerciseChoice {
   display: flex;
   flex-direction: row;
@@ -30,7 +36,9 @@ export const style = css`
 .dropdown {
   width: 180px;
 }
-.editorFeature {
+
+
+.editorFeatures {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -45,16 +53,42 @@ export const style = css`
   border-radius: 5px;
 }
 
-.codeResult {
-  display: flex;
-  flex-direction: row;
+
+.card{
+  display:flex;
+  --padding: 10px;
+  flex-direction: column;
+  min-width:200px;
+  align-items: center;
   justify-content: center;
 }
 
-.card {
-  display:flex;
-  min-width: 180px;
+.card [slot='footer']{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
 }
+
+@media (max-width: 720px) {
+  .editorFeatures {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+  
+  .exerciseChoice {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+
+  .dropdown{
+    padding: 10px;
+  }
+}
+
 
 `;
