@@ -88,6 +88,13 @@ export const style = css`
   .dropdown{
     padding: 10px;
   }
+
+  .Wrapper{
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }
 
 
