@@ -8,7 +8,8 @@ import { html } from "lit"
 import { mySetup } from "./codemirror-setup"
 import { autocompletion } from '@codemirror/autocomplete';
 import { highlightSelection } from "./highlight"
-import { oneDarkTheme } from "@codemirror/theme-one-dark";
+import { oneDarkTheme, oneDarkHighlightStyle } from "@codemirror/theme-one-dark";
+import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
 import readOnlyRangesExtension from 'codemirror-readonly-ranges'
 import SlInput from "@shoelace-style/shoelace/dist/components/input/input.js"
 import SlCheckbox from "@shoelace-style/shoelace/dist/components/checkbox/checkbox"
@@ -21,7 +22,7 @@ import SlCard from "@shoelace-style/shoelace/dist/components/card/card"
 import { javascriptModule } from "./languageModules/javascriptModule"
 import { pythonModule } from "./languageModules/pythonModule"
 
-//part=action einfügen
+
 
 @customElement("ww-code-cell")
 export default class CodeCell extends LitElementWw {
@@ -163,6 +164,7 @@ export default class CodeCell extends LitElementWw {
   autocompletion = new Compartment();
   readOnlyRanges = new Compartment();
   theme = new Compartment();
+  highlightStyle = new Compartment();
 
 
   static get scopedElements() {
@@ -180,6 +182,11 @@ export default class CodeCell extends LitElementWw {
 
   focus() {
     this.codeMirror?.focus()
+  }
+
+  firstUpdated() {
+    this.codeMirror = this.createCodeMirror(this.shadowRoot?.getElementById('code'));
+    this.codeMirror.focus();
   }
 
   render() {
@@ -203,14 +210,9 @@ export default class CodeCell extends LitElementWw {
     </div>`;
   }
 
-  firstUpdated() {
-    this.codeMirror = this.createCodeMirror(this.shadowRoot?.getElementById('code'));
-    this.codeMirror.focus();
-  }
-
   exerciseCreationTemplate() {
     return html`
-    <div class="createExercise">
+    <div class="createExercise" part="action">
       <div class="exerciseChoice">
         ${this.exerciseTypeTemplate()}
         ${this.exerciseLanguageTemplate()}
@@ -221,7 +223,7 @@ export default class CodeCell extends LitElementWw {
 
   exerciseTypeTemplate() {
     return html`
-        <sl-dropdown part="action" label="exerciseType">
+        <sl-dropdown label="exerciseType">
           <sl-button slot="trigger" caret class="dropdown">${this.exerciseType.name}</sl-button>
           <sl-menu>
             ${this.exerciseTypes.map((exerciseType) => html`
@@ -234,7 +236,7 @@ export default class CodeCell extends LitElementWw {
 
   exerciseLanguageTemplate() {
     return html`
-      <sl-dropdown part="action" label="Language">
+      <sl-dropdown label="Language">
         <sl-button slot="trigger" caret class="dropdown">${this.exerciseLanguage.name}</sl-button>
         <sl-menu>
           ${this.exerciseLanguages.map((exerciseLanguage) => html`
@@ -277,6 +279,8 @@ export default class CodeCell extends LitElementWw {
 
   private toggleTheme() {
     this.codeMirror.dispatch({ effects: this.theme.reconfigure(this.theme.get(this.codeMirror.state) === oneDarkTheme ? ([]) : oneDarkTheme) });
+    this.codeMirror.dispatch({ effects: this.highlightStyle.reconfigure(this.theme.get(this.codeMirror.state) === oneDarkTheme ? (syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })) : (syntaxHighlighting(defaultHighlightStyle, { fallback: true }))) });
+
     this.codeMirror.focus();
   }
 
@@ -346,6 +350,7 @@ export default class CodeCell extends LitElementWw {
           this.language.of(this.exerciseLanguage.highlightExtensions),
           this.autocompletion.of(autocompletion()),
           this.theme.of(oneDarkTheme),
+          this.highlightStyle.of(syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })),
           this.readOnlyRanges.of(readOnlyRangesExtension(this.getReadOnlyRanges))],
       }),
       parent: parentObject,

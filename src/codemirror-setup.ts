@@ -19,7 +19,6 @@ export const mySetup = /*@__PURE__*/(() => [
     dropCursor(),
     EditorState.allowMultipleSelections.of(true),
     indentOnInput(),
-    syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
     bracketMatching(),
     closeBrackets(),
     rectangularSelection(),
