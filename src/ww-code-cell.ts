@@ -199,7 +199,7 @@ export default class CodeCell extends LitElementWw {
       <div id="runCode">
         <sl-button @click=${() => this.runCode()}>></sl-button>
       </div>` : html``}
-      ${this.codeResult !== "" ? html`
+      ${this.codeResult !== "" && this.codeRunner("") ? html`
         <sl-card class="card">
           Result: ${this.codeResult}
           <div slot="footer">
