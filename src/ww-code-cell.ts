@@ -38,8 +38,9 @@ export default class CodeCell extends LitElementWw {
       templateText: "",
       features:
       {
-        showDisableButton: true,
+        showDisableButton: false,
         showCodeRunButton: true,
+        showExecutionTime: true,
       }
     },
     {
@@ -50,6 +51,7 @@ export default class CodeCell extends LitElementWw {
       {
         showDisableButton: true,
         showCodeRunButton: false,
+        showExecutionTime: true,
       }
     },
     {
@@ -60,6 +62,7 @@ export default class CodeCell extends LitElementWw {
       {
         showDisableButton: true,
         showCodeRunButton: true,
+        showExecutionTime: true,
       }
     },
     {
@@ -69,6 +72,7 @@ export default class CodeCell extends LitElementWw {
       {
         showDisableButton: true,
         showCodeRunButton: false,
+        showExecutionTime: true,
       }
     },
     {
@@ -78,6 +82,7 @@ export default class CodeCell extends LitElementWw {
       {
         showDisableButton: true,
         showCodeRunButton: true,
+        showExecutionTime: true,
       }
     },
     {
@@ -87,6 +92,7 @@ export default class CodeCell extends LitElementWw {
       {
         showDisableButton: true,
         showCodeRunButton: true,
+        showExecutionTime: true,
       }
     },
     {
@@ -96,6 +102,7 @@ export default class CodeCell extends LitElementWw {
       {
         showDisableButton: true,
         showCodeRunButton: false,
+        showExecutionTime: true,
       }
     },
     {
@@ -105,6 +112,7 @@ export default class CodeCell extends LitElementWw {
       {
         showDisableButton: true,
         showCodeRunButton: false,
+        showExecutionTime: true,
       }
     },
     {
@@ -114,6 +122,7 @@ export default class CodeCell extends LitElementWw {
       {
         showDisableButton: true,
         showCodeRunButton: false,
+        showExecutionTime: true,
       }
     },
     {
@@ -123,6 +132,7 @@ export default class CodeCell extends LitElementWw {
       {
         showDisableButton: true,
         showCodeRunButton: true,
+        showExecutionTime: true,
       }
     },
   ];
@@ -156,6 +166,9 @@ export default class CodeCell extends LitElementWw {
 
   @property({ attribute: true })
   showCodeRunButton = true;
+
+  @property({ attribute: true })
+  showExecutionTime = true;
 
   @property()
   codeResult: String = "";
@@ -195,23 +208,14 @@ export default class CodeCell extends LitElementWw {
   render() {
     return html`
     <div class="Wrapper">
-      ${this.editable ? html`${this.exerciseCreationTemplate()}` : html``} 
+      ${this.editable ? this.exerciseCreationTemplate() : html``} 
       <div id="code"></div>
       <div class="codeExecutionWrapper">
-      ${this.codeRunner("") && this.showCodeRunButton ? html`
-      <div id="runCode">
-        <sl-button @click=${() => this.runCode()}>></sl-button>
-      </div>` : html``}
-      ${this.codeResult !== "" && this.codeRunner("") ? html`
-        <sl-card class="card">
-          <div class="cardElements">
-          <div class="cardBody">
-          Result: ${this.codeResult}
-          ${this.exerciseType.name === "Code Baseline" ? html`<div>Execution time: ${this.executionTime}ms</div>` : html``}
-          </div>
-          <sl-button @click=${() => this.codeResult = ""}>X</sl-button>
-          </div>
-        </sl-card>` : html``}
+        ${this.codeRunner("") && this.showCodeRunButton ? html`
+        <div id="runCode">
+          <sl-button @click=${() => this.runCode()}>></sl-button>
+        </div>` : html``}
+      ${this.codeResult !== "" && this.codeRunner("") ? this.resultFieldTemplate() : html``}
       </div>
     </div>`;
   }
@@ -259,9 +263,24 @@ export default class CodeCell extends LitElementWw {
         ${this.showDisableButton ? html`<sl-button @click=${() => { this.disableLine() }} class="dropdown">Disable line</sl-button>` : html``}
         ${this.codeRunner("") ? html`<sl-button @click=${() => { this.toggleRunCode() }} class="dropdown">Toggle code running</sl-button>` : html``}
         <sl-button @click=${() => { this.toggleTheme() }} class="dropdown">Toggle theme</sl-button>
+        <sl-button @click=${() => { this.toggleExecutionTime() }} class="dropdown">Show execution time</sl-button>
         <sl-checkbox checked @sl-change=${() => { this.toggleAutocompletion() }} class="dropdown">Autocompletion</sl-checkbox>
       </div>
     `;
+  }
+
+  resultFieldTemplate() {
+    return html`
+        <sl-card class="card">
+          <div class="cardElements">
+          <div class="cardBody">
+          Result: ${this.codeResult}
+          ${this.showExecutionTime ? html`<div>Execution time: ${this.executionTime}ms</div>` : html``}
+          </div>
+          <sl-button @click=${() => this.codeResult = ""}>X</sl-button>
+          </div>
+        </sl-card>
+    `
   }
 
   private async runCode() {
@@ -289,7 +308,6 @@ export default class CodeCell extends LitElementWw {
   private toggleTheme() {
     this.codeMirror.dispatch({ effects: this.theme.reconfigure(this.theme.get(this.codeMirror.state) === oneDarkTheme ? ([]) : oneDarkTheme) });
     this.codeMirror.dispatch({ effects: this.highlightStyle.reconfigure(this.theme.get(this.codeMirror.state) === oneDarkTheme ? (syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })) : (syntaxHighlighting(defaultHighlightStyle, { fallback: true }))) });
-
     this.codeMirror.focus();
   }
 
@@ -298,11 +316,17 @@ export default class CodeCell extends LitElementWw {
     this.codeMirror.focus();
   };
 
+  private toggleExecutionTime() {
+    this.showExecutionTime = !this.showExecutionTime;
+    this.codeMirror.focus();
+  };
+
 
   private switchExerciseCodeMirror(exerciseType: any) {
     this.exerciseType = exerciseType;
     this.showCodeRunButton = exerciseType.features.showCodeRunButton;
     this.showDisableButton = this.exerciseType.features.showDisableButton;
+    this.showExecutionTime = this.exerciseType.features.showExecutionTime;
     this.codeResult = "";
     console.log(this.codeResult)
     this.codeMirror.dispatch({
