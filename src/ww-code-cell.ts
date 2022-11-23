@@ -263,7 +263,7 @@ export default class CodeCell extends LitElementWw {
         ${this.showDisableButton ? html`<sl-button @click=${() => { this.disableLine() }} class="dropdown">Disable line</sl-button>` : html``}
         ${this.codeRunner("") ? html`<sl-button @click=${() => { this.toggleRunCode() }} class="dropdown">Toggle code running</sl-button>` : html``}
         <sl-button @click=${() => { this.toggleTheme() }} class="dropdown">Toggle theme</sl-button>
-        <sl-button @click=${() => { this.toggleExecutionTime() }} class="dropdown">Show execution time</sl-button>
+        <sl-button @click=${() => { this.toggleExecutionTime() }} class="dropdown">Toggle execution time</sl-button>
         <sl-checkbox checked @sl-change=${() => { this.toggleAutocompletion() }} class="dropdown">Autocompletion</sl-checkbox>
       </div>
     `;
