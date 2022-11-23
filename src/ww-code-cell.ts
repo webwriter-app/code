@@ -160,6 +160,9 @@ export default class CodeCell extends LitElementWw {
   @property()
   codeResult: String = "";
 
+  @property()
+  executionTime: number = 0;
+
   language = new Compartment();
   autocompletion = new Compartment();
   readOnlyRanges = new Compartment();
@@ -201,9 +204,12 @@ export default class CodeCell extends LitElementWw {
       </div>` : html``}
       ${this.codeResult !== "" && this.codeRunner("") ? html`
         <sl-card class="card">
+          <div class="cardElements">
+          <div class="cardBody">
           Result: ${this.codeResult}
-          <div slot="footer">
-          <sl-button @click=${() => this.codeResult = ""}>Clear</sl-button>
+          ${this.exerciseType.name === "Code Baseline" ? html`<div>Execution time: ${this.executionTime}ms</div>` : html``}
+          </div>
+          <sl-button @click=${() => this.codeResult = ""}>X</sl-button>
           </div>
         </sl-card>` : html``}
       </div>
@@ -260,7 +266,10 @@ export default class CodeCell extends LitElementWw {
 
   private async runCode() {
     const code = this.codeMirror.state.doc.toString();
+    const startTime = performance.now();
     const codeResult = await this.codeRunner(code).toString();
+    const endTime = performance.now();
+    this.executionTime = endTime - startTime;
     this.codeResult = codeResult;
   }
 

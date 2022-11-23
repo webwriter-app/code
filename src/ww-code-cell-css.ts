@@ -22,7 +22,7 @@ export const style = css`
 
 .codeExecutionWrapper {
   display: flex;
-  flex-direction: row;
+  flex-direction: end;
   justify-content: space-between;
 }
 
@@ -53,12 +53,22 @@ export const style = css`
   border-radius: 5px;
 }
 
+.cardBody{
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: center;
+  padding-right: 10px;
+}
+
+.cardElements{
+  display: flex;
+  flex-direction: row;
+
+}
 
 .card{
-  display:flex;
   --padding: 10px;
-  flex-direction: column;
-  min-width:200px;
   align-items: center;
   justify-content: center;
 }
