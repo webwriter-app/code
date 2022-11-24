@@ -35,10 +35,10 @@ export default class CodeCell extends LitElementWw {
   exerciseTypes = [
     {
       name: "No exercise type",
-      templateText: "",
+      templateText: "\n\n",
       features:
       {
-        showDisableButton: false,
+        showDisableButton: true,
         showCodeRunButton: true,
         showExecutionTime: true,
       }
