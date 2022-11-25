@@ -16,5 +16,5 @@ const executeJavascript = (code: string) => {
 export const javascriptModule = {
     name: "JavaScript",
     executionFunction: executeJavascript,
-    highlightExtensions: javascript(),
+    languageExtension: javascript(),
 }

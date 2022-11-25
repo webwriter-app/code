@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codemirror/lang-html": "^6.2.0",
     "@codemirror/lang-javascript": "^6.0.2",
     "@codemirror/lang-python": "^6.0.2",
     "@codemirror/state": "^6.1.2",

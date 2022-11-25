@@ -1,11 +1,11 @@
 import { lineNumbers, highlightActiveLineGutter, highlightSpecialChars, drawSelection, dropCursor, rectangularSelection, crosshairCursor, highlightActiveLine, keymap } from '@codemirror/view';
 export { EditorView } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
-import { foldGutter, indentOnInput, syntaxHighlighting, defaultHighlightStyle, bracketMatching, foldKeymap } from '@codemirror/language';
+import { foldGutter, indentOnInput, bracketMatching, foldKeymap } from '@codemirror/language';
 import { history, defaultKeymap, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
 import { closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
-import { lintKeymap } from '@codemirror/lint';
+//import { lintKeymap } from '@codemirror/lint';
 import { indentationMarkers } from '@replit/codemirror-indentation-markers';
 
 export const mySetup = /*@__PURE__*/(() => [
@@ -30,9 +30,9 @@ export const mySetup = /*@__PURE__*/(() => [
         ...defaultKeymap,
         ...searchKeymap,
         ...historyKeymap,
-        ...foldKeymap,
+        //...foldKeymap, keymap doesn't work for me
         ...completionKeymap,
-        ...lintKeymap,
+        //...lintKeymap, no linter implemented yet
         indentWithTab
     ])
 ])();

@@ -21,6 +21,7 @@ import SlDivider from "@shoelace-style/shoelace/dist/components/divider/divider"
 import SlCard from "@shoelace-style/shoelace/dist/components/card/card"
 import { javascriptModule } from "./languageModules/javascriptModule"
 import { pythonModule } from "./languageModules/pythonModule"
+import { htmlModule } from "./languageModules/htmlModule"
 
 
 
@@ -143,7 +144,8 @@ export default class CodeCell extends LitElementWw {
   @property({ type: Array })
   exerciseLanguages = [
     javascriptModule,
-    pythonModule
+    pythonModule,
+    htmlModule
   ];
 
   @property()
@@ -295,13 +297,14 @@ export default class CodeCell extends LitElementWw {
   private changeCodeMirrorLanguage(language: any) {
     this.exerciseLanguage = language;
     this.codeRunner = this.exerciseLanguage.executionFunction;
-    this.codeMirror.dispatch({ effects: this.language.reconfigure(this.exerciseLanguage.highlightExtensions) });
+    this.codeMirror.dispatch({ effects: this.language.reconfigure(this.exerciseLanguage.languageExtension) });
     this.codeMirror.focus();
   }
 
   private toggleAutocompletion() {
     this.autocompletionEnabled = !this.autocompletionEnabled;
     this.codeMirror.dispatch({ effects: this.autocompletion.reconfigure(this.autocompletionEnabled ? autocompletion() : []) });
+
     this.codeMirror.focus();
   }
 
@@ -380,7 +383,7 @@ export default class CodeCell extends LitElementWw {
         doc: `\n\n`,
         extensions: [
           mySetup,
-          this.language.of(this.exerciseLanguage.highlightExtensions),
+          this.language.of(this.exerciseLanguage.languageExtension),
           this.autocompletion.of(autocompletion()),
           this.theme.of(oneDarkTheme),
           this.highlightStyle.of(syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })),
