@@ -1,5 +1,5 @@
 import { pythonLanguage } from "@codemirror/lang-python"
-import { CompletionContext } from "@codemirror/autocomplete"
+import { CompletionContext, snippetCompletion } from "@codemirror/autocomplete"
 import { LanguageSupport } from '@codemirror/language';
 
 //define the autocompletion for python
@@ -34,10 +34,18 @@ function pythonCompletions(context: CompletionContext) {
             { label: "finally", type: "keyword" },
             { label: "from", type: "keyword" },
             { label: "global", type: "keyword" },
+            { label: "return", type: "keyword" },
+            //this way you can add your own snippets
+            snippetCompletion("range(${variable})", {
+                label: "range",
+                detail: "definition",
+                type: "keyword"
+            }),
         ]
     }
 }
 
+//currently no execution function, so return null to remove the execute button
 const executePython = (code: string) => {
     return null
 }
