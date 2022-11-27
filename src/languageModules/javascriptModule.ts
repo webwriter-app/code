@@ -17,4 +17,4 @@ export const javascriptModule = {
     name: "JavaScript",
     executionFunction: executeJavascript,
     languageExtension: javascript(),
-}
+};

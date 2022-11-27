@@ -11,7 +11,6 @@ import { highlightSelection } from "./highlight"
 import { oneDarkTheme, oneDarkHighlightStyle } from "@codemirror/theme-one-dark";
 import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
 import readOnlyRangesExtension from 'codemirror-readonly-ranges'
-import SlInput from "@shoelace-style/shoelace/dist/components/input/input.js"
 import SlCheckbox from "@shoelace-style/shoelace/dist/components/checkbox/checkbox"
 import SlDropdown from "@shoelace-style/shoelace/dist/components/dropdown/dropdown"
 import SlMenu from "@shoelace-style/shoelace/dist/components/menu/menu"
@@ -29,10 +28,6 @@ import { htmlModule } from "./languageModules/htmlModule"
 export default class CodeCell extends LitElementWw {
   static styles = style;
 
-  @property({ type: Boolean, reflect: true, attribute: true })
-  editable = true;
-
-  @property({ type: Array })
   exerciseTypes = [
     {
       name: "No exercise type",
@@ -138,38 +133,39 @@ export default class CodeCell extends LitElementWw {
     },
   ];
 
-  @property({ type: String, reflect: true, attribute: true })
-  exerciseType = this.exerciseTypes[0];
-
-  @property({ type: Array })
   exerciseLanguages = [
     javascriptModule,
     pythonModule,
-    htmlModule
+    htmlModule,
   ];
 
-  @property()
+  private disabledLines: Array<number> = [];
+
+  @property({ type: Boolean, reflect: true, attribute: true })
+  editable = true;
+
+  @property({ type: Object, reflect: true, attribute: true })
+  exerciseType = this.exerciseTypes[0];
+
+  @property({ attribute: true })
   exerciseLanguage = this.exerciseLanguages[0];
 
-  @property({ type: EditorView })
+  @property({ type: EditorView, attribute: true, reflect: true })
   codeMirror: EditorView = new EditorView();
 
-  @property()
+  @property({ attribute: true, reflect: true })
   private codeRunner = this.exerciseLanguage.executionFunction;
 
   @property()
-  private disabledLines: Array<number> = [];
-
-  @property({ attribute: true })
   autocompletionEnabled = true;
 
-  @property({ attribute: true })
+  @property()
   showDisableButton = true;
 
-  @property({ attribute: true })
+  @property()
   showCodeRunButton = true;
 
-  @property({ attribute: true })
+  @property()
   showExecutionTime = true;
 
   @property()
@@ -187,7 +183,6 @@ export default class CodeCell extends LitElementWw {
 
   static get scopedElements() {
     return {
-      "sl-input": SlInput,
       "sl-checkbox": SlCheckbox,
       "sl-dropdown": SlDropdown,
       "sl-menu": SlMenu,
@@ -239,7 +234,7 @@ export default class CodeCell extends LitElementWw {
           <sl-button slot="trigger" caret class="dropdown">${this.exerciseType.name}</sl-button>
           <sl-menu>
             ${this.exerciseTypes.map((exerciseType) => html`
-              <sl-menu-item @click=${() => { this.switchExerciseCodeMirror(exerciseType) }}>
+              <sl-menu-item @click=${() => { this.switchExerciseType(exerciseType) }}>
                 ${exerciseType.name}
               </sl-menu-item>`)}   
           </sl-menu>
@@ -252,7 +247,7 @@ export default class CodeCell extends LitElementWw {
         <sl-button slot="trigger" caret class="dropdown">${this.exerciseLanguage.name}</sl-button>
         <sl-menu>
           ${this.exerciseLanguages.map((exerciseLanguage) => html`
-            <sl-menu-item @click=${() => this.changeCodeMirrorLanguage(exerciseLanguage)}>${exerciseLanguage.name}</sl-menu-item>
+            <sl-menu-item @click=${() => this.changeLanguage(exerciseLanguage)}>${exerciseLanguage.name}</sl-menu-item>
           `)}
         </sl-menu>
       </sl-dropdown>`;
@@ -294,7 +289,7 @@ export default class CodeCell extends LitElementWw {
     this.codeResult = codeResult;
   }
 
-  private changeCodeMirrorLanguage(language: any) {
+  private changeLanguage(language: any) {
     this.exerciseLanguage = language;
     this.codeRunner = this.exerciseLanguage.executionFunction;
     this.codeMirror.dispatch({ effects: this.language.reconfigure(this.exerciseLanguage.languageExtension) });
@@ -304,7 +299,6 @@ export default class CodeCell extends LitElementWw {
   private toggleAutocompletion() {
     this.autocompletionEnabled = !this.autocompletionEnabled;
     this.codeMirror.dispatch({ effects: this.autocompletion.reconfigure(this.autocompletionEnabled ? autocompletion() : []) });
-
     this.codeMirror.focus();
   }
 
@@ -324,14 +318,12 @@ export default class CodeCell extends LitElementWw {
     this.codeMirror.focus();
   };
 
-
-  private switchExerciseCodeMirror(exerciseType: any) {
+  private switchExerciseType(exerciseType: any) {
     this.exerciseType = exerciseType;
     this.showCodeRunButton = exerciseType.features.showCodeRunButton;
     this.showDisableButton = this.exerciseType.features.showDisableButton;
     this.showExecutionTime = this.exerciseType.features.showExecutionTime;
     this.codeResult = "";
-    console.log(this.codeResult)
     this.codeMirror.dispatch({
       changes: {
         from: 0,
