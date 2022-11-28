@@ -5,7 +5,7 @@ import { EditorView } from "codemirror"
 import { EditorState, Compartment } from "@codemirror/state"
 import { style } from "./ww-code-cell-css"
 import { html } from "lit"
-import { mySetup } from "./codemirror-setup"
+import { basicSetup } from "./codemirror-setup"
 import { autocompletion } from '@codemirror/autocomplete';
 import { highlightSelection } from "./highlight"
 import { oneDarkTheme, oneDarkHighlightStyle } from "@codemirror/theme-one-dark";
@@ -21,6 +21,7 @@ import SlCard from "@shoelace-style/shoelace/dist/components/card/card"
 import { javascriptModule } from "./languageModules/javascriptModule"
 import { pythonModule } from "./languageModules/pythonModule"
 import { htmlModule } from "./languageModules/htmlModule"
+import { exerciseTypes } from "./exerciseTypes"
 
 
 
@@ -28,110 +29,7 @@ import { htmlModule } from "./languageModules/htmlModule"
 export default class CodeCell extends LitElementWw {
   static styles = style;
 
-  exerciseTypes = [
-    {
-      name: "No exercise type",
-      templateText: "\n\n",
-      features:
-      {
-        showDisableButton: true,
-        showCodeRunButton: true,
-        showExecutionTime: true,
-      }
-    },
-    {
-      name: "Fill The Blanks",
-      templateText:
-        `//Fill in the blanks\nconst array = [1,2,3]; \n  array.map((element) => { \n  return _________ \n}); \n\nfunction double(a) {\n return a * 2; \n}`,
-      features:
-      {
-        showDisableButton: true,
-        showCodeRunButton: false,
-        showExecutionTime: true,
-      }
-    },
-    {
-      name: "Code Skeleton",
-      templateText:
-        `//Complete the function\nfunction isEven(variable) {\n\n}`,
-      features:
-      {
-        showDisableButton: true,
-        showCodeRunButton: true,
-        showExecutionTime: true,
-      }
-    },
-    {
-      name: "Buggy Code",
-      templateText: "//Find and fix the bug\nconst array = [1,2,3]; \n array.map((element) => { \n  return element * 2 \n}); \n\nfunction double(a) {\n return a * 2; \n}",
-      features:
-      {
-        showDisableButton: true,
-        showCodeRunButton: false,
-        showExecutionTime: true,
-      }
-    },
-    {
-      name: "Code From Scratch",
-      templateText: "/* Please code following task from scratch: \n--Task--\n*/",
-      features:
-      {
-        showDisableButton: true,
-        showCodeRunButton: true,
-        showExecutionTime: true,
-      }
-    },
-    {
-      name: "Code Baseline",
-      templateText: "//Improve the code\nfunction add(a,b){\n let c = a; \n for( let i = 0; i < b; i++ ){ \n  c = c + 1; \n };\nreturn c;\n}",
-      features:
-      {
-        showDisableButton: true,
-        showCodeRunButton: true,
-        showExecutionTime: true,
-      }
-    },
-    {
-      name: "Find The Bug",
-      templateText: "//Find the bug in the following code\nfunction add(a,b){\n let c = a; \n for( let i = 0; i > b; i++ ){ \n  c = c + 1; \n };\nreturn c;\n}",
-      features:
-      {
-        showDisableButton: true,
-        showCodeRunButton: false,
-        showExecutionTime: true,
-      }
-    },
-    {
-      name: "Compiling Errors",
-      templateText: "//Explain the following error\nconst a = 5;\n a.map(object => {\n return a + 1;\n})\n// Result: TypeError: a.map is not a function",
-      features:
-      {
-        showDisableButton: true,
-        showCodeRunButton: false,
-        showExecutionTime: true,
-      }
-    },
-    {
-      name: "Code Interpretation",
-      templateText: "//Explain the following code\nconst array = [1,2,3];\nconst newArray = array.map(element => element * 2);\nconsole.log(newArray);",
-      features:
-      {
-        showDisableButton: true,
-        showCodeRunButton: false,
-        showExecutionTime: true,
-      }
-    },
-    {
-      name: "Keyword Use",
-      templateText: "//Use an if-else statement to check if a variable is a string\nfunction isString(variable) {\n\n}",
-      features:
-      {
-        showDisableButton: true,
-        showCodeRunButton: true,
-        showExecutionTime: true,
-      }
-    },
-  ];
+  exerciseTypes = exerciseTypes;
 
   exerciseLanguages = [
     javascriptModule,
@@ -156,7 +54,7 @@ export default class CodeCell extends LitElementWw {
   @property({ attribute: true, reflect: true })
   private codeRunner = this.exerciseLanguage.executionFunction;
 
-  @property()
+  @property({ attribute: true, reflect: true })
   autocompletionEnabled = true;
 
   @property()
@@ -320,7 +218,7 @@ export default class CodeCell extends LitElementWw {
 
   private switchExerciseType(exerciseType: any) {
     this.exerciseType = exerciseType;
-    this.showCodeRunButton = exerciseType.features.showCodeRunButton;
+    this.showCodeRunButton = this.exerciseType.features.showCodeRunButton;
     this.showDisableButton = this.exerciseType.features.showDisableButton;
     this.showExecutionTime = this.exerciseType.features.showExecutionTime;
     this.codeResult = "";
@@ -374,7 +272,7 @@ export default class CodeCell extends LitElementWw {
       state: EditorState.create({
         doc: `\n\n`,
         extensions: [
-          mySetup,
+          basicSetup,
           this.language.of(this.exerciseLanguage.languageExtension),
           this.autocompletion.of(autocompletion()),
           this.theme.of(oneDarkTheme),

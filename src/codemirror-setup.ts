@@ -8,7 +8,7 @@ import { closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirro
 //import { lintKeymap } from '@codemirror/lint';
 import { indentationMarkers } from '@replit/codemirror-indentation-markers';
 
-export const mySetup = /*@__PURE__*/(() => [
+export const basicSetup = /*@__PURE__*/(() => [
     indentationMarkers(),
     lineNumbers(),
     highlightActiveLineGutter(),
