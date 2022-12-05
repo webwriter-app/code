@@ -2,6 +2,7 @@
   "name": "ww-code-cell",
   "private": true,
   "version": "0.0.0",
+  "license": "MIT",
   "type": "module",
   "keywords": [
     "webwriter-widget",
@@ -25,9 +26,7 @@
     "@webwriter/lit": "^0.3.0",
     "codemirror": "^6.0.1",
     "codemirror-readonly-ranges": "^0.1.0-alpha.1",
-    "fs": "^0.0.1-security",
-    "js-yaml": "^4.1.0",
-    "lit": "^2.2.7",
+    "lit": "2.3.1",
     "range-analyzer": "^0.1.1-alpha.2",
     "tslib": "^2.4.0"
   },
