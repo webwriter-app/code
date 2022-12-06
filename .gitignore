@@ -23,3 +23,4 @@ types
 *.njsproj
 *.sln
 *.sw?
+.eslintrc.cjs
