@@ -10,13 +10,12 @@ export const exerciseTypes = [
         }
     },
     {
-        name: "Fill The Blanks",
-        templateText:
-            `//Fill in the blanks\nconst array = [1,2,3]; \n  array.map((element) => { \n  return _________ \n}); \n\nfunction double(a) {\n return a * 2; \n}`,
+        name: "Code From Scratch",
+        templateText: "/* Please code following task from scratch: \n--Task--\n*/",
         features:
         {
             showDisableButton: true,
-            showCodeRunButton: false,
+            showCodeRunButton: true,
             showExecutionTime: true,
         }
     },
@@ -32,22 +31,13 @@ export const exerciseTypes = [
         }
     },
     {
-        name: "Buggy Code",
-        templateText: "//Find and fix the bug\nconst array = [1,2,3]; \n array.map((element) => { \n  return element * 2 \n}); \n\nfunction double(a) {\n return a * 2; \n}",
+        name: "Fill The Blanks",
+        templateText:
+            `//Fill in the blanks\nconst array = [1,2,3]; \n  array.map((element) => { \n  return _________ \n}); \n\nfunction double(a) {\n return a * 2; \n}`,
         features:
         {
             showDisableButton: true,
             showCodeRunButton: false,
-            showExecutionTime: true,
-        }
-    },
-    {
-        name: "Code From Scratch",
-        templateText: "/* Please code following task from scratch: \n--Task--\n*/",
-        features:
-        {
-            showDisableButton: true,
-            showCodeRunButton: true,
             showExecutionTime: true,
         }
     },
@@ -64,6 +54,16 @@ export const exerciseTypes = [
     {
         name: "Find The Bug",
         templateText: "//Find the bug in the following code\nfunction add(a,b){\n let c = a; \n for( let i = 0; i > b; i++ ){ \n  c = c + 1; \n };\nreturn c;\n}",
+        features:
+        {
+            showDisableButton: true,
+            showCodeRunButton: false,
+            showExecutionTime: true,
+        }
+    },
+    {
+        name: "Buggy Code",
+        templateText: "//Find and fix the bug\nconst array = [1,2,3]; \n array.map((element) => { \n  return element * 2 \n}); \n\nfunction double(a) {\n return a * 2; \n}",
         features:
         {
             showDisableButton: true,
