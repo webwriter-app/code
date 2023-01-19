@@ -4,6 +4,7 @@
   "license": "MIT",
   "main": "src/ww-code-cell.ts",
   "type": "module",
+  "author": "Erik Viere",
   "keywords": [
     "webwriter-widget",
     "codeWidget",
