@@ -1,14 +1,17 @@
 {
-  "name": "ww-code",
-  "version": "1.0.1",
+  "name": "@webwriter/ww-code",
+  "version": "0.1.0",
   "license": "MIT",
   "main": "src/ww-code.ts",
   "type": "module",
   "author": "Erik Viere",
+  "contributors": [
+    "Erik Viere",
+    "Jorik van Genuchten"
+  ],
   "keywords": [
     "webwriter-widget",
-    "codeWidget",
-    "webwriter"
+    "codeWidget"
   ],
   "scripts": {
     "dev": "vite --port 3000",

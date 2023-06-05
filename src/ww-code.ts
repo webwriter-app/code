@@ -4,7 +4,7 @@ import { property, customElement } from 'lit/decorators.js';
 import { EditorView } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
 import { style } from './ww-code-css';
-import { html } from 'lit';
+import { css, html } from 'lit';
 import { basicSetup } from './codemirror-setup';
 import { autocompletion } from '@codemirror/autocomplete';
 import { highlightSelection } from './highlight';
@@ -22,8 +22,9 @@ import { javascriptModule } from './languageModules/javascriptModule';
 import { pythonModule } from './languageModules/pythonModule';
 import { htmlModule } from './languageModules/htmlModule';
 import { exerciseTypes } from './exerciseTypes';
+import { SlChangeEvent, SlSwitch } from '@shoelace-style/shoelace';
 
-@customElement('ww-code-cell')
+@customElement('ww-code')
 export default class CodeCell extends LitElementWw {
     static styles = style;
 
@@ -42,10 +43,7 @@ export default class CodeCell extends LitElementWw {
     @property({ attribute: true })
     exerciseLanguage = this.exerciseLanguages[0];
 
-    @property({ type: EditorView, attribute: true, reflect: true })
     codeMirror: EditorView = new EditorView();
-
-    @property({ attribute: true, reflect: true })
     private codeRunner = this.exerciseLanguage.executionFunction;
 
     @property({ attribute: true, reflect: true })
@@ -54,10 +52,10 @@ export default class CodeCell extends LitElementWw {
     @property()
     showDisableButton = true;
 
-    @property()
-    showCodeRunButton = true;
+    @property({ attribute: true, reflect: true })
+    showCodeRunButton = false;
 
-    @property()
+    @property({ attribute: true, reflect: true })
     showExecutionTime = true;
 
     @property()
@@ -65,6 +63,12 @@ export default class CodeCell extends LitElementWw {
 
     @property()
     executionTime: number = 0;
+
+    @property({ attribute: true, reflect: true })
+    code = this.codeMirror.state.doc.toString();
+
+    @property({ attribute: true, reflect: true })
+    cursorPosition = 0;
 
     language = new Compartment();
     autocompletion = new Compartment();
@@ -81,6 +85,7 @@ export default class CodeCell extends LitElementWw {
             'sl-button': SlButton,
             'sl-divider': SlDivider,
             'sl-card': SlCard,
+            'sl-switch': SlSwitch,
         };
     }
 
@@ -89,23 +94,35 @@ export default class CodeCell extends LitElementWw {
     }
 
     firstUpdated() {
+        console.log('[ww-code] firstUpdated', this);
         this.codeMirror = this.createCodeMirror(this.shadowRoot?.getElementById('code'));
         this.codeMirror.focus();
     }
 
     render() {
-        return html` <div class="Wrapper">
-            ${this.editable ? this.exerciseCreationTemplate() : html``}
-            <div id="code"></div>
-            <div class="codeExecutionWrapper">
-                ${this.codeRunner('') && this.showCodeRunButton
-                    ? html` <div id="runCode">
-                          <sl-button @click=${() => this.runCode()}>></sl-button>
-                      </div>`
-                    : html``}
-                ${this.codeResult !== '' && this.codeRunner('') ? this.resultFieldTemplate() : html``}
+        return html`
+            <style>
+                ${style}
+            </style>
+            <div class="Wrapper">
+                ${this.editable ? this.exerciseCreationTemplate() : html``}
+
+                <div id="code">
+                    <div class="codeViewHeader"></div>
+                </div>
+                <sl-button @click=${() => (this.code = this.codeMirror.state.doc.toString())} variant="success"
+                    >Save</sl-button
+                >
+                <div class="codeExecutionWrapper">
+                    ${this.showCodeRunButton
+                        ? html` <div id="runCode">
+                              <sl-button @click=${this.runCode} variant="success">></sl-button>
+                          </div>`
+                        : html``}
+                    ${this.codeResult !== '' ? this.resultFieldTemplate() : html``}
+                </div>
             </div>
-        </div>`;
+        `;
     }
 
     exerciseCreationTemplate() {
@@ -150,7 +167,7 @@ export default class CodeCell extends LitElementWw {
     editorFeaturesTemplate() {
         return html`
             <sl-divider></sl-divider>
-            <div part="action" class="editorFeatures">
+            <div class="editorFeatures">
                 ${this.showDisableButton
                     ? html`<sl-button
                           @click=${() => {
@@ -160,7 +177,7 @@ export default class CodeCell extends LitElementWw {
                           >Disable line</sl-button
                       >`
                     : html``}
-                ${this.codeRunner('')
+                <!-- ${this.codeRunner('')
                     ? html`<sl-button
                           @click=${() => {
                               this.toggleRunCode();
@@ -168,7 +185,17 @@ export default class CodeCell extends LitElementWw {
                           class="dropdown"
                           >Toggle code running</sl-button
                       >`
-                    : html``}
+                    : html``} -->
+                <sl-switch
+                    @sl-change=${(event: SlChangeEvent) => {
+                        if (event.target) {
+                            let target = event.target as SlSwitch;
+                            this.showCodeRunButton = target.checked;
+                        }
+                    }}
+                    ?checked=${this.showCodeRunButton}
+                    >Alow Code execution</sl-switch
+                >
                 <sl-button
                     @click=${() => {
                         this.toggleTheme();
@@ -249,27 +276,23 @@ export default class CodeCell extends LitElementWw {
 
     private toggleRunCode() {
         this.showCodeRunButton = !this.showCodeRunButton;
-        this.codeMirror.focus();
+        // this.codeMirror.focus();
     }
 
     private toggleExecutionTime() {
         this.showExecutionTime = !this.showExecutionTime;
-        this.codeMirror.focus();
+        // this.codeMirror.focus();
     }
 
     private switchExerciseType(exerciseType: any) {
+        console.log(exerciseType);
+
         this.exerciseType = exerciseType;
+        this.code = exerciseType.templateText;
         this.showCodeRunButton = this.exerciseType.features.showCodeRunButton;
         this.showDisableButton = this.exerciseType.features.showDisableButton;
         this.showExecutionTime = this.exerciseType.features.showExecutionTime;
         this.codeResult = '';
-        this.codeMirror.dispatch({
-            changes: {
-                from: 0,
-                to: this.codeMirror.state.doc.length,
-                insert: this.exerciseType.templateText,
-            },
-        });
         this.codeMirror.focus();
     }
 
@@ -315,9 +338,9 @@ export default class CodeCell extends LitElementWw {
     };
 
     private createCodeMirror(parentObject: any) {
-        return new EditorView({
+        const editorView = new EditorView({
             state: EditorState.create({
-                doc: `\n\n`,
+                doc: this.code,
                 extensions: [
                     basicSetup,
                     this.language.of(this.exerciseLanguage.languageExtension),
@@ -329,5 +352,7 @@ export default class CodeCell extends LitElementWw {
             }),
             parent: parentObject,
         });
+
+        return editorView;
     }
 }
