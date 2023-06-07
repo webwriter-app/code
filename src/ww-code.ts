@@ -4,38 +4,71 @@ import { property, customElement } from 'lit/decorators.js';
 import { EditorView } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
 import { style } from './ww-code-css';
-import { css, html } from 'lit';
+import { html } from 'lit';
 import { basicSetup } from './codemirror-setup';
 import { autocompletion } from '@codemirror/autocomplete';
 import { highlightSelection } from './highlight';
 import { oneDarkTheme, oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
 import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
 import readOnlyRangesExtension from 'codemirror-readonly-ranges';
-import SlCheckbox from '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
-import SlDropdown from '@shoelace-style/shoelace/dist/components/dropdown/dropdown.js';
-import SlMenu from '@shoelace-style/shoelace/dist/components/menu/menu.js';
-import SlMenuItem from '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
-import SlButton from '@shoelace-style/shoelace/dist/components/button/button.js';
-import SlDivider from '@shoelace-style/shoelace/dist/components/divider/divider.js';
-import SlCard from '@shoelace-style/shoelace/dist/components/card/card.js';
 import { javascriptModule } from './languageModules/javascriptModule';
 import { pythonModule } from './languageModules/pythonModule';
 import { htmlModule } from './languageModules/htmlModule';
 import { exerciseTypes } from './exerciseTypes';
-import { SlChangeEvent, SlSwitch } from '@shoelace-style/shoelace';
+import {
+    SlButton,
+    SlCard,
+    SlChangeEvent,
+    SlCheckbox,
+    SlDivider,
+    SlDropdown,
+    SlIcon,
+    SlMenu,
+    SlMenuItem,
+    SlSwitch,
+} from '@shoelace-style/shoelace';
+
+import { classMap } from 'lit/directives/class-map.js';
+import LockMarker from './CodeMirror/LockMarker';
+import CustomGutter from './CodeMirror/CustomGutter';
 
 @customElement('ww-code')
 export default class CodeCell extends LitElementWw {
     static styles = style;
 
+    static JSONConverter = {
+        fromAttribute: (value: string) => {
+            return JSON.parse(value);
+        },
+        toAttribute: (value: Array<number>) => {
+            return JSON.stringify(value);
+        },
+    };
+
     exerciseTypes = exerciseTypes;
 
     exerciseLanguages = [javascriptModule, pythonModule, htmlModule];
+    codeMirror: EditorView = new EditorView();
+
+    @property({ attribute: true, reflect: true, converter: CodeCell.JSONConverter })
+    lockedLines: Array<number> = [];
+
+    @property({ attribute: true, reflect: true, converter: CodeCell.JSONConverter })
+    codeRunButtonState = { hidden: false };
+
+    @property({ attribute: true, reflect: true, converter: CodeCell.JSONConverter })
+    autocompletionState = { enabled: false };
+
+    @property({ attribute: true, reflect: true, converter: CodeCell.JSONConverter })
+    executionTimeState = { hidden: false };
+
+    @property({ attribute: true, reflect: true, converter: CodeCell.JSONConverter })
+    themeState = { theme: 'light' };
+
+    @property({ attribute: true, reflect: true })
+    code = this.codeMirror.state.doc.toString();
 
     private disabledLines: Array<number> = [];
-
-    @property({ type: Boolean, reflect: true, attribute: true })
-    editable = true;
 
     @property({ type: Object, reflect: true, attribute: true })
     exerciseType = this.exerciseTypes[0];
@@ -43,20 +76,7 @@ export default class CodeCell extends LitElementWw {
     @property({ attribute: true })
     exerciseLanguage = this.exerciseLanguages[0];
 
-    codeMirror: EditorView = new EditorView();
     private codeRunner = this.exerciseLanguage.executionFunction;
-
-    @property({ attribute: true, reflect: true })
-    autocompletionEnabled = true;
-
-    @property()
-    showDisableButton = true;
-
-    @property({ attribute: true, reflect: true })
-    showCodeRunButton = false;
-
-    @property({ attribute: true, reflect: true })
-    showExecutionTime = true;
 
     @property()
     codeResult: String = '';
@@ -64,17 +84,15 @@ export default class CodeCell extends LitElementWw {
     @property()
     executionTime: number = 0;
 
-    @property({ attribute: true, reflect: true })
-    code = this.codeMirror.state.doc.toString();
-
-    @property({ attribute: true, reflect: true })
-    cursorPosition = 0;
-
     language = new Compartment();
     autocompletion = new Compartment();
     readOnlyRanges = new Compartment();
     theme = new Compartment();
     highlightStyle = new Compartment();
+
+    private lockGutter = CustomGutter('lock', new LockMarker(), (_: EditorView, l: number) =>
+        this.makeLineReadOnly(this.codeMirror.state.doc.lineAt(l).number)
+    );
 
     static get scopedElements() {
         return {
@@ -86,6 +104,7 @@ export default class CodeCell extends LitElementWw {
             'sl-divider': SlDivider,
             'sl-card': SlCard,
             'sl-switch': SlSwitch,
+            'sl-icon': SlIcon,
         };
     }
 
@@ -94,9 +113,14 @@ export default class CodeCell extends LitElementWw {
     }
 
     firstUpdated() {
-        console.log('[ww-code] firstUpdated', this);
+        console.log('[ww-code] firstUpdated()');
+
         this.codeMirror = this.createCodeMirror(this.shadowRoot?.getElementById('code'));
         this.codeMirror.focus();
+
+        for (const line of this.lockedLines) {
+            this.makeLineReadOnly(line);
+        }
     }
 
     render() {
@@ -104,136 +128,110 @@ export default class CodeCell extends LitElementWw {
             <style>
                 ${style}
             </style>
-            <div class="Wrapper">
+            <div class=${'wrapper theme_' + this.themeState.theme}>
+                <div class="editor">
+                    <div class="codeViewHeader">
+                        <sl-dropdown label="Language">
+                            <sl-button slot="trigger" caret class="languageSelect"
+                                >${this.exerciseLanguage.name}</sl-button
+                            >
+                            <sl-menu>
+                                ${this.exerciseLanguages.map(
+                                    (exerciseLanguage) => html`
+                                        <sl-menu-item @click=${() => this.changeLanguage(exerciseLanguage)}
+                                            >${exerciseLanguage.name}</sl-menu-item
+                                        >
+                                    `
+                                )}
+                            </sl-menu>
+                        </sl-dropdown>
+                    </div>
+                    <div id="code"></div>
+                    <div class="codeViewFooter">
+                        <div class="codeViewFooterButtons">
+                            <sl-button @click=${this.runCode} class=${classMap(this.codeRunButtonState)}
+                                ><sl-icon name="caret-right"></sl-icon> Run</sl-button
+                            >
+                            <sl-button @click=${this.saveCode}><sl-icon name="save"></sl-icon> Save</sl-button>
+                        </div>
+                        <div class=${classMap({ ...this.codeRunButtonState, codeViewFooterResult: true })}>
+                            <div class="codeViewFooterResultText">Result: ${this.codeResult}</div>
+                            <div class=${classMap({ ...this.executionTimeState, codeViewFooterExecutionTime: true })}>
+                                ${this.executionTime.toFixed(1)}ms
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 ${this.editable ? this.exerciseCreationTemplate() : html``}
-
-                <div id="code">
-                    <div class="codeViewHeader"></div>
-                </div>
-                <sl-button @click=${() => (this.code = this.codeMirror.state.doc.toString())} variant="success"
-                    >Save</sl-button
-                >
-                <div class="codeExecutionWrapper">
-                    ${this.showCodeRunButton
-                        ? html` <div id="runCode">
-                              <sl-button @click=${this.runCode} variant="success">></sl-button>
-                          </div>`
-                        : html``}
-                    ${this.codeResult !== '' ? this.resultFieldTemplate() : html``}
-                </div>
             </div>
         `;
     }
 
     exerciseCreationTemplate() {
-        return html` <div class="createExercise" part="action">
-            <div class="exerciseChoice">${this.exerciseTypeTemplate()} ${this.exerciseLanguageTemplate()}</div>
-            ${this.editorFeaturesTemplate()}
+        return html` <div class="editorFeatures" part="action">
+            <sl-dropdown label="exerciseType">
+                <sl-button slot="trigger" caret class="dropdown">${this.exerciseType.name}</sl-button>
+                <sl-menu>
+                    ${this.exerciseTypes.map(
+                        (exerciseType) => html` <sl-menu-item
+                            @click=${() => {
+                                this.switchExerciseType(exerciseType);
+                            }}
+                        >
+                            ${exerciseType.name}
+                        </sl-menu-item>`
+                    )}
+                </sl-menu>
+            </sl-dropdown>
+            <sl-divider></sl-divider>
+            <sl-switch
+                @sl-change=${(event: SlChangeEvent) => {
+                    if (event.target) {
+                        let target = event.target as SlSwitch;
+                        this.codeRunButtonState = { hidden: !target.checked };
+                        this.saveCode();
+                    }
+                }}
+                ?checked=${!this.codeRunButtonState.hidden}
+                >Alow Code execution</sl-switch
+            >
+            <sl-switch
+                @sl-change=${(event: SlChangeEvent) => {
+                    if (event.target) {
+                        let target = event.target as SlSwitch;
+                        this.setAutocompletion(target.checked);
+                    }
+                }}
+                ?checked=${this.autocompletionState.enabled}
+                >Autocompletion</sl-switch
+            >
+            <sl-switch
+                @sl-change=${(event: SlChangeEvent) => {
+                    if (event.target) {
+                        let target = event.target as SlSwitch;
+                        this.setTheme(target.checked ? 'dark' : 'light');
+                    }
+                }}
+                ?checked=${this.themeState.theme === 'dark'}
+                >Toggle Theme</sl-switch
+            >
+            <sl-switch
+                @sl-change=${(event: SlChangeEvent) => {
+                    if (event.target) {
+                        let target = event.target as SlSwitch;
+                        this.executionTimeState = { hidden: !target.checked };
+                        this.saveCode();
+                    }
+                }}
+                ?checked=${!this.executionTimeState.hidden}
+                >Show execution time</sl-switch
+            >
         </div>`;
     }
 
-    exerciseTypeTemplate() {
-        return html` <sl-dropdown label="exerciseType">
-            <sl-button slot="trigger" caret class="dropdown">${this.exerciseType.name}</sl-button>
-            <sl-menu>
-                ${this.exerciseTypes.map(
-                    (exerciseType) => html` <sl-menu-item
-                        @click=${() => {
-                            this.switchExerciseType(exerciseType);
-                        }}
-                    >
-                        ${exerciseType.name}
-                    </sl-menu-item>`
-                )}
-            </sl-menu>
-        </sl-dropdown>`;
-    }
-
-    exerciseLanguageTemplate() {
-        return html` <sl-dropdown label="Language">
-            <sl-button slot="trigger" caret class="dropdown">${this.exerciseLanguage.name}</sl-button>
-            <sl-menu>
-                ${this.exerciseLanguages.map(
-                    (exerciseLanguage) => html`
-                        <sl-menu-item @click=${() => this.changeLanguage(exerciseLanguage)}
-                            >${exerciseLanguage.name}</sl-menu-item
-                        >
-                    `
-                )}
-            </sl-menu>
-        </sl-dropdown>`;
-    }
-
-    editorFeaturesTemplate() {
-        return html`
-            <sl-divider></sl-divider>
-            <div class="editorFeatures">
-                ${this.showDisableButton
-                    ? html`<sl-button
-                          @click=${() => {
-                              this.disableLine();
-                          }}
-                          class="dropdown"
-                          >Disable line</sl-button
-                      >`
-                    : html``}
-                <!-- ${this.codeRunner('')
-                    ? html`<sl-button
-                          @click=${() => {
-                              this.toggleRunCode();
-                          }}
-                          class="dropdown"
-                          >Toggle code running</sl-button
-                      >`
-                    : html``} -->
-                <sl-switch
-                    @sl-change=${(event: SlChangeEvent) => {
-                        if (event.target) {
-                            let target = event.target as SlSwitch;
-                            this.showCodeRunButton = target.checked;
-                        }
-                    }}
-                    ?checked=${this.showCodeRunButton}
-                    >Alow Code execution</sl-switch
-                >
-                <sl-button
-                    @click=${() => {
-                        this.toggleTheme();
-                    }}
-                    class="dropdown"
-                    >Toggle theme</sl-button
-                >
-                <sl-button
-                    @click=${() => {
-                        this.toggleExecutionTime();
-                    }}
-                    class="dropdown"
-                    >Toggle execution time</sl-button
-                >
-                <sl-checkbox
-                    checked
-                    @sl-change=${() => {
-                        this.toggleAutocompletion();
-                    }}
-                    class="dropdown"
-                    >Autocompletion</sl-checkbox
-                >
-            </div>
-        `;
-    }
-
-    resultFieldTemplate() {
-        return html`
-            <sl-card class="card">
-                <div class="cardElements">
-                    <div class="cardBody">
-                        Result: ${this.codeResult}
-                        ${this.showExecutionTime ? html`<div>Execution time: ${this.executionTime}ms</div>` : html``}
-                    </div>
-                    <sl-button @click=${() => (this.codeResult = '')}>X</sl-button>
-                </div>
-            </sl-card>
-        `;
+    private saveCode() {
+        this.lockedLines = this.disabledLines;
+        this.code = this.codeMirror.state.doc.toString();
     }
 
     private async runCode() {
@@ -246,42 +244,48 @@ export default class CodeCell extends LitElementWw {
     }
 
     private changeLanguage(language: any) {
+        this.saveCode();
         this.exerciseLanguage = language;
         this.codeRunner = this.exerciseLanguage.executionFunction;
         this.codeMirror.dispatch({ effects: this.language.reconfigure(this.exerciseLanguage.languageExtension) });
         this.codeMirror.focus();
     }
 
-    private toggleAutocompletion() {
-        this.autocompletionEnabled = !this.autocompletionEnabled;
+    private setAutocompletion(value: boolean) {
+        this.saveCode();
+        this.autocompletionState = { enabled: value };
         this.codeMirror.dispatch({
-            effects: this.autocompletion.reconfigure(this.autocompletionEnabled ? autocompletion() : []),
+            effects: this.autocompletion.reconfigure(value ? autocompletion() : []),
         });
         this.codeMirror.focus();
     }
 
-    private toggleTheme() {
-        this.codeMirror.dispatch({
-            effects: this.theme.reconfigure(this.theme.get(this.codeMirror.state) === oneDarkTheme ? [] : oneDarkTheme),
-        });
-        this.codeMirror.dispatch({
-            effects: this.highlightStyle.reconfigure(
-                this.theme.get(this.codeMirror.state) === oneDarkTheme
-                    ? syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })
-                    : syntaxHighlighting(defaultHighlightStyle, { fallback: true })
-            ),
-        });
-        this.codeMirror.focus();
-    }
+    private setTheme(theme: string) {
+        this.saveCode();
+        switch (theme) {
+            case 'dark':
+                this.codeMirror.dispatch({
+                    effects: this.theme.reconfigure(oneDarkTheme),
+                });
+                this.codeMirror.dispatch({
+                    effects: this.highlightStyle.reconfigure(
+                        syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })
+                    ),
+                });
+                break;
+            default:
+                this.codeMirror.dispatch({
+                    effects: this.theme.reconfigure([]),
+                });
+                this.codeMirror.dispatch({
+                    effects: this.highlightStyle.reconfigure(
+                        syntaxHighlighting(defaultHighlightStyle, { fallback: true })
+                    ),
+                });
 
-    private toggleRunCode() {
-        this.showCodeRunButton = !this.showCodeRunButton;
-        // this.codeMirror.focus();
-    }
-
-    private toggleExecutionTime() {
-        this.showExecutionTime = !this.showExecutionTime;
-        // this.codeMirror.focus();
+                break;
+        }
+        this.themeState = { theme: theme };
     }
 
     private switchExerciseType(exerciseType: any) {
@@ -289,44 +293,13 @@ export default class CodeCell extends LitElementWw {
 
         this.exerciseType = exerciseType;
         this.code = exerciseType.templateText;
-        this.showCodeRunButton = this.exerciseType.features.showCodeRunButton;
-        this.showDisableButton = this.exerciseType.features.showDisableButton;
-        this.showExecutionTime = this.exerciseType.features.showExecutionTime;
+        this.codeRunButtonState = { hidden: !exerciseType.features.allowCodeExecution };
+        this.executionTimeState = { hidden: !exerciseType.features.showExecutionTime };
         this.codeResult = '';
         this.codeMirror.focus();
-    }
 
-    private async disableLine() {
-        const state = this.codeMirror.state;
-        state.selection.ranges.forEach((range) => {
-            const currentline = state.doc.lineAt(range.head).number;
-            if (!this.disabledLines.includes(currentline)) {
-                this.disabledLines.push(currentline);
-                highlightSelection(this.codeMirror, [
-                    { from: state.doc.line(currentline).from, to: state.doc.line(currentline).to },
-                ]);
-            } else {
-                // dirty fix to remove the highlight
-                this.disabledLines = this.disabledLines.filter((line) => line !== currentline);
-                this.codeMirror.dispatch({
-                    changes: {
-                        from: state.doc.line(currentline).from,
-                        to: state.doc.line(currentline).to,
-                        insert: '',
-                    },
-                });
-                this.codeMirror.dispatch({
-                    changes: {
-                        from: state.doc.line(currentline).from,
-                        to: undefined,
-                        insert: state.doc.line(currentline).text,
-                    },
-                });
-            }
-        });
-        this.codeMirror.dispatch({
-            effects: this.readOnlyRanges.reconfigure(readOnlyRangesExtension(this.getReadOnlyRanges)),
-        });
+        this.lockedLines = [];
+        this.disabledLines = [];
     }
 
     private getReadOnlyRanges = (
@@ -334,6 +307,45 @@ export default class CodeCell extends LitElementWw {
     ): Array<{ from: number | undefined; to: number | undefined }> => {
         return this.disabledLines.map((line) => {
             return { from: targetState.doc.line(line).from, to: targetState.doc.line(line).to };
+        });
+    };
+
+    private makeLineReadOnly = (line: number) => {
+        const state = this.codeMirror.state;
+        const lineStart = this.codeMirror.state.doc.line(line).from;
+        const lineEnd = this.codeMirror.state.doc.line(line).to;
+
+        if (!this.disabledLines.includes(line)) {
+            this.disabledLines.push(line);
+            if (this.codeMirror.state.doc.line(line).text !== '') {
+                highlightSelection(this.codeMirror, [{ from: lineStart, to: lineEnd }]);
+            }
+            this.codeMirror.dispatch({
+                effects: this.lockGutter.effect.of({ pos: lineStart, on: true }),
+            });
+        } else {
+            // dirty fix to remove the highlight
+            this.disabledLines = this.disabledLines.filter((l) => l !== line);
+            this.codeMirror.dispatch({
+                changes: {
+                    from: state.doc.line(line).from,
+                    to: state.doc.line(line).to,
+                    insert: '',
+                },
+            });
+            this.codeMirror.dispatch({
+                changes: {
+                    from: state.doc.line(line).from,
+                    to: undefined,
+                    insert: state.doc.line(line).text,
+                },
+            });
+            this.codeMirror.dispatch({
+                effects: this.lockGutter.effect.of({ pos: lineStart, on: false }),
+            });
+        }
+        this.codeMirror.dispatch({
+            effects: this.readOnlyRanges.reconfigure(readOnlyRangesExtension(this.getReadOnlyRanges)),
         });
     };
 
@@ -345,9 +357,10 @@ export default class CodeCell extends LitElementWw {
                     basicSetup,
                     this.language.of(this.exerciseLanguage.languageExtension),
                     this.autocompletion.of(autocompletion()),
-                    this.theme.of(oneDarkTheme),
+                    this.theme.of(this.themeState.theme === 'dark' ? oneDarkTheme : []),
                     this.highlightStyle.of(syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })),
                     this.readOnlyRanges.of(readOnlyRangesExtension(this.getReadOnlyRanges)),
+                    this.lockGutter.gutter,
                 ],
             }),
             parent: parentObject,

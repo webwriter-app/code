@@ -1,6 +1,6 @@
 import { css } from 'lit';
 export const style = css`
-    .Wrapper {
+    .wrapper {
         display: flex;
         flex-direction: column;
         font-family: monospace;
@@ -9,86 +9,94 @@ export const style = css`
         min-width: 400px;
     }
 
-    .codeExecutionWrapper {
-        display: flex;
-        flex-direction: end;
-        justify-content: space-between;
+    .theme_light {
+        --theme-background-color: #f8f8f8;
+        --theme-color: #000;
     }
 
-    .exerciseChoice {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-evenly;
-        align-items: center;
-    }
-
-    .dropdown {
-        width: 180px;
+    .theme_dark {
+        --theme-background-color: #292c34;
+        --theme-color: #abb2bf;
     }
 
     .editorFeatures {
         display: flex;
-        flex-direction: row;
-        justify-content: space-evenly;
-        align-items: center;
-        padding-bottom: 10px;
-    }
-
-    .cardBody {
-        display: flex;
         flex-direction: column;
-        align-items: left;
-        justify-content: center;
-        padding-right: 10px;
+        justify-content: space-evenly;
+        align-items: flex-start;
+        margin-top: 2rem;
     }
 
-    .cardElements {
-        display: flex;
-        flex-direction: row;
+    .editorFeatures sl-divider {
+        width: 100%;
     }
 
-    .card {
-        --padding: 10px;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .card [slot='footer'] {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-    }
-
-    @media (max-width: 720px) {
-        .editorFeatures {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly;
-            align-items: center;
-        }
-
-        .exerciseChoice {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly;
-            align-items: center;
-        }
-
-        .dropdown {
-            padding: 10px;
-        }
-
-        .Wrapper {
-            margin-left: 5px;
-            margin-right: 5px;
-            padding-left: 10px;
-            padding-right: 10px;
-        }
+    .editorFeatures > * {
+        margin: 0.5rem;
     }
 
     .codeViewHeader {
-        height: 50px;
-        /* background-color: red; */
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: flex-end;
+    }
+
+    .codeViewFooter {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        background-color: var(--theme-background-color, #f8f8f8);
+        color: var(--theme-color, #000);
+    }
+
+    .codeViewFooterButtons {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .codeViewFooterButtons sl-button::part(base) {
+        background-color: var(--theme-background-color, #f8f8f8);
+        color: var(--theme-color, #000);
+        border: none;
+        border-radius: 0;
+    }
+
+    .codeViewFooterButtons sl-button::part(base):hover {
+        background-color: filter(var(--theme-background-color, #f8f8f8), brightness(2));
+    }
+
+    sl-button.languageSelect::part(base) {
+        background-color: var(--theme-background-color, #f8f8f8);
+        color: var(--theme-color, #000);
+        border: none;
+        border-radius: 0;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    .cm-lock-gutter .cm-gutterElement {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .codeViewFooterResult {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .codeViewFooterResult div {
+        color: var(--theme-color, #000);
+        margin: 1rem;
     }
 `;
