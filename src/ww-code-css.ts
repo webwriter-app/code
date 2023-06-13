@@ -22,7 +22,7 @@ export const style = css`
     .editorFeatures {
         display: flex;
         flex-direction: column;
-        justify-content: space-evenly;
+        justify-content: flex-start;
         align-items: flex-start;
         margin-top: 2rem;
     }
@@ -125,5 +125,25 @@ export const style = css`
             outline: 1px solid black !important;
             z-index: 1000;
         }
+    }
+
+    .htmlPreview {
+        width: 100%;
+        height: fit-content;
+        margin: 1rem;
+    }
+
+    .cssPreviewWrapper {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cssPreview {
+        height: 100px;
+        width: 100px;
+
+        border: 1px solid black;
     }
 `;

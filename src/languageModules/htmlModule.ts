@@ -1,11 +1,11 @@
-import { html } from "@codemirror/lang-html"
+import { html } from '@codemirror/lang-html';
 
 const executeHTML = (code: string) => {
-    return null;
-}
+    return code;
+};
 
 export const htmlModule = {
-    name: "HTML",
+    name: 'HTML',
     executionFunction: executeHTML,
     languageExtension: html(),
-}
+};

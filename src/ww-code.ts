@@ -14,11 +14,11 @@ import readOnlyRangesExtension from 'codemirror-readonly-ranges';
 import { javascriptModule } from './languageModules/javascriptModule';
 import { pythonModule } from './languageModules/pythonModule';
 import { htmlModule } from './languageModules/htmlModule';
+import { cssModule } from './languageModules/cssModule';
 import { exerciseTypes } from './exerciseTypes';
 import {
     SlButton,
     SlCard,
-    SlChangeEvent,
     SlCheckbox,
     SlDivider,
     SlDropdown,
@@ -47,7 +47,7 @@ export default class CodeCell extends LitElementWw {
 
     exerciseTypes = exerciseTypes;
 
-    exerciseLanguages = [javascriptModule, pythonModule, htmlModule];
+    exerciseLanguages = [javascriptModule, pythonModule, htmlModule, cssModule];
     codeMirror: EditorView = new EditorView();
 
     @property({ attribute: true, reflect: true, converter: CodeCell.JSONConverter })
@@ -73,12 +73,15 @@ export default class CodeCell extends LitElementWw {
     @property({ type: Object, reflect: true, attribute: true })
     exerciseType = this.exerciseTypes[0];
 
-    @property({ attribute: true })
+    @property({ attribute: true, reflect: true })
+    exerciseLanguageName = 'JavaScript';
+
+    @property()
     exerciseLanguage = this.exerciseLanguages[0];
 
     private codeRunner = this.exerciseLanguage.executionFunction;
 
-    @property()
+    @property({ attribute: true, reflect: true })
     codeResult: String = '';
 
     @property()
@@ -119,8 +122,14 @@ export default class CodeCell extends LitElementWw {
             this.themeState = { theme: 'dark' };
         }
 
+        this.exerciseLanguage = this.exerciseLanguages.find(
+            (exerciseLanguage) => exerciseLanguage.name === this.exerciseLanguageName
+        )!;
+
         this.codeMirror = this.createCodeMirror(this.shadowRoot?.getElementById('code'));
         this.codeMirror.focus();
+
+        this.codeRunner = this.exerciseLanguage.executionFunction;
 
         for (const line of this.lockedLines) {
             this.makeLineReadOnly(line);
@@ -136,7 +145,7 @@ export default class CodeCell extends LitElementWw {
                 <div class="editor">
                     <div class="codeViewHeader">
                         <sl-dropdown label="Language">
-                            <sl-button slot="trigger" ?caret=${this.printable} class="languageSelect"
+                            <sl-button slot="trigger" ?caret=${!this.printable} class="languageSelect"
                                 >${this.exerciseLanguage.name}</sl-button
                             >
                             <sl-menu>
@@ -159,10 +168,7 @@ export default class CodeCell extends LitElementWw {
                             <sl-button @click=${this.saveCode}><sl-icon name="save"></sl-icon> Save</sl-button>
                         </div>
                         <div class=${classMap({ ...this.codeRunButtonState, codeViewFooterResult: true })}>
-                            <div class="codeViewFooterResultText">Result: ${this.codeResult}</div>
-                            <div class=${classMap({ ...this.executionTimeState, codeViewFooterExecutionTime: true })}>
-                                ${this.executionTime.toFixed(1)}ms
-                            </div>
+                            ${this.codeResultTemplate()}
                         </div>
                     </div>
                 </div>
@@ -189,7 +195,7 @@ export default class CodeCell extends LitElementWw {
             </sl-dropdown>
             <sl-divider></sl-divider>
             <sl-switch
-                @sl-change=${(event: SlChangeEvent) => {
+                @sl-change=${(event: any) => {
                     if (event.target) {
                         let target = event.target as SlSwitch;
                         this.codeRunButtonState = { hidden: !target.checked };
@@ -200,7 +206,7 @@ export default class CodeCell extends LitElementWw {
                 >Alow Code execution</sl-switch
             >
             <sl-switch
-                @sl-change=${(event: SlChangeEvent) => {
+                @sl-change=${(event: any) => {
                     if (event.target) {
                         let target = event.target as SlSwitch;
                         this.setAutocompletion(target.checked);
@@ -210,7 +216,7 @@ export default class CodeCell extends LitElementWw {
                 >Autocompletion</sl-switch
             >
             <sl-switch
-                @sl-change=${(event: SlChangeEvent) => {
+                @sl-change=${(event: any) => {
                     if (event.target) {
                         let target = event.target as SlSwitch;
                         this.setTheme(target.checked ? 'dark' : 'light');
@@ -220,7 +226,7 @@ export default class CodeCell extends LitElementWw {
                 >Toggle Theme</sl-switch
             >
             <sl-switch
-                @sl-change=${(event: SlChangeEvent) => {
+                @sl-change=${(event: any) => {
                     if (event.target) {
                         let target = event.target as SlSwitch;
                         this.executionTimeState = { hidden: !target.checked };
@@ -231,6 +237,32 @@ export default class CodeCell extends LitElementWw {
                 >Show execution time</sl-switch
             >
         </div>`;
+    }
+
+    codeResultTemplate() {
+        switch (this.exerciseLanguageName) {
+            case 'JavaScript':
+                return html` <div class="codeViewFooterResultText">Result: ${this.codeResult}</div>
+                    <div class=${classMap({ ...this.executionTimeState, codeViewFooterExecutionTime: true })}>
+                        ${this.executionTime.toFixed(1)}ms
+                    </div>`;
+            case 'Python':
+                return html` <div class="codeViewFooterResultText">Result: ${this.codeResult}</div>
+                    <div class=${classMap({ ...this.executionTimeState, codeViewFooterExecutionTime: true })}>
+                        ${this.executionTime.toFixed(1)}ms
+                    </div>`;
+            case 'HTML':
+                return html` <iframe class="htmlPreview" srcdoc="${this.codeResult}"></iframe>`;
+            case 'CSS':
+                return html` <style>
+                        ${this.codeResult}
+                    </style>
+                    <div class="cssPreviewWrapper">
+                        <div class="cssPreview"></div>
+                    </div>`;
+            default:
+                return html``;
+        }
     }
 
     private saveCode() {
@@ -245,11 +277,13 @@ export default class CodeCell extends LitElementWw {
         const endTime = performance.now();
         this.executionTime = endTime - startTime;
         this.codeResult = codeResult;
+        this.saveCode();
     }
 
     private changeLanguage(language: any) {
         this.saveCode();
         this.exerciseLanguage = language;
+        this.exerciseLanguageName = language.name;
         this.codeRunner = this.exerciseLanguage.executionFunction;
         this.codeMirror.dispatch({ effects: this.language.reconfigure(this.exerciseLanguage.languageExtension) });
         this.codeMirror.focus();
@@ -297,7 +331,7 @@ export default class CodeCell extends LitElementWw {
 
         this.exerciseType = exerciseType;
         this.code = exerciseType.templateText;
-        this.codeRunButtonState = { hidden: !exerciseType.features.allowCodeExecution };
+        this.codeRunButtonState = { hidden: !exerciseType.features.showCodeRunButton };
         this.executionTimeState = { hidden: !exerciseType.features.showExecutionTime };
         this.codeResult = '';
         this.codeMirror.focus();
