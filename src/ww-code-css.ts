@@ -27,6 +27,10 @@ export const style = css`
         margin-top: 2rem;
     }
 
+    :host[editable='false'] .editorFeatures {
+        display: none !important;
+    }
+
     .editorFeatures sl-divider {
         width: 100%;
     }
@@ -98,5 +102,28 @@ export const style = css`
     .codeViewFooterResult div {
         color: var(--theme-color, #000);
         margin: 1rem;
+    }
+
+    @media print {
+        .codeViewFooterButtons,
+        div.cm-gutter.cm-lock-gutter,
+        div.cm-gutter.cm-foldGutter,
+        .editorFeatures {
+            display: none !important;
+        }
+
+        :host {
+            outline: none !important;
+        }
+
+        .wrapper {
+            --theme-background-color: transparent !important;
+            --theme-color: #000 !important;
+        }
+
+        #code {
+            outline: 1px solid black !important;
+            z-index: 1000;
+        }
     }
 `;

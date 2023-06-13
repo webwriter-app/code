@@ -115,6 +115,10 @@ export default class CodeCell extends LitElementWw {
     firstUpdated() {
         console.log('[ww-code] firstUpdated()');
 
+        if (this.printable) {
+            this.themeState = { theme: 'dark' };
+        }
+
         this.codeMirror = this.createCodeMirror(this.shadowRoot?.getElementById('code'));
         this.codeMirror.focus();
 
@@ -132,7 +136,7 @@ export default class CodeCell extends LitElementWw {
                 <div class="editor">
                     <div class="codeViewHeader">
                         <sl-dropdown label="Language">
-                            <sl-button slot="trigger" caret class="languageSelect"
+                            <sl-button slot="trigger" ?caret=${this.printable} class="languageSelect"
                                 >${this.exerciseLanguage.name}</sl-button
                             >
                             <sl-menu>
