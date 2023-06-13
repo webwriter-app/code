@@ -1,10 +1,9 @@
 {
   "name": "@webwriter/ww-code",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "main": "src/ww-code.ts",
   "type": "module",
-  "author": "Erik Viere",
   "contributors": [
     "Erik Viere",
     "Jorik van Genuchten"
