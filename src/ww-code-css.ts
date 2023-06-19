@@ -12,11 +12,13 @@ export const style = css`
     .theme_light {
         --theme-background-color: #f8f8f8;
         --theme-color: #000;
+        --theme-color-hover: #fff;
     }
 
     .theme_dark {
         --theme-background-color: #292c34;
         --theme-color: #abb2bf;
+        --theme-color-hover: #000;
     }
 
     .editorFeatures {
@@ -39,13 +41,6 @@ export const style = css`
         margin: 0.5rem;
     }
 
-    .codeViewHeader {
-        display: flex;
-        flex-direction: row;
-        align-items: flex-end;
-        justify-content: flex-end;
-    }
-
     .codeViewFooter {
         display: flex;
         flex-direction: column;
@@ -58,7 +53,8 @@ export const style = css`
         display: flex;
         flex-direction: row;
         align-items: center;
-        justify-content: flex-start;
+        width: 100%;
+        justify-content: space-between;
     }
 
     .codeViewFooterButtons sl-button::part(base) {
@@ -68,8 +64,9 @@ export const style = css`
         border-radius: 0;
     }
 
-    .codeViewFooterButtons sl-button::part(base):hover {
-        background-color: filter(var(--theme-background-color, #f8f8f8), brightness(2));
+    .codeViewFooterButtons sl-button::part(base):hover,
+    .codeViewFooterButtons sl-button::part(base):focus {
+        background-color: var(--theme-color-hover, #000);
     }
 
     sl-button.languageSelect::part(base) {
@@ -89,6 +86,10 @@ export const style = css`
         align-items: center;
         justify-content: center;
         cursor: pointer;
+    }
+
+    .cm-editor.cm-focused {
+        outline: none !important;
     }
 
     .codeViewFooterResult {
@@ -129,15 +130,14 @@ export const style = css`
 
     .htmlPreview {
         width: 100%;
-        height: fit-content;
         margin: 1rem;
     }
 
     .cssPreviewWrapper {
         width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        margin: 1rem;
+
+        display: block;
     }
 
     .cssPreview {

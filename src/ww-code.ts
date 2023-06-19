@@ -1,6 +1,6 @@
 import '@shoelace-style/shoelace/dist/themes/light.css';
 import { LitElementWw } from '@webwriter/lit';
-import { property, customElement } from 'lit/decorators.js';
+import { property, customElement, query } from 'lit/decorators.js';
 import { EditorView } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
 import { style } from './ww-code-css';
@@ -87,6 +87,9 @@ export default class CodeCell extends LitElementWw {
     @property()
     executionTime: number = 0;
 
+    @query('#iframePreview')
+    private iframePreview: HTMLIFrameElement | undefined;
+
     language = new Compartment();
     autocompletion = new Compartment();
     readOnlyRanges = new Compartment();
@@ -131,6 +134,14 @@ export default class CodeCell extends LitElementWw {
 
         this.codeRunner = this.exerciseLanguage.executionFunction;
 
+        if (this.iframePreview) {
+            this.iframePreview.addEventListener('load', () => {
+                if (this.iframePreview && this.iframePreview.contentWindow) {
+                    this.iframePreview.height = this.iframePreview.contentWindow.document.body.scrollHeight + 16 + 'px';
+                }
+            });
+        }
+
         for (const line of this.lockedLines) {
             this.makeLineReadOnly(line);
         }
@@ -138,34 +149,47 @@ export default class CodeCell extends LitElementWw {
 
     render() {
         return html`
+            <script src="https://cdn.jsdelivr.net/pyodide/v0.23.2/full/pyodide.js"></script>
+            <script type="text/javascript">
+                async function main() {
+                    let pyodide = await loadPyodide();
+                    console.log(pyodide.runPython('1 + 2'));
+                }
+                main();
+            </script>
             <style>
                 ${style}
             </style>
             <div class=${'wrapper theme_' + this.themeState.theme}>
                 <div class="editor">
-                    <div class="codeViewHeader">
-                        <sl-dropdown label="Language">
-                            <sl-button slot="trigger" ?caret=${!this.printable} class="languageSelect"
-                                >${this.exerciseLanguage.name}</sl-button
-                            >
-                            <sl-menu>
-                                ${this.exerciseLanguages.map(
-                                    (exerciseLanguage) => html`
-                                        <sl-menu-item @click=${() => this.changeLanguage(exerciseLanguage)}
-                                            >${exerciseLanguage.name}</sl-menu-item
-                                        >
-                                    `
-                                )}
-                            </sl-menu>
-                        </sl-dropdown>
-                    </div>
                     <div id="code"></div>
                     <div class="codeViewFooter">
                         <div class="codeViewFooterButtons">
-                            <sl-button @click=${this.runCode} class=${classMap(this.codeRunButtonState)}
-                                ><sl-icon name="caret-right"></sl-icon> Run</sl-button
-                            >
-                            <sl-button @click=${this.saveCode}><sl-icon name="save"></sl-icon> Save</sl-button>
+                            <div class="codeViewFooterButtonsLeft">
+                                <sl-button
+                                    @click=${this.runCode}
+                                    class=${classMap(this.codeRunButtonState)}
+                                    ?disabled=${this.codeRunner === undefined}
+                                    ><sl-icon name="caret-right"></sl-icon> Run</sl-button
+                                >
+                                <sl-button @click=${this.saveCode}><sl-icon name="save"></sl-icon> Save</sl-button>
+                            </div>
+                            <div class="codeViewFooterButtonsRight">
+                                <sl-dropdown label="Language">
+                                    <sl-button slot="trigger" ?caret=${!this.printable} class="languageSelect"
+                                        >${this.exerciseLanguage.name}</sl-button
+                                    >
+                                    <sl-menu>
+                                        ${this.exerciseLanguages.map(
+                                            (exerciseLanguage) => html`
+                                                <sl-menu-item @click=${() => this.changeLanguage(exerciseLanguage)}
+                                                    >${exerciseLanguage.name}</sl-menu-item
+                                                >
+                                            `
+                                        )}
+                                    </sl-menu>
+                                </sl-dropdown>
+                            </div>
                         </div>
                         <div class=${classMap({ ...this.codeRunButtonState, codeViewFooterResult: true })}>
                             ${this.codeResultTemplate()}
@@ -193,7 +217,6 @@ export default class CodeCell extends LitElementWw {
                     )}
                 </sl-menu>
             </sl-dropdown>
-            <sl-divider></sl-divider>
             <sl-switch
                 @sl-change=${(event: any) => {
                     if (event.target) {
@@ -203,7 +226,7 @@ export default class CodeCell extends LitElementWw {
                     }
                 }}
                 ?checked=${!this.codeRunButtonState.hidden}
-                >Alow Code execution</sl-switch
+                >Allow Code execution</sl-switch
             >
             <sl-switch
                 @sl-change=${(event: any) => {
@@ -242,24 +265,28 @@ export default class CodeCell extends LitElementWw {
     codeResultTemplate() {
         switch (this.exerciseLanguageName) {
             case 'JavaScript':
-                return html` <div class="codeViewFooterResultText">Result: ${this.codeResult}</div>
+                return html` <div class="codeViewFooterResultText">${this.codeResult}</div>
                     <div class=${classMap({ ...this.executionTimeState, codeViewFooterExecutionTime: true })}>
                         ${this.executionTime.toFixed(1)}ms
                     </div>`;
             case 'Python':
-                return html` <div class="codeViewFooterResultText">Result: ${this.codeResult}</div>
+                return html` <div class="codeViewFooterResultText">${this.codeResult}</div>
                     <div class=${classMap({ ...this.executionTimeState, codeViewFooterExecutionTime: true })}>
                         ${this.executionTime.toFixed(1)}ms
                     </div>`;
             case 'HTML':
-                return html` <iframe class="htmlPreview" srcdoc="${this.codeResult}"></iframe>`;
+                return html` <iframe id="iframePreview" class="htmlPreview" srcdoc="${this.codeResult}"></iframe>`;
             case 'CSS':
-                return html` <style>
+                const src = `
+                    <style>
+                        html, body {
+                            overflow: hidden;
+                        }
                         ${this.codeResult}
                     </style>
-                    <div class="cssPreviewWrapper">
-                        <div class="cssPreview"></div>
-                    </div>`;
+                    <div class="cssPreview"></div>
+                `;
+                return html` <iframe id="iframePreview" class="cssPreviewWrapper" srcdoc=${src} seamless></iframe> `;
             default:
                 return html``;
         }
@@ -271,6 +298,10 @@ export default class CodeCell extends LitElementWw {
     }
 
     private async runCode() {
+        if (!this.codeRunner) {
+            return;
+        }
+
         const code = this.codeMirror.state.doc.toString();
         const startTime = performance.now();
         const codeResult = await this.codeRunner(code).toString();
@@ -282,6 +313,7 @@ export default class CodeCell extends LitElementWw {
 
     private changeLanguage(language: any) {
         this.saveCode();
+        this.codeResult = '';
         this.exerciseLanguage = language;
         this.exerciseLanguageName = language.name;
         this.codeRunner = this.exerciseLanguage.executionFunction;
