@@ -31,6 +31,7 @@ import {
 import { classMap } from 'lit/directives/class-map.js';
 import LockMarker from './CodeMirror/LockMarker';
 import CustomGutter from './CodeMirror/CustomGutter';
+import { loadPyodide } from 'pyodide';
 
 @customElement('ww-code')
 export default class CodeCell extends LitElementWw {
@@ -149,14 +150,6 @@ export default class CodeCell extends LitElementWw {
 
     render() {
         return html`
-            <script src="https://cdn.jsdelivr.net/pyodide/v0.23.2/full/pyodide.js"></script>
-            <script type="text/javascript">
-                async function main() {
-                    let pyodide = await loadPyodide();
-                    console.log(pyodide.runPython('1 + 2'));
-                }
-                main();
-            </script>
             <style>
                 ${style}
             </style>
@@ -304,7 +297,7 @@ export default class CodeCell extends LitElementWw {
 
         const code = this.codeMirror.state.doc.toString();
         const startTime = performance.now();
-        const codeResult = await this.codeRunner(code).toString();
+        const codeResult = await this.codeRunner(code);
         const endTime = performance.now();
         this.executionTime = endTime - startTime;
         this.codeResult = codeResult;

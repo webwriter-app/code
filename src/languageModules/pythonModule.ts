@@ -1,6 +1,7 @@
 import { pythonLanguage } from '@codemirror/lang-python';
 import { CompletionContext, snippetCompletion } from '@codemirror/autocomplete';
 import { LanguageSupport } from '@codemirror/language';
+import { loadPyodide } from 'pyodide';
 
 //define the autocompletion for python
 //these are probably not all the keywords
@@ -45,8 +46,13 @@ function pythonCompletions(context: CompletionContext) {
 }
 
 //currently no execution function, so return null to remove the execute button
-const executePython = (code: string) => {
-    return null;
+const executePython = async (code: string) => {
+    let pyodide = await loadPyodide({
+        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.23.3/full/',
+    });
+    let res = await pyodide.runPythonAsync(code);
+
+    return res;
 };
 
 //add the autocompletion to the language function
@@ -56,6 +62,6 @@ function python() {
 
 export const pythonModule = {
     name: 'Python',
-    executionFunction: undefined,
+    executionFunction: executePython,
     languageExtension: python(),
 };

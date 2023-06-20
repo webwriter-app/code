@@ -1,4 +1,4 @@
-import { RangeSet, StateEffect, StateField } from '@codemirror/state';
+import { Line, RangeSet, StateEffect, StateField } from '@codemirror/state';
 import { EditorView, GutterMarker, gutter } from '@codemirror/view';
 
 export default function CustomGutter(
@@ -26,12 +26,17 @@ export default function CustomGutter(
         },
     });
 
+    let markerPositions = new Set<number>();
+    let tempMarkerPositions = new Set<number>();
+    let lastLine: Line;
+
     function toggleGutter(view: EditorView, pos: number) {
         let gutters = view.state.field(state);
         let hasGutter = false;
         gutters.between(pos, pos, () => {
             hasGutter = true;
         });
+
         view.dispatch({
             effects: effect.of({ pos, on: !hasGutter }),
         });

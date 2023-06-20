@@ -32,6 +32,7 @@
     "codemirror": "^6.0.1",
     "codemirror-readonly-ranges": "^0.1.0-alpha.1",
     "lit": "2.3.1",
+    "pyodide": "^0.23.3",
     "range-analyzer": "^0.1.1-alpha.2",
     "tslib": "^2.4.0"
   },
