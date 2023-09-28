@@ -12,7 +12,7 @@ import { oneDarkTheme, oneDarkHighlightStyle } from '@codemirror/theme-one-dark'
 import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
 import readOnlyRangesExtension from 'codemirror-readonly-ranges';
 import { javascriptModule } from './languageModules/javascriptModule';
-import { pythonModule } from './languageModules/pythonModule';
+// import { pythonModule } from './languageModules/pythonModule';
 import { htmlModule } from './languageModules/htmlModule';
 import { cssModule } from './languageModules/cssModule';
 import { exerciseTypes } from './exerciseTypes';
@@ -31,7 +31,7 @@ import {
 import { classMap } from 'lit/directives/class-map.js';
 import LockMarker from './CodeMirror/LockMarker';
 import CustomGutter from './CodeMirror/CustomGutter';
-import { loadPyodide } from 'pyodide';
+// import { loadPyodide } from 'pyodide';
 
 @customElement('ww-code')
 export default class CodeCell extends LitElementWw {
@@ -48,7 +48,7 @@ export default class CodeCell extends LitElementWw {
 
     exerciseTypes = exerciseTypes;
 
-    exerciseLanguages = [javascriptModule, pythonModule, htmlModule, cssModule];
+    exerciseLanguages = [javascriptModule, htmlModule, cssModule];
     codeMirror: EditorView = new EditorView();
 
     @property({ attribute: true, reflect: true, converter: CodeCell.JSONConverter })
@@ -64,10 +64,19 @@ export default class CodeCell extends LitElementWw {
     executionTimeState = { hidden: false };
 
     @property({ attribute: true, reflect: true, converter: CodeCell.JSONConverter })
-    themeState = { theme: 'light' };
+    executionCountState = { hidden: false };
+
+    @property({ type: Boolean, attribute: true, reflect: true })
+    globalExecution = false;
 
     @property({ attribute: true, reflect: true })
     code = this.codeMirror.state.doc.toString();
+
+    @property({ type: Boolean, attribute: true, reflect: true })
+    canChangeLanguage = true;
+
+    @property({ type: Number, attribute: true, reflect: true })
+    executionCount = 0;
 
     private disabledLines: Array<number> = [];
 
@@ -122,10 +131,6 @@ export default class CodeCell extends LitElementWw {
     firstUpdated() {
         console.log('[ww-code] firstUpdated()');
 
-        if (this.printable) {
-            this.themeState = { theme: 'dark' };
-        }
-
         this.exerciseLanguage = this.exerciseLanguages.find(
             (exerciseLanguage) => exerciseLanguage.name === this.exerciseLanguageName
         )!;
@@ -153,7 +158,7 @@ export default class CodeCell extends LitElementWw {
             <style>
                 ${style}
             </style>
-            <div class=${'wrapper theme_' + this.themeState.theme}>
+            <div class=${'wrapper theme_light'}>
                 <div class="editor">
                     <div id="code"></div>
                     <div class="codeViewFooter">
@@ -163,25 +168,40 @@ export default class CodeCell extends LitElementWw {
                                     @click=${this.runCode}
                                     class=${classMap(this.codeRunButtonState)}
                                     ?disabled=${this.codeRunner === undefined}
-                                    ><sl-icon name="caret-right"></sl-icon> Run</sl-button
+                                    ><sl-icon name="caret-right"></sl-icon> Run
+                                    ${this.globalExecution ? 'in global context' : 'in local context'}
+                                    ${this.executionCountState.hidden ? '' : `(${this.executionCount})`}
+                                </sl-button>
+                                <sl-button
+                                    @click=${() => {
+                                        this.codeResult = '';
+                                        this.executionTime = 0;
+                                        this.codeMirror.focus();
+                                    }}
+                                    class=${classMap(this.codeRunButtonState)}
+                                    >Clear Output</sl-button
                                 >
-                                <sl-button @click=${this.saveCode}><sl-icon name="save"></sl-icon> Save</sl-button>
                             </div>
                             <div class="codeViewFooterButtonsRight">
-                                <sl-dropdown label="Language">
-                                    <sl-button slot="trigger" ?caret=${!this.printable} class="languageSelect"
-                                        >${this.exerciseLanguage.name}</sl-button
-                                    >
-                                    <sl-menu>
-                                        ${this.exerciseLanguages.map(
-                                            (exerciseLanguage) => html`
-                                                <sl-menu-item @click=${() => this.changeLanguage(exerciseLanguage)}
-                                                    >${exerciseLanguage.name}</sl-menu-item
-                                                >
-                                            `
-                                        )}
-                                    </sl-menu>
-                                </sl-dropdown>
+                                ${this.canChangeLanguage
+                                    ? html`
+                                          <sl-dropdown label="Language">
+                                              <sl-button slot="trigger" ?caret=${!this.printable} class="languageSelect"
+                                                  >${this.exerciseLanguage.name}</sl-button
+                                              >
+                                              <sl-menu>
+                                                  ${this.exerciseLanguages.map(
+                                                      (exerciseLanguage) => html`
+                                                          <sl-menu-item
+                                                              @click=${() => this.changeLanguage(exerciseLanguage)}
+                                                              >${exerciseLanguage.name}</sl-menu-item
+                                                          >
+                                                      `
+                                                  )}
+                                              </sl-menu>
+                                          </sl-dropdown>
+                                      `
+                                    : html` <sl-button>${this.exerciseLanguage.name}</sl-button> `}
                             </div>
                         </div>
                         <div class=${classMap({ ...this.codeRunButtonState, codeViewFooterResult: true })}>
@@ -195,7 +215,7 @@ export default class CodeCell extends LitElementWw {
     }
 
     exerciseCreationTemplate() {
-        return html` <div class="editorFeatures" part="action">
+        return html` <div class="editorFeatures" part="action" style="z-index: 1000">
             <sl-dropdown label="exerciseType">
                 <sl-button slot="trigger" caret class="dropdown">${this.exerciseType.name}</sl-button>
                 <sl-menu>
@@ -215,11 +235,30 @@ export default class CodeCell extends LitElementWw {
                     if (event.target) {
                         let target = event.target as SlSwitch;
                         this.codeRunButtonState = { hidden: !target.checked };
-                        this.saveCode();
                     }
                 }}
                 ?checked=${!this.codeRunButtonState.hidden}
                 >Allow Code execution</sl-switch
+            >
+            <sl-switch
+                @sl-change=${(event: any) => {
+                    if (event.target) {
+                        let target = event.target as SlSwitch;
+                        this.canChangeLanguage = target.checked;
+                    }
+                }}
+                ?checked=${this.canChangeLanguage}
+                >Allow Language change</sl-switch
+            >
+            <sl-switch
+                @sl-change=${(event: any) => {
+                    if (event.target) {
+                        let target = event.target as SlSwitch;
+                        this.globalExecution = target.checked;
+                    }
+                }}
+                ?checked=${this.globalExecution}
+                >Global Execution</sl-switch
             >
             <sl-switch
                 @sl-change=${(event: any) => {
@@ -235,23 +274,23 @@ export default class CodeCell extends LitElementWw {
                 @sl-change=${(event: any) => {
                     if (event.target) {
                         let target = event.target as SlSwitch;
-                        this.setTheme(target.checked ? 'dark' : 'light');
-                    }
-                }}
-                ?checked=${this.themeState.theme === 'dark'}
-                >Toggle Theme</sl-switch
-            >
-            <sl-switch
-                @sl-change=${(event: any) => {
-                    if (event.target) {
-                        let target = event.target as SlSwitch;
                         this.executionTimeState = { hidden: !target.checked };
-                        this.saveCode();
                     }
                 }}
                 ?checked=${!this.executionTimeState.hidden}
                 >Show execution time</sl-switch
             >
+            <sl-switch
+                @sl-change=${(event: any) => {
+                    if (event.target) {
+                        let target = event.target as SlSwitch;
+                        this.executionCountState = { hidden: !target.checked };
+                    }
+                }}
+                ?checked=${!this.executionCountState.hidden}
+                >Show execution count</sl-switch
+            >
+            <sl-button @click=${() => (this.executionCount = 0)}>Reset execution count</sl-button>
         </div>`;
     }
 
@@ -285,11 +324,6 @@ export default class CodeCell extends LitElementWw {
         }
     }
 
-    private saveCode() {
-        this.lockedLines = this.disabledLines;
-        this.code = this.codeMirror.state.doc.toString();
-    }
-
     private async runCode() {
         if (!this.codeRunner) {
             return;
@@ -297,15 +331,16 @@ export default class CodeCell extends LitElementWw {
 
         const code = this.codeMirror.state.doc.toString();
         const startTime = performance.now();
-        const codeResult = await this.codeRunner(code);
+        let codeResult = await this.codeRunner(code, this.globalExecution);
+
         const endTime = performance.now();
         this.executionTime = endTime - startTime;
         this.codeResult = codeResult;
-        this.saveCode();
+
+        this.executionCount++;
     }
 
     private changeLanguage(language: any) {
-        this.saveCode();
         this.codeResult = '';
         this.exerciseLanguage = language;
         this.exerciseLanguageName = language.name;
@@ -315,40 +350,11 @@ export default class CodeCell extends LitElementWw {
     }
 
     private setAutocompletion(value: boolean) {
-        this.saveCode();
         this.autocompletionState = { enabled: value };
         this.codeMirror.dispatch({
             effects: this.autocompletion.reconfigure(value ? autocompletion() : []),
         });
         this.codeMirror.focus();
-    }
-
-    private setTheme(theme: string) {
-        this.saveCode();
-        switch (theme) {
-            case 'dark':
-                this.codeMirror.dispatch({
-                    effects: this.theme.reconfigure(oneDarkTheme),
-                });
-                this.codeMirror.dispatch({
-                    effects: this.highlightStyle.reconfigure(
-                        syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })
-                    ),
-                });
-                break;
-            default:
-                this.codeMirror.dispatch({
-                    effects: this.theme.reconfigure([]),
-                });
-                this.codeMirror.dispatch({
-                    effects: this.highlightStyle.reconfigure(
-                        syntaxHighlighting(defaultHighlightStyle, { fallback: true })
-                    ),
-                });
-
-                break;
-        }
-        this.themeState = { theme: theme };
     }
 
     private switchExerciseType(exerciseType: any) {
@@ -360,6 +366,14 @@ export default class CodeCell extends LitElementWw {
         this.executionTimeState = { hidden: !exerciseType.features.showExecutionTime };
         this.codeResult = '';
         this.codeMirror.focus();
+
+        this.codeMirror.dispatch({
+            changes: {
+                from: 0,
+                to: this.codeMirror.state.doc.length,
+                insert: exerciseType.templateText,
+            },
+        });
 
         this.lockedLines = [];
         this.disabledLines = [];
@@ -374,6 +388,10 @@ export default class CodeCell extends LitElementWw {
     };
 
     private makeLineReadOnly = (line: number) => {
+        if (!this.editable) {
+            return;
+        }
+
         const state = this.codeMirror.state;
         const lineStart = this.codeMirror.state.doc.line(line).from;
         const lineEnd = this.codeMirror.state.doc.line(line).to;
@@ -407,9 +425,12 @@ export default class CodeCell extends LitElementWw {
                 effects: this.lockGutter.effect.of({ pos: lineStart, on: false }),
             });
         }
+
         this.codeMirror.dispatch({
             effects: this.readOnlyRanges.reconfigure(readOnlyRangesExtension(this.getReadOnlyRanges)),
         });
+
+        this.lockedLines = [...this.disabledLines];
     };
 
     private createCodeMirror(parentObject: any) {
@@ -420,15 +441,19 @@ export default class CodeCell extends LitElementWw {
                     basicSetup,
                     this.language.of(this.exerciseLanguage.languageExtension),
                     this.autocompletion.of(autocompletion()),
-                    this.theme.of(this.themeState.theme === 'dark' ? oneDarkTheme : []),
+                    this.theme.of([]),
                     this.highlightStyle.of(syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })),
                     this.readOnlyRanges.of(readOnlyRangesExtension(this.getReadOnlyRanges)),
                     this.lockGutter.gutter,
+                    EditorView.updateListener.of((update) => {
+                        if (update.docChanged) {
+                            this.code = update.state.doc.toString();
+                        }
+                    }),
                 ],
             }),
             parent: parentObject,
         });
-
         return editorView;
     }
 }

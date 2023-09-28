@@ -44,6 +44,31 @@ function pythonCompletions(context: CompletionContext) {
         ],
     };
 }
+// import { pyodide_asm_js } from '../pyodide/pyodide.asm.js';
+// import { repodata_json } from '../pyodide/repodata.json';
+
+// const { fetch: originalFetch } = window;
+
+// window.fetch = async (...args) => {
+//     let [resource, config] = args;
+//     // request interceptor here
+//     console.log(resource);
+//     // if (resource.toString().includes('repodata.json')) {
+//     //     return await originalFetch(URL.createObjectURL(repodata_json), config);
+//     // }
+//     // if (resource.toString().includes('pyodide.asm.js')) {
+//     //     return await originalFetch(URL.createObjectURL(pyodide_asm_js), config);
+//     // }
+//     // if (resource.toString().includes('pyodide.asm.wasm')) {
+//     //     return await originalFetch(URL.createObjectURL(pyodide_asm_wasm), config);
+//     // }
+
+//     const response = await originalFetch(resource, config);
+//     // response interceptor here
+//     return response;
+// };
+
+// console.log(URL.createObjectURL(pyodide_asm_js));
 
 //currently no execution function, so return null to remove the execute button
 const executePython = async (code: string) => {

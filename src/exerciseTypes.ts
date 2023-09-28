@@ -103,12 +103,12 @@ export const exerciseTypes = [
             showExecutionTime: true,
         },
     },
-    {
-        name: '(PY) Skeleton',
-        templateText: 'def add(a, b):\n    return a + b\n\nadd(1, 2)',
-        features: {
-            showCodeRunButton: true,
-            showExecutionTime: true,
-        },
-    },
+    //     {
+    //         name: '(PY) Skeleton',
+    //         templateText: 'def add(a, b):\n    return a + b\n\nadd(1, 2)',
+    //         features: {
+    //             showCodeRunButton: true,
+    //             showExecutionTime: true,
+    //         },
+    //     },
 ];

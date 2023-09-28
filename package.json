@@ -1,50 +1,51 @@
 {
-  "name": "@webwriter/ww-code",
-  "version": "0.2.0",
-  "license": "MIT",
-  "main": "src/ww-code.ts",
-  "type": "module",
-  "contributors": [
-    "Erik Viere",
-    "Jorik van Genuchten"
-  ],
-  "keywords": [
-    "webwriter-widget",
-    "codeWidget"
-  ],
-  "scripts": {
-    "dev": "vite --port 3000",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@codemirror/lang-css": "^6.2.0",
-    "@codemirror/lang-html": "^6.2.0",
-    "@codemirror/lang-javascript": "^6.0.2",
-    "@codemirror/lang-python": "^6.0.2",
-    "@codemirror/state": "^6.1.2",
-    "@codemirror/theme-one-dark": "^6.1.0",
-    "@codemirror/view": "^6.2.5",
-    "@open-wc/scoped-elements": "^2.0.0-next.6",
-    "@replit/codemirror-indentation-markers": "^6.1.0",
-    "@shoelace-style/shoelace": "^2.0.0-beta.83",
-    "@webwriter/lit": "^0.3.0",
-    "codemirror": "^6.0.1",
-    "codemirror-readonly-ranges": "^0.1.0-alpha.1",
-    "lit": "2.3.1",
-    "pyodide": "^0.23.3",
-    "range-analyzer": "^0.1.1-alpha.2",
-    "tslib": "^2.4.0"
-  },
-  "devDependencies": {
-    "@types/node": "^18.7.21",
-    "@typescript-eslint/eslint-plugin": "^5.38.1",
-    "eslint": "^8.24.0",
-    "eslint-config-standard-with-typescript": "^23.0.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-n": "^15.3.0",
-    "eslint-plugin-promise": "^6.0.1",
-    "typescript": "^4.8.3",
-    "vite": "^3.0.0"
-  }
+    "name": "@webwriter/ww-code",
+    "version": "0.3.0",
+    "keywords": [
+        "webwriter-widget",
+        "codeWidget"
+    ],
+    "license": "MIT",
+    "author": "",
+    "contributors": [
+        "Erik Viere",
+        "Jorik van Genuchten"
+    ],
+    "main": "src/ww-code.ts",
+    "scripts": {
+        "dev": "vite --port 3000",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@codemirror/lang-css": ">=6.2.0 <7.0.0-0",
+        "@codemirror/lang-html": ">=6.2.0 <7.0.0-0",
+        "@codemirror/lang-javascript": ">=6.0.2 <7.0.0-0",
+        "@codemirror/lang-python": ">=6.0.2 <7.0.0-0",
+        "@codemirror/state": ">=6.1.2 <7.0.0-0",
+        "@codemirror/theme-one-dark": ">=6.1.0 <7.0.0-0",
+        "@codemirror/view": ">=6.2.5 <7.0.0-0",
+        "@open-wc/scoped-elements": ">=2.0.0-next.6 <3.0.0-0",
+        "@replit/codemirror-indentation-markers": ">=6.1.0 <7.0.0-0",
+        "@shoelace-style/shoelace": ">=2.0.0-beta.83 <3.0.0-0",
+        "@webwriter/lit": ">=0.3.0 <0.4.0-0",
+        "codemirror": ">=6.0.1 <7.0.0-0",
+        "codemirror-readonly-ranges": ">=0.1.0-alpha.1 <0.2.0-0",
+        "lit": "2.3.1",
+        "pyodide": ">=0.23.3 <0.24.0-0",
+        "range-analyzer": ">=0.1.1-alpha.2 <0.2.0-0",
+        "tslib": ">=2.4.0 <3.0.0-0"
+    },
+    "devDependencies": {
+        "@types/node": ">=18.7.21 <19.0.0-0",
+        "@typescript-eslint/eslint-plugin": ">=5.38.1 <6.0.0-0",
+        "eslint": ">=8.24.0 <9.0.0-0",
+        "eslint-config-standard-with-typescript": ">=23.0.0 <24.0.0-0",
+        "eslint-plugin-import": ">=2.26.0 <3.0.0-0",
+        "eslint-plugin-n": ">=15.3.0 <16.0.0-0",
+        "eslint-plugin-promise": ">=6.0.1 <7.0.0-0",
+        "typescript": ">=4.8.3 <5.0.0-0",
+        "vite": ">=3.0.0 <4.0.0-0"
+    },
+    "type": "module"
 }

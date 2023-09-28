@@ -1,20 +1,26 @@
-import { javascript } from "@codemirror/lang-javascript"
+import { javascript } from '@codemirror/lang-javascript';
 
-const executeJavascript = (code: string) => {
+const executeJavascript = (code: string, globalExecution: Boolean) => {
     try {
-        if (eval(code) === undefined) {
-            return "undefined";
-        } else if (eval(code) === null) {
-            return "null";
+        const result = scopeEval(globalExecution ? window : {}, code);
+
+        if (result === undefined) {
+            return 'No value returned';
+        } else if (result === null) {
+            return 'null';
         }
-        return eval(code);
+        return result;
     } catch (e) {
         return e;
     }
+};
+
+function scopeEval(scope: Object, code: string) {
+    return Function(code).bind(scope)();
 }
 
 export const javascriptModule = {
-    name: "JavaScript",
+    name: 'JavaScript',
     executionFunction: executeJavascript,
     languageExtension: javascript(),
 };
