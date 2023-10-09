@@ -1,32 +1,30 @@
 import '@shoelace-style/shoelace/dist/themes/light.css';
 import { LitElementWw } from '@webwriter/lit';
 import { property, customElement, query } from 'lit/decorators.js';
-import { EditorView } from 'codemirror';
+import { EditorView } from '@codemirror/view';
 import { EditorState, Compartment } from '@codemirror/state';
 import { style } from './ww-code-css';
 import { html } from 'lit';
 import { basicSetup } from './codemirror-setup';
 import { autocompletion } from '@codemirror/autocomplete';
 import { highlightSelection } from './highlight';
-import { oneDarkTheme, oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
-import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
-import readOnlyRangesExtension from 'codemirror-readonly-ranges';
+import { oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
+import { syntaxHighlighting } from '@codemirror/language';
+// import readOnlyRangesExtension from 'codemirror-readonly-ranges';
 import { javascriptModule } from './languageModules/javascriptModule';
 // import { pythonModule } from './languageModules/pythonModule';
 import { htmlModule } from './languageModules/htmlModule';
 import { cssModule } from './languageModules/cssModule';
 import { exerciseTypes } from './exerciseTypes';
-import {
-    SlButton,
-    SlCard,
-    SlCheckbox,
-    SlDivider,
-    SlDropdown,
-    SlIcon,
-    SlMenu,
-    SlMenuItem,
-    SlSwitch,
-} from '@shoelace-style/shoelace';
+import SlButton from "@shoelace-style/shoelace/dist/components/button/button.js"
+import SlCard from "@shoelace-style/shoelace/dist/components/card/card.js"
+import SlCheckbox from "@shoelace-style/shoelace/dist/components/checkbox/checkbox.js"
+import SlDivider from "@shoelace-style/shoelace/dist/components/divider/divider.js"
+import SlDropdown from "@shoelace-style/shoelace/dist/components/dropdown/dropdown.js"
+import SlIcon from "@shoelace-style/shoelace/dist/components/icon/icon.js"
+import SlMenu from "@shoelace-style/shoelace/dist/components/menu/menu.js"
+import SlMenuItem from "@shoelace-style/shoelace/dist/components/menu-item/menu-item.js"
+import SlSwitch from "@shoelace-style/shoelace/dist/components/switch/switch.js"
 
 import { classMap } from 'lit/directives/class-map.js';
 import LockMarker from './CodeMirror/LockMarker';
@@ -86,7 +84,7 @@ export default class CodeCell extends LitElementWw {
     @property({ attribute: true, reflect: true })
     exerciseLanguageName = 'JavaScript';
 
-    @property()
+    @property({attribute: false})
     exerciseLanguage = this.exerciseLanguages[0];
 
     private codeRunner = this.exerciseLanguage.executionFunction;
@@ -94,7 +92,7 @@ export default class CodeCell extends LitElementWw {
     @property({ attribute: true, reflect: true })
     codeResult: String = '';
 
-    @property()
+    @property({attribute: false})
     executionTime: number = 0;
 
     @query('#iframePreview')
@@ -102,7 +100,7 @@ export default class CodeCell extends LitElementWw {
 
     language = new Compartment();
     autocompletion = new Compartment();
-    readOnlyRanges = new Compartment();
+    // readOnlyRanges = new Compartment();
     theme = new Compartment();
     highlightStyle = new Compartment();
 
@@ -129,8 +127,6 @@ export default class CodeCell extends LitElementWw {
     }
 
     firstUpdated() {
-        console.log('[ww-code] firstUpdated()');
-
         this.exerciseLanguage = this.exerciseLanguages.find(
             (exerciseLanguage) => exerciseLanguage.name === this.exerciseLanguageName
         )!;
@@ -154,6 +150,7 @@ export default class CodeCell extends LitElementWw {
     }
 
     render() {
+        console.log("render")
         return html`
             <style>
                 ${style}
@@ -358,8 +355,6 @@ export default class CodeCell extends LitElementWw {
     }
 
     private switchExerciseType(exerciseType: any) {
-        console.log(exerciseType);
-
         this.exerciseType = exerciseType;
         this.code = exerciseType.templateText;
         this.codeRunButtonState = { hidden: !exerciseType.features.showCodeRunButton };
@@ -426,14 +421,15 @@ export default class CodeCell extends LitElementWw {
             });
         }
 
-        this.codeMirror.dispatch({
+        /* this.codeMirror.dispatch({
             effects: this.readOnlyRanges.reconfigure(readOnlyRangesExtension(this.getReadOnlyRanges)),
-        });
+        });*/
 
         this.lockedLines = [...this.disabledLines];
     };
 
     private createCodeMirror(parentObject: any) {
+      console.log("createCodeMirror")
         const editorView = new EditorView({
             state: EditorState.create({
                 doc: this.code,
@@ -443,8 +439,8 @@ export default class CodeCell extends LitElementWw {
                     this.autocompletion.of(autocompletion()),
                     this.theme.of([]),
                     this.highlightStyle.of(syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })),
-                    this.readOnlyRanges.of(readOnlyRangesExtension(this.getReadOnlyRanges)),
-                    this.lockGutter.gutter,
+                    // this.readOnlyRanges.of(readOnlyRangesExtension(this.getReadOnlyRanges)),
+                    // this.lockGutter.gutter,
                     EditorView.updateListener.of((update) => {
                         if (update.docChanged) {
                             this.code = update.state.doc.toString();
