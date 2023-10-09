@@ -1,9 +1,12 @@
 {
     "name": "@webwriter/ww-code",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "keywords": [
         "webwriter-widget",
-        "codeWidget"
+        "code",
+        "js",
+        "html",
+        "css"
     ],
     "license": "MIT",
     "author": "",
