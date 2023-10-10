@@ -1,72 +1,86 @@
 import { css } from 'lit';
 export const style = css`
-    .wrapper {
+    :host {
         display: flex;
         flex-direction: column;
         font-family: monospace;
         align-items: top;
         justify-content: space-between;
         min-width: 400px;
-    }
-
-    .theme_light {
         --theme-background-color: #f8f8f8;
         --theme-color: #000;
         --theme-color-hover: #fff;
     }
 
-    .theme_dark {
-        --theme-background-color: #292c34;
-        --theme-color: #abb2bf;
-        --theme-color-hover: #000;
-    }
-
-    .editorFeatures {
+    aside[part=action] {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
-        margin-top: 2rem;
     }
 
-    :host[editable='false'] .editorFeatures {
+    :host:not([editable]) aside[part=action] {
         display: none !important;
     }
 
-    .editorFeatures sl-divider {
+    aside[part=action] sl-divider {
         width: 100%;
     }
 
-    .editorFeatures > * {
+    aside[part=action] > * {
         margin: 0.5rem;
     }
 
-    .codeViewFooter {
+    pre {
+      margin: 0;
+    }
+
+    footer {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: flex-start;
         background-color: var(--theme-background-color, #f8f8f8);
         color: var(--theme-color, #000);
     }
 
-    .codeViewFooterButtons {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .codeViewFooterButtons sl-button::part(base) {
+    footer sl-button::part(base) {
         background-color: var(--theme-background-color, #f8f8f8);
         color: var(--theme-color, #000);
         border: none;
         border-radius: 0;
     }
 
-    .codeViewFooterButtons sl-button::part(base):hover,
-    .codeViewFooterButtons sl-button::part(base):focus {
+    sl-button::part(base):hover,
+    sl-button::part(base):focus {
         background-color: var(--theme-color-hover, #000);
+    }
+
+    footer sl-select {
+      margin-left: auto;
+      max-width: 150px;
+    }
+
+    footer sl-option::part(checked-icon) {
+      display: none;
+    }
+
+    footer sl-select[disabled] {
+      color: inherit;
+    }
+
+    
+    footer sl-select[disabled]::part(expand-icon) {
+      color: inherit;
+      display: none;
+    }
+
+    footer sl-select::part(display-input) {
+      text-align: right;
+    }
+
+    footer sl-select::part(combobox) {
+      background: none;
+      border: none;
     }
 
     sl-button.languageSelect::part(base) {
@@ -76,8 +90,8 @@ export const style = css`
         border-radius: 0;
     }
 
-    .hidden {
-        display: none !important;
+    :host([hideExecutionTime]) .executionTime {
+      display: none;
     }
 
     .cm-lock-gutter .cm-gutterElement {
@@ -92,24 +106,29 @@ export const style = css`
         outline: none !important;
     }
 
-    .codeViewFooterResult {
+    output {
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
         width: 100%;
+        color: var(--theme-color, #000);
+        background-color: var(--theme-background-color, #f8f8f8);
+        padding: 0.5rem;
+        box-sizing: border-box;
+        min-height: 2.75rem;
     }
 
-    .codeViewFooterResult div {
-        color: var(--theme-color, #000);
-        margin: 1rem;
+    output .outputs {
+      display: flex;
+      flex-direction: column;
     }
 
     @media print {
-        .codeViewFooterButtons,
+        footer,
         div.cm-gutter.cm-lock-gutter,
         div.cm-gutter.cm-foldGutter,
-        .editorFeatures {
+        aside[part=action] {
             display: none !important;
         }
 

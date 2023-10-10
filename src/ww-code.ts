@@ -9,63 +9,61 @@ import { basicSetup } from './codemirror-setup';
 import { autocompletion } from '@codemirror/autocomplete';
 import { highlightSelection } from './highlight';
 import { oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
-import { syntaxHighlighting } from '@codemirror/language';
+import { LanguageSupport, syntaxHighlighting } from '@codemirror/language';
 // import readOnlyRangesExtension from 'codemirror-readonly-ranges';
 import { javascriptModule } from './languageModules/javascriptModule';
 // import { pythonModule } from './languageModules/pythonModule';
 import { htmlModule } from './languageModules/htmlModule';
 import { cssModule } from './languageModules/cssModule';
-import { exerciseTypes } from './exerciseTypes';
 import SlButton from "@shoelace-style/shoelace/dist/components/button/button.js"
 import SlCard from "@shoelace-style/shoelace/dist/components/card/card.js"
 import SlCheckbox from "@shoelace-style/shoelace/dist/components/checkbox/checkbox.js"
 import SlDivider from "@shoelace-style/shoelace/dist/components/divider/divider.js"
-import SlDropdown from "@shoelace-style/shoelace/dist/components/dropdown/dropdown.js"
+import SlSelect from "@shoelace-style/shoelace/dist/components/select/select.js"
 import SlIcon from "@shoelace-style/shoelace/dist/components/icon/icon.js"
 import SlMenu from "@shoelace-style/shoelace/dist/components/menu/menu.js"
 import SlMenuItem from "@shoelace-style/shoelace/dist/components/menu-item/menu-item.js"
 import SlSwitch from "@shoelace-style/shoelace/dist/components/switch/switch.js"
-
-import { classMap } from 'lit/directives/class-map.js';
 import LockMarker from './CodeMirror/LockMarker';
 import CustomGutter from './CodeMirror/CustomGutter';
 // import { loadPyodide } from 'pyodide';
 
+export type LanguageModule = {
+  name: string
+  executionFunction: (code: string, context: Code) => any
+  languageExtension: LanguageSupport
+}
+
 @customElement('ww-code')
-export default class CodeCell extends LitElementWw {
+export default class Code extends LitElementWw {
     static styles = style;
 
     static JSONConverter = {
-        fromAttribute: (value: string) => {
-            return JSON.parse(value);
-        },
-        toAttribute: (value: Array<number>) => {
-            return JSON.stringify(value);
-        },
+      fromAttribute: (value: string) => {
+        return JSON.parse(value);
+      },
+      toAttribute: (value: Array<number>) => {
+        return JSON.stringify(value);
+      },
     };
 
-    exerciseTypes = exerciseTypes;
-
-    exerciseLanguages = [javascriptModule, htmlModule, cssModule];
+    static languages: LanguageModule[] = [javascriptModule, htmlModule, cssModule];
     codeMirror: EditorView = new EditorView();
 
-    @property({ attribute: true, reflect: true, converter: CodeCell.JSONConverter })
-    lockedLines: Array<number> = [];
+    @property({ type: Array, attribute: true, reflect: true})
+    lockedLines: number[] = [];
 
-    @property({ attribute: true, reflect: true, converter: CodeCell.JSONConverter })
-    codeRunButtonState = { hidden: false };
+    @property({ type: Boolean, attribute: true, reflect: true})
+    runnable = true
 
-    @property({ attribute: true, reflect: true, converter: CodeCell.JSONConverter })
-    autocompletionState = { enabled: false };
+    @property({ type: Boolean, attribute: true, reflect: true})
+    autocomplete = false
 
-    @property({ attribute: true, reflect: true, converter: CodeCell.JSONConverter })
-    executionTimeState = { hidden: false };
+    @property({type: Boolean, attribute: true, reflect: true})
+    hideExecutionTime = true
 
-    @property({ attribute: true, reflect: true, converter: CodeCell.JSONConverter })
-    executionCountState = { hidden: false };
-
-    @property({ type: Boolean, attribute: true, reflect: true })
-    globalExecution = false;
+    @property({type: Boolean, attribute: true, reflect: true})
+    hideExecutionCount = true
 
     @property({ attribute: true, reflect: true })
     code = this.codeMirror.state.doc.toString();
@@ -78,19 +76,20 @@ export default class CodeCell extends LitElementWw {
 
     private disabledLines: Array<number> = [];
 
-    @property({ type: Object, reflect: true, attribute: true })
-    exerciseType = this.exerciseTypes[0];
-
     @property({ attribute: true, reflect: true })
-    exerciseLanguageName = 'JavaScript';
+    get languageName() {
+      return this.languageModule.name
+    }
 
     @property({attribute: false})
-    exerciseLanguage = this.exerciseLanguages[0];
+    languageModule: LanguageModule = Code.languages[0]
 
-    private codeRunner = this.exerciseLanguage.executionFunction;
+    private get codeRunner() {
+      return this.languageModule.executionFunction
+    }
 
-    @property({ attribute: true, reflect: true })
-    codeResult: String = '';
+    @property({attribute: true, reflect: true, converter: Code.JSONConverter})
+    results: string[] = []
 
     @property({attribute: false})
     executionTime: number = 0;
@@ -109,132 +108,98 @@ export default class CodeCell extends LitElementWw {
     );
 
     static get scopedElements() {
-        return {
-            'sl-checkbox': SlCheckbox,
-            'sl-dropdown': SlDropdown,
-            'sl-menu': SlMenu,
-            'sl-menu-item': SlMenuItem,
-            'sl-button': SlButton,
-            'sl-divider': SlDivider,
-            'sl-card': SlCard,
-            'sl-switch': SlSwitch,
-            'sl-icon': SlIcon,
-        };
+      return {
+        'sl-checkbox': SlCheckbox,
+        'sl-select': SlSelect,
+        'sl-menu': SlMenu,
+        'sl-menu-item': SlMenuItem,
+        'sl-button': SlButton,
+        'sl-divider': SlDivider,
+        'sl-card': SlCard,
+        'sl-switch': SlSwitch,
+        'sl-icon': SlIcon,
+      };
     }
 
     focus() {
-        this.codeMirror?.focus();
+      this.codeMirror?.focus();
     }
 
+    @query("pre")
+    pre?: HTMLPreElement
+
     firstUpdated() {
-        this.exerciseLanguage = this.exerciseLanguages.find(
-            (exerciseLanguage) => exerciseLanguage.name === this.exerciseLanguageName
-        )!;
-
-        this.codeMirror = this.createCodeMirror(this.shadowRoot?.getElementById('code'));
-        this.codeMirror.focus();
-
-        this.codeRunner = this.exerciseLanguage.executionFunction;
-
-        if (this.iframePreview) {
-            this.iframePreview.addEventListener('load', () => {
-                if (this.iframePreview && this.iframePreview.contentWindow) {
-                    this.iframePreview.height = this.iframePreview.contentWindow.document.body.scrollHeight + 16 + 'px';
-                }
-            });
-        }
-
-        for (const line of this.lockedLines) {
-            this.makeLineReadOnly(line);
-        }
+      this.codeMirror = this.createCodeMirror(this.pre);
+      this.codeMirror.focus();
+      if (this.iframePreview) {
+        this.iframePreview.addEventListener('load', () => {
+          if (this.iframePreview && this.iframePreview.contentWindow) {
+            this.iframePreview.height = this.iframePreview.contentWindow.document.body.scrollHeight + 16 + 'px';
+          }
+        });
+      }
+      for (const line of this.lockedLines) {
+        this.makeLineReadOnly(line);
+      }
     }
 
     render() {
-        console.log("render")
-        return html`
-            <style>
-                ${style}
-            </style>
-            <div class=${'wrapper theme_light'}>
-                <div class="editor">
-                    <div id="code"></div>
-                    <div class="codeViewFooter">
-                        <div class="codeViewFooterButtons">
-                            <div class="codeViewFooterButtonsLeft">
-                                <sl-button
-                                    @click=${this.runCode}
-                                    class=${classMap(this.codeRunButtonState)}
-                                    ?disabled=${this.codeRunner === undefined}
-                                    ><sl-icon name="caret-right"></sl-icon> Run
-                                    ${this.globalExecution ? 'in global context' : 'in local context'}
-                                    ${this.executionCountState.hidden ? '' : `(${this.executionCount})`}
-                                </sl-button>
-                                <sl-button
-                                    @click=${() => {
-                                        this.codeResult = '';
-                                        this.executionTime = 0;
-                                        this.codeMirror.focus();
-                                    }}
-                                    class=${classMap(this.codeRunButtonState)}
-                                    >Clear Output</sl-button
-                                >
-                            </div>
-                            <div class="codeViewFooterButtonsRight">
-                                ${this.canChangeLanguage
-                                    ? html`
-                                          <sl-dropdown label="Language">
-                                              <sl-button slot="trigger" ?caret=${!this.printable} class="languageSelect"
-                                                  >${this.exerciseLanguage.name}</sl-button
-                                              >
-                                              <sl-menu>
-                                                  ${this.exerciseLanguages.map(
-                                                      (exerciseLanguage) => html`
-                                                          <sl-menu-item
-                                                              @click=${() => this.changeLanguage(exerciseLanguage)}
-                                                              >${exerciseLanguage.name}</sl-menu-item
-                                                          >
-                                                      `
-                                                  )}
-                                              </sl-menu>
-                                          </sl-dropdown>
-                                      `
-                                    : html` <sl-button>${this.exerciseLanguage.name}</sl-button> `}
-                            </div>
-                        </div>
-                        <div class=${classMap({ ...this.codeRunButtonState, codeViewFooterResult: true })}>
-                            ${this.codeResultTemplate()}
-                        </div>
-                    </div>
-                </div>
-                ${this.editable ? this.exerciseCreationTemplate() : html``}
-            </div>
-        `;
+      return html`
+        <style>${style}</style>
+        ${this.Code()}
+        ${this.Footer()}
+        ${this.Output()}
+        ${this.Options()}
+      `
+  }
+
+    Code() {
+      return html`<pre></pre>`
     }
 
-    exerciseCreationTemplate() {
-        return html` <div class="editorFeatures" part="action" style="z-index: 1000">
-            <sl-dropdown label="exerciseType">
-                <sl-button slot="trigger" caret class="dropdown">${this.exerciseType.name}</sl-button>
-                <sl-menu>
-                    ${this.exerciseTypes.map(
-                        (exerciseType) => html` <sl-menu-item
-                            @click=${() => {
-                                this.switchExerciseType(exerciseType);
-                            }}
-                        >
-                            ${exerciseType.name}
-                        </sl-menu-item>`
-                    )}
-                </sl-menu>
-            </sl-dropdown>
+    Footer() {
+      return html`<footer>
+        <sl-button
+          @click=${this.runCode}
+          ?disabled=${this.codeRunner === undefined}
+          ><sl-icon name="caret-right"></sl-icon> Run
+          ${this.hideExecutionCount ? '' : `(${this.executionCount})`}
+        </sl-button>
+        <sl-button
+            @click=${() => {
+              this.results = [];
+              this.executionTime = 0;
+              this.codeMirror.focus();
+            }}
+            >Clear Output</sl-button
+        >
+        <sl-select ?disabled=${!this.canChangeLanguage}>
+          ${Code.languages.map(l => html`
+            <sl-option @click=${() => this.changeLanguage(l)}>
+              ${l.name}
+            </sl-option>`
+          )}
+        </sl-select>
+      </footer>`
+    }
+
+    Output() {
+      return html`<output>
+        ${this.Result()}
+      </output>`
+    }
+
+    Options() {
+        return html`<aside part="action" style="z-index: 1000">
+            <sl-button @click=${() => (this.executionCount = 0)}>Reset execution count</sl-button>
             <sl-switch
                 @sl-change=${(event: any) => {
                     if (event.target) {
                         let target = event.target as SlSwitch;
-                        this.codeRunButtonState = { hidden: !target.checked };
+                        this.runnable = !target.checked;
                     }
                 }}
-                ?checked=${!this.codeRunButtonState.hidden}
+                ?checked=${this.runnable}
                 >Allow Code execution</sl-switch
             >
             <sl-switch
@@ -251,67 +216,45 @@ export default class CodeCell extends LitElementWw {
                 @sl-change=${(event: any) => {
                     if (event.target) {
                         let target = event.target as SlSwitch;
-                        this.globalExecution = target.checked;
-                    }
-                }}
-                ?checked=${this.globalExecution}
-                >Global Execution</sl-switch
-            >
-            <sl-switch
-                @sl-change=${(event: any) => {
-                    if (event.target) {
-                        let target = event.target as SlSwitch;
                         this.setAutocompletion(target.checked);
                     }
                 }}
-                ?checked=${this.autocompletionState.enabled}
+                ?checked=${this.autocomplete}
                 >Autocompletion</sl-switch
             >
             <sl-switch
-                @sl-change=${(event: any) => {
-                    if (event.target) {
-                        let target = event.target as SlSwitch;
-                        this.executionTimeState = { hidden: !target.checked };
-                    }
-                }}
-                ?checked=${!this.executionTimeState.hidden}
+                @sl-change=${(e: any) => this.hideExecutionTime = !e.target.checked}
+                ?checked=${!this.hideExecutionTime}
                 >Show execution time</sl-switch
             >
             <sl-switch
-                @sl-change=${(event: any) => {
-                    if (event.target) {
-                        let target = event.target as SlSwitch;
-                        this.executionCountState = { hidden: !target.checked };
-                    }
-                }}
-                ?checked=${!this.executionCountState.hidden}
+                @sl-change=${(e: any) => this.hideExecutionCount = !e.target.checked}
+                ?checked=${!this.hideExecutionCount}
                 >Show execution count</sl-switch
             >
-            <sl-button @click=${() => (this.executionCount = 0)}>Reset execution count</sl-button>
-        </div>`;
+        </aside>`;
     }
 
-    codeResultTemplate() {
-        switch (this.exerciseLanguageName) {
-            case 'JavaScript':
-                return html` <div class="codeViewFooterResultText">${this.codeResult}</div>
-                    <div class=${classMap({ ...this.executionTimeState, codeViewFooterExecutionTime: true })}>
-                        ${this.executionTime.toFixed(1)}ms
-                    </div>`;
-            case 'Python':
-                return html` <div class="codeViewFooterResultText">${this.codeResult}</div>
-                    <div class=${classMap({ ...this.executionTimeState, codeViewFooterExecutionTime: true })}>
-                        ${this.executionTime.toFixed(1)}ms
-                    </div>`;
+    Result() {
+        switch (this.languageName) {
+            case 'JS': case 'Python':
+              const outputs = this.results.filter(r => r !== undefined).map(r => html`<code>${r}</code>`)
+              return html`
+                <div class="outputs">
+                  ${outputs}
+                </div>
+                <div class="executionTime">
+                    ${this.executionTime.toFixed(1)}ms
+                </div>`
             case 'HTML':
-                return html` <iframe id="iframePreview" class="htmlPreview" srcdoc="${this.codeResult}"></iframe>`;
+                return html` <iframe id="iframePreview" class="htmlPreview" srcdoc=${this.results[0]}></iframe>`;
             case 'CSS':
                 const src = `
                     <style>
                         html, body {
                             overflow: hidden;
                         }
-                        ${this.codeResult}
+                        ${this.results[0]}
                     </style>
                     <div class="cssPreview"></div>
                 `;
@@ -325,53 +268,28 @@ export default class CodeCell extends LitElementWw {
         if (!this.codeRunner) {
             return;
         }
-
+        this.results = []
         const code = this.codeMirror.state.doc.toString();
         const startTime = performance.now();
-        let codeResult = await this.codeRunner(code, this.globalExecution);
-
+        await this.codeRunner(code, this);
         const endTime = performance.now();
         this.executionTime = endTime - startTime;
-        this.codeResult = codeResult;
-
         this.executionCount++;
     }
 
     private changeLanguage(language: any) {
-        this.codeResult = '';
-        this.exerciseLanguage = language;
-        this.exerciseLanguageName = language.name;
-        this.codeRunner = this.exerciseLanguage.executionFunction;
-        this.codeMirror.dispatch({ effects: this.language.reconfigure(this.exerciseLanguage.languageExtension) });
+        this.results = [];
+        this.languageModule = language;
+        this.codeMirror.dispatch({ effects: this.language.reconfigure(this.languageModule.languageExtension) });
         this.codeMirror.focus();
     }
 
     private setAutocompletion(value: boolean) {
-        this.autocompletionState = { enabled: value };
+        this.autocomplete = value;
         this.codeMirror.dispatch({
             effects: this.autocompletion.reconfigure(value ? autocompletion() : []),
         });
         this.codeMirror.focus();
-    }
-
-    private switchExerciseType(exerciseType: any) {
-        this.exerciseType = exerciseType;
-        this.code = exerciseType.templateText;
-        this.codeRunButtonState = { hidden: !exerciseType.features.showCodeRunButton };
-        this.executionTimeState = { hidden: !exerciseType.features.showExecutionTime };
-        this.codeResult = '';
-        this.codeMirror.focus();
-
-        this.codeMirror.dispatch({
-            changes: {
-                from: 0,
-                to: this.codeMirror.state.doc.length,
-                insert: exerciseType.templateText,
-            },
-        });
-
-        this.lockedLines = [];
-        this.disabledLines = [];
     }
 
     private getReadOnlyRanges = (
@@ -429,13 +347,12 @@ export default class CodeCell extends LitElementWw {
     };
 
     private createCodeMirror(parentObject: any) {
-      console.log("createCodeMirror")
         const editorView = new EditorView({
             state: EditorState.create({
                 doc: this.code,
                 extensions: [
                     basicSetup,
-                    this.language.of(this.exerciseLanguage.languageExtension),
+                    this.language.of(this.languageModule.languageExtension),
                     this.autocompletion.of(autocompletion()),
                     this.theme.of([]),
                     this.highlightStyle.of(syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })),
