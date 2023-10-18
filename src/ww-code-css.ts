@@ -19,7 +19,7 @@ export const style = css`
         align-items: flex-start;
     }
 
-    :host:not([editable]) aside[part=action] {
+    :host(:not([editable])) aside[part=action] {
         display: none !important;
     }
 

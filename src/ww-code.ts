@@ -15,15 +15,16 @@ import { javascriptModule } from './languageModules/javascriptModule';
 // import { pythonModule } from './languageModules/pythonModule';
 import { htmlModule } from './languageModules/htmlModule';
 import { cssModule } from './languageModules/cssModule';
-import SlButton from "@shoelace-style/shoelace/dist/components/button/button.js"
-import SlCard from "@shoelace-style/shoelace/dist/components/card/card.js"
-import SlCheckbox from "@shoelace-style/shoelace/dist/components/checkbox/checkbox.js"
-import SlDivider from "@shoelace-style/shoelace/dist/components/divider/divider.js"
-import SlSelect from "@shoelace-style/shoelace/dist/components/select/select.js"
-import SlIcon from "@shoelace-style/shoelace/dist/components/icon/icon.js"
-import SlMenu from "@shoelace-style/shoelace/dist/components/menu/menu.js"
-import SlMenuItem from "@shoelace-style/shoelace/dist/components/menu-item/menu-item.js"
-import SlSwitch from "@shoelace-style/shoelace/dist/components/switch/switch.js"
+import SlButton from "@shoelace-style/shoelace/dist/components/button/button.component.js"
+import SlCard from "@shoelace-style/shoelace/dist/components/card/card.component.js"
+import SlCheckbox from "@shoelace-style/shoelace/dist/components/checkbox/checkbox.component.js"
+import SlDivider from "@shoelace-style/shoelace/dist/components/divider/divider.component.js"
+import SlSelect from "@shoelace-style/shoelace/dist/components/select/select.component.js"
+import SlIcon from "@shoelace-style/shoelace/dist/components/icon/icon.component.js"
+import SlMenu from "@shoelace-style/shoelace/dist/components/menu/menu.component.js"
+import SlMenuItem from "@shoelace-style/shoelace/dist/components/menu-item/menu-item.component.js"
+import SlSwitch from "@shoelace-style/shoelace/dist/components/switch/switch.component.js"
+import SlOption from "@shoelace-style/shoelace/dist/components/option/option.component.js"
 import LockMarker from './CodeMirror/LockMarker';
 import CustomGutter from './CodeMirror/CustomGutter';
 // import { loadPyodide } from 'pyodide';
@@ -81,6 +82,8 @@ export default class Code extends LitElementWw {
       return this.languageModule.name
     }
 
+    set languageName(value: string) {}
+
     @property({attribute: false})
     languageModule: LanguageModule = Code.languages[0]
 
@@ -118,6 +121,7 @@ export default class Code extends LitElementWw {
         'sl-card': SlCard,
         'sl-switch': SlSwitch,
         'sl-icon': SlIcon,
+        'sl-option': SlOption
       };
     }
 
@@ -173,9 +177,9 @@ export default class Code extends LitElementWw {
             }}
             >Clear Output</sl-button
         >
-        <sl-select ?disabled=${!this.canChangeLanguage}>
+        <sl-select value=${this.languageName} ?disabled=${!this.canChangeLanguage}>
           ${Code.languages.map(l => html`
-            <sl-option @click=${() => this.changeLanguage(l)}>
+            <sl-option value=${l.name} @click=${() => this.changeLanguage(l)}>
               ${l.name}
             </sl-option>`
           )}
