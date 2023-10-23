@@ -9,31 +9,72 @@ const executeJavascript = (code: string, context: Code) => {
     const oldConsole = window.console;
     window.console = {
         log: (...objs: any[]) => {
-            objs.forEach((obj) => context.results.push({ color: 'inherit', text: String(obj) }));
+            objs.forEach((obj) =>
+                context.results.push({
+                    color: 'inherit',
+                    text: typeof obj === 'string' ? String(obj) : JSON.stringify(obj),
+                })
+            );
         },
         info: (...objs: any[]) => {
-            objs.forEach((obj) => context.results.push({ color: 'inherit', text: String(obj) }));
+            objs.forEach((obj) =>
+                context.results.push({
+                    color: 'inherit',
+                    text: typeof obj === 'string' ? String(obj) : JSON.stringify(obj),
+                })
+            );
         },
         warn: (...objs: any[]) => {
-            objs.forEach((obj) => context.results.push({ color: 'orange', text: String(obj) }));
+            objs.forEach((obj) =>
+                context.results.push({
+                    color: 'orange',
+                    text: typeof obj === 'string' ? String(obj) : JSON.stringify(obj),
+                })
+            );
         },
         error: (...objs: any[]) => {
-            objs.forEach((obj) => context.results.push({ color: 'red', text: String(obj) }));
+            objs.forEach((obj) =>
+                context.results.push({
+                    color: 'red',
+                    text: typeof obj === 'string' ? String(obj) : JSON.stringify(obj),
+                })
+            );
         },
         trace: (...objs: any[]) => {
-            objs.forEach((obj) => context.results.push({ color: 'inherit', text: String(obj) }));
+            objs.forEach((obj) =>
+                context.results.push({
+                    color: 'inherit',
+                    text: typeof obj === 'string' ? String(obj) : JSON.stringify(obj),
+                })
+            );
         },
         table: (...objs: any[]) => {
-            objs.forEach((obj) => context.results.push({ color: 'inherit', text: String(obj) }));
+            objs.forEach((obj) =>
+                context.results.push({
+                    color: 'inherit',
+                    text: typeof obj === 'string' ? String(obj) : JSON.stringify(obj),
+                })
+            );
         },
         assert: (assertion: boolean, ...objs: any[]) => {
-            assertion && objs.forEach((obj) => context.results.push({ color: 'inherit', text: String(obj) }));
+            assertion &&
+                objs.forEach((obj) =>
+                    context.results.push({
+                        color: 'inherit',
+                        text: typeof obj === 'string' ? String(obj) : JSON.stringify(obj),
+                    })
+                );
         },
         clear: () => {},
         count: () => {},
         countReset: () => {},
         debug: (...objs: any[]) => {
-            objs.forEach((obj) => context.results.push({ color: 'inherit', text: String(obj) }));
+            objs.forEach((obj) =>
+                context.results.push({
+                    color: 'inherit',
+                    text: typeof obj === 'string' ? String(obj) : JSON.stringify(obj),
+                })
+            );
         },
         dir: () => {},
         dirxml: () => {},
@@ -49,7 +90,7 @@ const executeJavascript = (code: string, context: Code) => {
         Console: window.console.Console,
     };
     try {
-        const result = context.globalExecution ? unScopeEval(code) : scopedEval(code, context);
+        const result = context.globalExecution ? unScopeEval(code, context) : scopedEval(code, context);
         context.results.push({ color: 'inherit', text: result });
         return result;
     } catch (e) {
@@ -66,14 +107,32 @@ function scopedEval(code: string, context: Code) {
     return Function(`
       const codeToExecute = [${code
           .split('\n')
-          .map((line) => `"${line}"`)
+          .map((line) => `'${line.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`)
           .join(',')}];
       return eval(codeToExecute.join("\\n"));
     `)();
 }
 
-function unScopeEval(code: string) {
-    return eval(code);
+function unScopeEval(code: string, context: Code) {
+    //TODO this is a hacky way to do this, but it works for now
+
+    let functionString = `const codeToExecute = [${code
+        .split('\n')
+        .map((line) => `'${line.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`)
+        .join(',')}];
+    return eval(codeToExecute.join("\\n"));
+  `;
+
+    //replace function definitions with globalThis.functionName = function() {}
+    //and remove leading let, const, var if it exists
+    functionString = functionString.replace(/(let|const|var)\s+(\w+)\s*=\s*function/g, 'globalThis.$2 = function');
+
+    //replace function definitions with globalThis.functionName = function() {}
+    functionString = functionString.replace(/function\s+(\w+)\s*\(/g, 'globalThis.$1 = function(');
+
+    // console.log(functionString);
+
+    return Function(functionString).bind(window.globalThis)();
 }
 
 export const javascriptModule = {

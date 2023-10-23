@@ -15,19 +15,21 @@ import { javascriptModule } from './languageModules/javascriptModule';
 // import { pythonModule } from './languageModules/pythonModule';
 import { htmlModule } from './languageModules/htmlModule';
 import { cssModule } from './languageModules/cssModule';
-import SlButton from "@shoelace-style/shoelace/dist/components/button/button.component.js"
-import SlCard from "@shoelace-style/shoelace/dist/components/card/card.component.js"
-import SlCheckbox from "@shoelace-style/shoelace/dist/components/checkbox/checkbox.component.js"
-import SlDivider from "@shoelace-style/shoelace/dist/components/divider/divider.component.js"
-import SlSelect from "@shoelace-style/shoelace/dist/components/select/select.component.js"
-import SlIcon from "@shoelace-style/shoelace/dist/components/icon/icon.component.js"
-import SlMenu from "@shoelace-style/shoelace/dist/components/menu/menu.component.js"
-import SlMenuItem from "@shoelace-style/shoelace/dist/components/menu-item/menu-item.component.js"
-import SlSwitch from "@shoelace-style/shoelace/dist/components/switch/switch.component.js"
-import SlOption from "@shoelace-style/shoelace/dist/components/option/option.component.js"
+import SlButton from '@shoelace-style/shoelace/dist/components/button/button.component.js';
+import SlCard from '@shoelace-style/shoelace/dist/components/card/card.component.js';
+import SlCheckbox from '@shoelace-style/shoelace/dist/components/checkbox/checkbox.component.js';
+import SlDivider from '@shoelace-style/shoelace/dist/components/divider/divider.component.js';
+import SlSelect from '@shoelace-style/shoelace/dist/components/select/select.component.js';
+import SlIcon from '@shoelace-style/shoelace/dist/components/icon/icon.component.js';
+import SlMenu from '@shoelace-style/shoelace/dist/components/menu/menu.component.js';
+import SlMenuItem from '@shoelace-style/shoelace/dist/components/menu-item/menu-item.component.js';
+import SlSwitch from '@shoelace-style/shoelace/dist/components/switch/switch.component.js';
+import SlOption from '@shoelace-style/shoelace/dist/components/option/option.component.js';
 import LockMarker from './CodeMirror/LockMarker';
 import CustomGutter from './CodeMirror/CustomGutter';
 // import { loadPyodide } from 'pyodide';
+
+import { faPlay } from './fontawesome.css';
 
 export type LanguageModule = {
     name: string;
@@ -116,18 +118,20 @@ export default class Code extends LitElementWw {
     );
 
     static get scopedElements() {
-      return {
-        'sl-checkbox': SlCheckbox,
-        'sl-select': SlSelect,
-        'sl-menu': SlMenu,
-        'sl-menu-item': SlMenuItem,
-        'sl-button': SlButton,
-        'sl-divider': SlDivider,
-        'sl-card': SlCard,
-        'sl-switch': SlSwitch,
-        'sl-icon': SlIcon,
-        'sl-option': SlOption
-      };
+        let componentList = {
+            // 'sl-checkbox': SlCheckbox,
+            // 'sl-select': SlSelect,
+            // 'sl-menu': SlMenu,
+            // 'sl-menu-item': SlMenuItem,
+            // 'sl-button': SlButton,
+            // 'sl-divider': SlDivider,
+            // 'sl-card': SlCard,
+            'sl-switch': SlSwitch,
+            // 'sl-icon': SlIcon,
+            // 'sl-option': SlOption,
+        } as any;
+
+        return componentList;
     }
 
     focus() {
@@ -168,6 +172,10 @@ export default class Code extends LitElementWw {
                 });
             }
         }
+
+        if (_changedProperties.has('languageName')) {
+            this.codeMirror.dispatch({ effects: this.language.reconfigure(this.languageModule.languageExtension) });
+        }
     }
 
     render() {
@@ -184,29 +192,38 @@ export default class Code extends LitElementWw {
     }
 
     Footer() {
-      return html`<footer>
-        <sl-button
-          @click=${this.runCode}
-          ?disabled=${this.codeRunner === undefined}
-          ><sl-icon name="caret-right"></sl-icon> Run
-          ${this.hideExecutionCount ? '' : `(${this.executionCount})`}
-        </sl-button>
-        <sl-button
-            @click=${() => {
-              this.results = [];
-              this.executionTime = 0;
-              this.codeMirror.focus();
-            }}
-            >Clear Output</sl-button
-        >
-        <sl-select value=${this.languageName} ?disabled=${!this.canChangeLanguage}>
-          ${Code.languages.map(l => html`
-            <sl-option value=${l.name} @click=${() => this.changeLanguage(l)}>
-              ${l.name}
-            </sl-option>`
-          )}
-        </sl-select>
-      </footer>`
+        return html`<footer>
+            <button
+                class="ww-code-button"
+                ?disabled=${this.codeRunner === undefined}
+                @click="${this.runCode}"
+                style=${this.runnable ? '' : 'display: none'}
+            >
+                ${faPlay} Run ${this.globalExecution ? '' : 'in isolation'}
+                ${this.hideExecutionCount ? '' : `(${this.executionCount})`}
+            </button>
+            <button
+                class="ww-code-button"
+                @click=${() => {
+                    this.results = [];
+                    this.executionTime = 0;
+                    this.codeMirror.focus();
+                }}
+                style=${this.runnable ? '' : 'display: none'}
+            >
+                Clear Output
+            </button>
+            <select
+                value=${this.languageName}
+                ?disabled=${!this.canChangeLanguage}
+                class="ww-code-select"
+                @change=${(e: any) => {
+                    this.changeLanguage(Code.languages.find((l) => l.name === e.target.value));
+                }}
+            >
+                ${Code.languages.map((l) => html` <option value="${l.name}">${l.name}</option>`)}
+            </select>
+        </footer>`;
     }
 
     Output() {
@@ -220,7 +237,7 @@ export default class Code extends LitElementWw {
                 @sl-change=${(event: any) => {
                     if (event.target) {
                         let target = event.target as SlSwitch;
-                        this.runnable = !target.checked;
+                        this.runnable = target.checked;
                     }
                 }}
                 ?checked=${this.runnable}
@@ -312,7 +329,7 @@ export default class Code extends LitElementWw {
 
     private changeLanguage(language: any) {
         this.results = [];
-        this.languageModule = language;
+        this.languageName = language.name;
         this.codeMirror.dispatch({ effects: this.language.reconfigure(this.languageModule.languageExtension) });
         this.codeMirror.focus();
     }

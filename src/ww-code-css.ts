@@ -12,27 +12,27 @@ export const style = css`
         --theme-color-hover: #fff;
     }
 
-    aside[part=action] {
+    aside[part='action'] {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
     }
 
-    :host(:not([editable])) aside[part=action] {
+    :host(:not([editable])) aside[part='action'] {
         display: none !important;
     }
 
-    aside[part=action] sl-divider {
+    aside[part='action'] sl-divider {
         width: 100%;
     }
 
-    aside[part=action] > * {
+    aside[part='action'] > * {
         margin: 0.5rem;
     }
 
     pre {
-      margin: 0;
+        margin: 0;
     }
 
     footer {
@@ -56,31 +56,30 @@ export const style = css`
     }
 
     footer sl-select {
-      margin-left: auto;
-      max-width: 150px;
+        margin-left: auto;
+        max-width: 150px;
     }
 
     footer sl-option::part(checked-icon) {
-      display: none;
+        display: none;
     }
 
     footer sl-select[disabled] {
-      color: inherit;
+        color: inherit;
     }
 
-    
     footer sl-select[disabled]::part(expand-icon) {
-      color: inherit;
-      display: none;
+        color: inherit;
+        display: none;
     }
 
     footer sl-select::part(display-input) {
-      text-align: right;
+        text-align: right;
     }
 
     footer sl-select::part(combobox) {
-      background: none;
-      border: none;
+        background: none;
+        border: none;
     }
 
     sl-button.languageSelect::part(base) {
@@ -91,7 +90,7 @@ export const style = css`
     }
 
     :host([hideExecutionTime]) .executionTime {
-      display: none;
+        display: none;
     }
 
     .cm-lock-gutter .cm-gutterElement {
@@ -120,15 +119,15 @@ export const style = css`
     }
 
     output .outputs {
-      display: flex;
-      flex-direction: column;
+        display: flex;
+        flex-direction: column;
     }
 
     @media print {
         footer,
         div.cm-gutter.cm-lock-gutter,
         div.cm-gutter.cm-foldGutter,
-        aside[part=action] {
+        aside[part='action'] {
             display: none !important;
         }
 
@@ -164,5 +163,97 @@ export const style = css`
         width: 100px;
 
         border: 1px solid black;
+    }
+
+    .ww-code-button {
+        background: none;
+        outline: none;
+        border: none;
+
+        height: auto;
+        min-height: var(--sl-input-height-medium);
+        font-size: var(--sl-button-font-size-medium);
+        line-height: calc(var(--sl-input-height-medium) - var(--sl-input-border-width) * 2);
+        border-radius: var(--sl-input-border-radius-medium);
+
+        padding: 0 var(--sl-spacing-medium);
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--sl-input-font-family);
+        font-weight: var(--sl-font-weight-semibold);
+        text-decoration: none;
+        user-select: none;
+        white-space: nowrap;
+        vertical-align: middle;
+        transition: var(--sl-transition-x-fast) background-color, var(--sl-transition-x-fast) color,
+            var(--sl-transition-x-fast) border, var(--sl-transition-x-fast) box-shadow;
+        cursor: inherit;
+
+        justify-self: flex-start;
+    }
+
+    .ww-code-button:hover {
+        cursor: pointer;
+        background-color: white;
+    }
+
+    .ww-code-button.hidden {
+        display: none;
+    }
+
+    .ww-code-button svg {
+        padding-right: 0.5rem;
+    }
+
+    .ww-code-select {
+        background: none;
+        outline: none;
+        border: none;
+
+        height: auto;
+        min-height: var(--sl-input-height-medium);
+        font-size: var(--sl-button-font-size-medium);
+        line-height: calc(var(--sl-input-height-medium) - var(--sl-input-border-width) * 2);
+        border-radius: var(--sl-input-border-radius-medium);
+
+        padding: 0 var(--sl-spacing-medium);
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--sl-input-font-family);
+        font-weight: var(--sl-font-weight-semibold);
+        text-decoration: none;
+        user-select: none;
+        white-space: nowrap;
+        vertical-align: middle;
+        transition: var(--sl-transition-x-fast) background-color, var(--sl-transition-x-fast) color,
+            var(--sl-transition-x-fast) border, var(--sl-transition-x-fast) box-shadow;
+        cursor: inherit;
+
+        float: right;
+        justify-self: flex-end;
+    }
+
+    .ww-code-select:hover {
+        cursor: pointer;
+        background-color: white;
+    }
+
+    .ww-code-select:disabled {
+        cursor: default;
+        background: none;
+    }
+
+    footer {
+        display: flex;
+        width: 100%;
+    }
+
+    footer select {
+        margin-left: auto;
+        max-width: 150px;
     }
 `;
