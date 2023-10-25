@@ -114,25 +114,32 @@ function scopedEval(code: string, context: Code) {
 }
 
 function unScopeEval(code: string, context: Code) {
-    //TODO this is a hacky way to do this, but it works for now
+    const st = document.createElement('script');
+    st.innerHTML = code;
 
-    let functionString = `const codeToExecute = [${code
-        .split('\n')
-        .map((line) => `'${line.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`)
-        .join(',')}];
-    return eval(codeToExecute.join("\\n"));
-  `;
+    document.body.appendChild(st);
+    document.body.removeChild(st);
 
-    //replace function definitions with globalThis.functionName = function() {}
-    //and remove leading let, const, var if it exists
-    functionString = functionString.replace(/(let|const|var)\s+(\w+)\s*=\s*function/g, 'globalThis.$2 = function');
+    //     //TODO this is a hacky way to do this, but it works for now
 
-    //replace function definitions with globalThis.functionName = function() {}
-    functionString = functionString.replace(/function\s+(\w+)\s*\(/g, 'globalThis.$1 = function(');
+    //     let functionString = `const codeToExecute = [${code
+    //         .split('\n')
+    //         .map((line) => `'${line.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`)
+    //         .join(',')}];
+    //     return eval(codeToExecute.join("\\n"));
+    //   `;
 
-    // console.log(functionString);
+    //     //replace function definitions with globalThis.functionName = function() {}
+    //     //and remove leading let, const, var if it exists
+    //     functionString = functionString.replace(/(let|const|var)\s+(\w+)\s*=\s*function/g, 'globalThis.$2 = function');
 
-    return Function(functionString).bind(window.globalThis)();
+    //     //replace function definitions with globalThis.functionName = function() {}
+    //     functionString = functionString.replace(/function\s+(\w+)\s*\(/g, 'globalThis.$1 = function(');
+
+    //     // console.log(functionString);
+
+    // return Function(functionString).bind(window.globalThis)();
+    return undefined;
 }
 
 export const javascriptModule = {

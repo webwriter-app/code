@@ -56,28 +56,28 @@ export default class Code extends LitElementWw {
     @property({ type: Array, attribute: true, reflect: true })
     lockedLines: number[] = [];
 
-    @property({ type: Boolean, attribute: true, reflect: true })
+    @property({ type: Object, attribute: true, reflect: true })
     runnable = true;
 
-    @property({ type: Boolean, attribute: true, reflect: true })
+    @property({ type: Object, attribute: true, reflect: true })
     autocomplete = false;
 
-    @property({ type: Boolean, attribute: true, reflect: true })
+    @property({ type: Object, attribute: true, reflect: true })
     hideExecutionTime = true;
 
-    @property({ type: Boolean, attribute: true, reflect: true })
+    @property({ type: Object, attribute: true, reflect: true })
     hideExecutionCount = true;
 
     @property({ attribute: true, reflect: true })
     code = this.codeMirror.state.doc.toString();
 
-    @property({ type: Boolean, attribute: true, reflect: true })
+    @property({ type: Object, attribute: true, reflect: true })
     canChangeLanguage = true;
 
     @property({ type: Number, attribute: true, reflect: true })
     executionCount = 0;
 
-    @property({ type: Boolean, attribute: true, reflect: true })
+    @property({ type: Object, attribute: true, reflect: true })
     globalExecution = true;
 
     private disabledLines: Array<number> = [];
@@ -93,6 +93,9 @@ export default class Code extends LitElementWw {
 
     @property({ attribute: false })
     languageModule: LanguageModule = Code.languages[0];
+
+    @property({ attribute: false })
+    errorListener: any;
 
     private get codeRunner() {
         return this.languageModule.executionFunction;
@@ -123,7 +126,7 @@ export default class Code extends LitElementWw {
             // 'sl-select': SlSelect,
             // 'sl-menu': SlMenu,
             // 'sl-menu-item': SlMenuItem,
-            // 'sl-button': SlButton,
+            'sl-button': SlButton,
             // 'sl-divider': SlDivider,
             // 'sl-card': SlCard,
             'sl-switch': SlSwitch,
@@ -154,6 +157,15 @@ export default class Code extends LitElementWw {
         for (const line of this.lockedLines) {
             this.makeLineReadOnly(line);
         }
+
+        window.addEventListener('error', (e) => {
+            //Check if language is JS
+            if (this.languageName !== 'JS') {
+                return;
+            }
+
+            this.results.push({ color: 'red', text: e.message });
+        });
     }
 
     protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
