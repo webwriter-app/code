@@ -12,6 +12,7 @@ import { oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
 import { LanguageSupport, syntaxHighlighting } from '@codemirror/language';
 // import readOnlyRangesExtension from 'codemirror-readonly-ranges';
 import { javascriptModule } from './languageModules/javascriptModule';
+import { typescriptModule } from './languageModules/typescriptModule';
 // import { pythonModule } from './languageModules/pythonModule';
 import { htmlModule } from './languageModules/htmlModule';
 import { cssModule } from './languageModules/cssModule';
@@ -50,11 +51,17 @@ export default class Code extends LitElementWw {
         },
     };
 
-    static languages: LanguageModule[] = [javascriptModule, htmlModule, cssModule];
+    static languages: LanguageModule[] = [javascriptModule, typescriptModule, htmlModule, cssModule];
     codeMirror: EditorView = new EditorView();
 
     @property({ type: Array, attribute: true, reflect: true })
     lockedLines: number[] = [];
+
+    @property({ type: String, attribute: true, reflect: true })
+    name: string = '';
+
+    @property({ type: Object, attribute: true, reflect: true })
+    runAsModule = false;
 
     @property({ type: Object, attribute: true, reflect: true })
     runnable = true;
@@ -146,7 +153,7 @@ export default class Code extends LitElementWw {
 
     firstUpdated() {
         this.codeMirror = this.createCodeMirror(this.pre);
-        this.codeMirror.focus();
+        // this.codeMirror.focus();
         if (this.iframePreview) {
             this.iframePreview.addEventListener('load', () => {
                 if (this.iframePreview && this.iframePreview.contentWindow) {
@@ -188,6 +195,8 @@ export default class Code extends LitElementWw {
         if (_changedProperties.has('languageName')) {
             this.codeMirror.dispatch({ effects: this.language.reconfigure(this.languageModule.languageExtension) });
         }
+
+        console.log(_changedProperties);
     }
 
     render() {
@@ -211,7 +220,10 @@ export default class Code extends LitElementWw {
                 @click="${this.runCode}"
                 style=${this.runnable ? '' : 'display: none'}
             >
-                ${faPlay} Run ${this.globalExecution ? '' : 'in isolation'}
+                ${faPlay} Run
+                ${this.globalExecution ? '' : 'in isolation'}${this.runAsModule && this.globalExecution
+                    ? ' as module'
+                    : ''}
                 ${this.hideExecutionCount ? '' : `(${this.executionCount})`}
             </button>
             <button
@@ -269,6 +281,17 @@ export default class Code extends LitElementWw {
                 @sl-change=${(event: any) => {
                     if (event.target) {
                         let target = event.target as SlSwitch;
+                        this.runAsModule = target.checked;
+                    }
+                }}
+                ?disabled=${!this.globalExecution}
+                ?checked=${this.runAsModule}
+                >Run as module</sl-switch
+            >
+            <sl-switch
+                @sl-change=${(event: any) => {
+                    if (event.target) {
+                        let target = event.target as SlSwitch;
                         this.canChangeLanguage = target.checked;
                     }
                 }}
@@ -301,6 +324,7 @@ export default class Code extends LitElementWw {
     Result() {
         switch (this.languageName) {
             case 'JS':
+            case 'TS':
             case 'Python':
                 const outputs = this.results
                     .filter((r) => r !== undefined)

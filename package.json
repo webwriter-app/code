@@ -1,6 +1,6 @@
 {
     "name": "@webwriter/ww-code",
-    "version": "0.5.3",
+    "version": "0.6.0",
     "keywords": [
         "webwriter-widget",
         "code",
@@ -19,7 +19,7 @@
         "dev": "vite --port 3000",
         "build": "vite build",
         "preview": "vite preview"
-    },
+        },
     "dependencies": {
         "@codemirror/autocomplete": ">=6.10.2 <7.0.0-0",
         "@codemirror/commands": ">=6.3.0 <7.0.0-0",
