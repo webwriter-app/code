@@ -30,7 +30,7 @@ import LockMarker from './CodeMirror/LockMarker';
 import CustomGutter from './CodeMirror/CustomGutter';
 // import { loadPyodide } from 'pyodide';
 
-import { faPlay } from './fontawesome.css';
+import { faPlay, faCirclePlay } from './fontawesome.css';
 
 export type LanguageModule = {
     name: string;
@@ -62,6 +62,12 @@ export default class Code extends LitElementWw {
 
     @property({ type: Object, attribute: true, reflect: true })
     runAsModule = false;
+
+    @property({ type: Object, attribute: true, reflect: true })
+    visible = true;
+
+    @property({ type: Object, attribute: true, reflect: true })
+    autoRun = false;
 
     @property({ type: Object, attribute: true, reflect: true })
     runnable = true;
@@ -173,6 +179,10 @@ export default class Code extends LitElementWw {
 
             this.results.push({ color: 'red', text: e.message });
         });
+
+        if (this.autoRun) {
+            this.runCode();
+        }
     }
 
     protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -196,7 +206,14 @@ export default class Code extends LitElementWw {
             this.codeMirror.dispatch({ effects: this.language.reconfigure(this.languageModule.languageExtension) });
         }
 
-        console.log(_changedProperties);
+        // console.log(_changedProperties);
+    }
+
+    getVisibleStyle() {
+        if (this.editable) {
+            return this.visible ? '' : 'opacity: 0.5';
+        }
+        return this.visible ? '' : 'display: none';
     }
 
     render() {
@@ -209,18 +226,18 @@ export default class Code extends LitElementWw {
     }
 
     Code() {
-        return html`<pre></pre>`;
+        return html`<pre style=${this.getVisibleStyle()}></pre>`;
     }
 
     Footer() {
-        return html`<footer>
+        return html`<footer style=${this.getVisibleStyle()}>
             <button
                 class="ww-code-button"
                 ?disabled=${this.codeRunner === undefined}
                 @click="${this.runCode}"
                 style=${this.runnable ? '' : 'display: none'}
             >
-                ${faPlay} Run
+                ${this.autoRun ? faCirclePlay : faPlay} Run
                 ${this.globalExecution ? '' : 'in isolation'}${this.runAsModule && this.globalExecution
                     ? ' as module'
                     : ''}
@@ -231,7 +248,7 @@ export default class Code extends LitElementWw {
                 @click=${() => {
                     this.results = [];
                     this.executionTime = 0;
-                    this.codeMirror.focus();
+                    // this.codeMirror.focus();
                 }}
                 style=${this.runnable ? '' : 'display: none'}
             >
@@ -245,13 +262,15 @@ export default class Code extends LitElementWw {
                     this.changeLanguage(Code.languages.find((l) => l.name === e.target.value));
                 }}
             >
-                ${Code.languages.map((l) => html` <option value="${l.name}">${l.name}</option>`)}
+                ${Code.languages.map(
+                    (l) => html` <option value="${l.name}" ?selected=${l.name === this.languageName}>${l.name}</option>`
+                )}
             </select>
         </footer>`;
     }
 
     Output() {
-        return html`<output> ${this.Result()} </output>`;
+        return html`<output style=${this.getVisibleStyle()}> ${this.Result()} </output>`;
     }
 
     Options() {
@@ -318,6 +337,12 @@ export default class Code extends LitElementWw {
                 ?checked=${!this.hideExecutionCount}
                 >Show execution count</sl-switch
             >
+            <sl-switch @sl-change=${(e: any) => (this.visible = e.target.checked)} ?checked=${this.visible}
+                >Visible</sl-switch
+            >
+            <sl-switch @sl-change=${(e: any) => (this.autoRun = e.target.checked)} ?checked=${this.autoRun}
+                >Run on load</sl-switch
+            >
         </aside>`;
     }
 
@@ -367,7 +392,7 @@ export default class Code extends LitElementWw {
         this.results = [];
         this.languageName = language.name;
         this.codeMirror.dispatch({ effects: this.language.reconfigure(this.languageModule.languageExtension) });
-        this.codeMirror.focus();
+        // this.codeMirror.focus();
     }
 
     private setAutocompletion(value: boolean) {
@@ -375,7 +400,7 @@ export default class Code extends LitElementWw {
         this.codeMirror.dispatch({
             effects: this.autocompletion.reconfigure(value ? autocompletion() : []),
         });
-        this.codeMirror.focus();
+        // this.codeMirror.focus();
     }
 
     private getReadOnlyRanges = (
