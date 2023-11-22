@@ -1,40 +1,43 @@
 import '@shoelace-style/shoelace/dist/themes/light.css';
 import { LitElementWw } from '@webwriter/lit';
 import { property, customElement, query } from 'lit/decorators.js';
-import { EditorView } from '@codemirror/view';
-import { EditorState, Compartment } from '@codemirror/state';
-import { style } from './ww-code-css';
 import { PropertyValueMap, html } from 'lit';
-import { basicSetup } from './codemirror-setup';
-import { autocompletion } from '@codemirror/autocomplete';
-import { highlightSelection } from './highlight';
-import { oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
-import { LanguageSupport, syntaxHighlighting } from '@codemirror/language';
+
+import { style } from './ww-code-css';
+
 // import readOnlyRangesExtension from 'codemirror-readonly-ranges';
+
+// CodeMirror
+import { LanguageSupport, syntaxHighlighting } from '@codemirror/language';
+import { oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
+import { EditorState, Compartment } from '@codemirror/state';
+import { autocompletion } from '@codemirror/autocomplete';
+import { EditorView } from '@codemirror/view';
+import { basicSetup } from './codemirror-setup';
+import { highlightSelection } from './highlight';
+
+// Language Modules
 import { javascriptModule } from './languageModules/javascriptModule';
 import { typescriptModule } from './languageModules/typescriptModule';
-// import { pythonModule } from './languageModules/pythonModule';
+import { webassemblyModule } from './languageModules/webassemblyModule';
+import { pythonModule } from './languageModules/pythonModule';
 import { htmlModule } from './languageModules/htmlModule';
 import { cssModule } from './languageModules/cssModule';
+
+// Shoelace Components
 import SlButton from '@shoelace-style/shoelace/dist/components/button/button.component.js';
-import SlCard from '@shoelace-style/shoelace/dist/components/card/card.component.js';
-import SlCheckbox from '@shoelace-style/shoelace/dist/components/checkbox/checkbox.component.js';
-import SlDivider from '@shoelace-style/shoelace/dist/components/divider/divider.component.js';
-import SlSelect from '@shoelace-style/shoelace/dist/components/select/select.component.js';
-import SlIcon from '@shoelace-style/shoelace/dist/components/icon/icon.component.js';
-import SlMenu from '@shoelace-style/shoelace/dist/components/menu/menu.component.js';
-import SlMenuItem from '@shoelace-style/shoelace/dist/components/menu-item/menu-item.component.js';
 import SlSwitch from '@shoelace-style/shoelace/dist/components/switch/switch.component.js';
-import SlOption from '@shoelace-style/shoelace/dist/components/option/option.component.js';
+import SlInput from '@shoelace-style/shoelace/dist/components/input/input.component.js';
+import SLDetails from '@shoelace-style/shoelace/dist/components/details/details.component.js';
+
 import LockMarker from './CodeMirror/LockMarker';
 import CustomGutter from './CodeMirror/CustomGutter';
-// import { loadPyodide } from 'pyodide';
 
 import { faPlay, faCirclePlay } from './fontawesome.css';
 
 export type LanguageModule = {
     name: string;
-    executionFunction: (code: string, context: Code) => any;
+    executionFunction: ((code: string, context: Code) => any) | undefined;
     languageExtension: LanguageSupport;
 };
 
@@ -51,7 +54,14 @@ export default class Code extends LitElementWw {
         },
     };
 
-    static languages: LanguageModule[] = [javascriptModule, typescriptModule, htmlModule, cssModule];
+    static languages: LanguageModule[] = [
+        javascriptModule,
+        typescriptModule,
+        webassemblyModule,
+        htmlModule,
+        cssModule,
+        pythonModule,
+    ];
     codeMirror: EditorView = new EditorView();
 
     @property({ type: Array, attribute: true, reflect: true })
@@ -59,6 +69,12 @@ export default class Code extends LitElementWw {
 
     @property({ type: String, attribute: true, reflect: true })
     name: string = '';
+
+    @property({ type: Boolean })
+    didRunOnce: boolean = false;
+
+    @property({ type: Array, attribute: true, reflect: true })
+    dependencies: string[] = [];
 
     @property({ type: Object, attribute: true, reflect: true })
     runAsModule = false;
@@ -110,6 +126,9 @@ export default class Code extends LitElementWw {
     @property({ attribute: false })
     errorListener: any;
 
+    @property({ attribute: false })
+    dependecyListening: boolean = false;
+
     private get codeRunner() {
         return this.languageModule.executionFunction;
     }
@@ -135,16 +154,10 @@ export default class Code extends LitElementWw {
 
     static get scopedElements() {
         let componentList = {
-            // 'sl-checkbox': SlCheckbox,
-            // 'sl-select': SlSelect,
-            // 'sl-menu': SlMenu,
-            // 'sl-menu-item': SlMenuItem,
             'sl-button': SlButton,
-            // 'sl-divider': SlDivider,
-            // 'sl-card': SlCard,
+            'sl-input': SlInput,
             'sl-switch': SlSwitch,
-            // 'sl-icon': SlIcon,
-            // 'sl-option': SlOption,
+            'sl-details': SLDetails,
         } as any;
 
         return componentList;
@@ -193,11 +206,7 @@ export default class Code extends LitElementWw {
         if (_changedProperties.has('code')) {
             if (this.codeMirror.state.doc.toString() !== this.code) {
                 this.codeMirror.dispatch({
-                    changes: {
-                        from: 0,
-                        to: undefined,
-                        insert: this.code,
-                    },
+                    changes: { from: 0, to: this.codeMirror.state.doc.length, insert: this.code },
                 });
             }
         }
@@ -221,7 +230,8 @@ export default class Code extends LitElementWw {
             <style>
                 ${style}
             </style>
-            ${this.Code()} ${this.Footer()} ${this.Output()} ${this.editable ? this.Options() : ''}
+            ${this.Code()} ${this.Footer()} ${this.codeRunner !== undefined ? this.Output() : null}
+            ${this.editable ? this.Options() : ''}
         `;
     }
 
@@ -235,7 +245,7 @@ export default class Code extends LitElementWw {
                 class="ww-code-button"
                 ?disabled=${this.codeRunner === undefined}
                 @click="${this.runCode}"
-                style=${this.runnable ? '' : 'display: none'}
+                style=${this.runnable && this.codeRunner !== undefined ? '' : 'display: none'}
             >
                 ${this.autoRun ? faCirclePlay : faPlay} Run
                 ${this.globalExecution ? '' : 'in isolation'}${this.runAsModule && this.globalExecution
@@ -250,7 +260,7 @@ export default class Code extends LitElementWw {
                     this.executionTime = 0;
                     // this.codeMirror.focus();
                 }}
-                style=${this.runnable ? '' : 'display: none'}
+                style=${this.runnable && this.codeRunner !== undefined ? '' : 'display: none'}
             >
                 Clear Output
             </button>
@@ -275,74 +285,140 @@ export default class Code extends LitElementWw {
 
     Options() {
         return html`<aside part="action" style="z-index: 1000">
-            <sl-button @click=${() => (this.executionCount = 0)}>Reset execution count</sl-button>
-            <sl-switch
-                @sl-change=${(event: any) => {
-                    if (event.target) {
-                        let target = event.target as SlSwitch;
-                        this.runnable = target.checked;
-                    }
-                }}
-                ?checked=${this.runnable}
-                >Allow Code execution</sl-switch
-            >
-            <sl-switch
-                @sl-change=${(event: any) => {
-                    if (event.target) {
-                        let target = event.target as SlSwitch;
-                        this.globalExecution = target.checked;
-                    }
-                }}
-                ?checked=${this.globalExecution}
-                >Global execution</sl-switch
-            >
-            <sl-switch
-                @sl-change=${(event: any) => {
-                    if (event.target) {
-                        let target = event.target as SlSwitch;
-                        this.runAsModule = target.checked;
-                    }
-                }}
-                ?disabled=${!this.globalExecution}
-                ?checked=${this.runAsModule}
-                >Run as module</sl-switch
-            >
-            <sl-switch
-                @sl-change=${(event: any) => {
-                    if (event.target) {
-                        let target = event.target as SlSwitch;
-                        this.canChangeLanguage = target.checked;
-                    }
-                }}
-                ?checked=${this.canChangeLanguage}
-                >Allow Language change</sl-switch
-            >
-            <sl-switch
-                @sl-change=${(event: any) => {
-                    if (event.target) {
-                        let target = event.target as SlSwitch;
-                        this.setAutocompletion(target.checked);
-                    }
-                }}
-                ?checked=${this.autocomplete}
-                >Autocompletion</sl-switch
-            >
-            <sl-switch
-                @sl-change=${(e: any) => (this.hideExecutionTime = !e.target.checked)}
-                ?checked=${!this.hideExecutionTime}
-                >Show execution time</sl-switch
-            >
-            <sl-switch
-                @sl-change=${(e: any) => (this.hideExecutionCount = !e.target.checked)}
-                ?checked=${!this.hideExecutionCount}
-                >Show execution count</sl-switch
-            >
-            <sl-switch @sl-change=${(e: any) => (this.visible = e.target.checked)} ?checked=${this.visible}
-                >Visible</sl-switch
-            >
-            <sl-switch @sl-change=${(e: any) => (this.autoRun = e.target.checked)} ?checked=${this.autoRun}
-                >Run on load</sl-switch
-            >
+            <sl-input
+                @sl-change=${(e: any) => (this.name = e.target.value)}
+                value=${this.name}
+                placeholder="Code Cell Name"
+            ></sl-input>
+            <sl-details summary="Execution" ?disabled=${this.codeRunner === undefined}>
+                <sl-switch
+                    @sl-change=${(event: any) => {
+                        if (event.target) {
+                            let target = event.target as SlSwitch;
+                            this.runnable = target.checked;
+                        }
+                    }}
+                    ?checked=${this.runnable}
+                    ?disabled=${this.codeRunner === undefined}
+                    >Allow Code execution</sl-switch
+                >
+                <sl-switch
+                    @sl-change=${(event: any) => {
+                        if (event.target) {
+                            let target = event.target as SlSwitch;
+                            this.globalExecution = target.checked;
+                        }
+                    }}
+                    ?checked=${this.globalExecution}
+                    ?disabled=${this.codeRunner === undefined}
+                    >Global execution</sl-switch
+                >
+                <sl-switch
+                    @sl-change=${(event: any) => {
+                        if (event.target) {
+                            let target = event.target as SlSwitch;
+                            this.runAsModule = target.checked;
+                        }
+                    }}
+                    ?disabled=${!this.globalExecution || this.codeRunner === undefined}
+                    ?checked=${this.runAsModule}
+                    >Run as module</sl-switch
+                >
+                <sl-switch
+                    @sl-change=${(e: any) => (this.autoRun = e.target.checked)}
+                    ?checked=${this.autoRun}
+                    ?disabled=${this.codeRunner === undefined}
+                    >Run on load</sl-switch
+                >
+            </sl-details>
+            <sl-details summary="Editor">
+                <sl-switch
+                    @sl-change=${(event: any) => {
+                        if (event.target) {
+                            let target = event.target as SlSwitch;
+                            this.canChangeLanguage = target.checked;
+                        }
+                    }}
+                    ?checked=${this.canChangeLanguage}
+                    >Allow Language change</sl-switch
+                >
+                <sl-switch
+                    @sl-change=${(event: any) => {
+                        if (event.target) {
+                            let target = event.target as SlSwitch;
+                            this.setAutocompletion(target.checked);
+                        }
+                    }}
+                    ?checked=${this.autocomplete}
+                    >Autocompletion</sl-switch
+                >
+
+                <sl-switch @sl-change=${(e: any) => (this.visible = e.target.checked)} ?checked=${this.visible}
+                    >Visible</sl-switch
+                >
+            </sl-details>
+            <sl-details summary="Results" ?disabled=${this.codeRunner === undefined}>
+                <sl-switch
+                    @sl-change=${(e: any) => (this.hideExecutionTime = !e.target.checked)}
+                    ?checked=${!this.hideExecutionTime}
+                    >Show execution time</sl-switch
+                >
+                <sl-switch
+                    @sl-change=${(e: any) => (this.hideExecutionCount = !e.target.checked)}
+                    ?checked=${!this.hideExecutionCount}
+                    >Show execution count</sl-switch
+                >
+                <sl-button @click=${() => (this.executionCount = 0)}>Reset execution count</sl-button>
+            </sl-details>
+            <sl-details summary="Dependencies" ?disabled=${this.codeRunner === undefined}>
+                <table>
+                    <tbody>
+                        ${this.dependencies.map(
+                            (d) => html`<tr>
+                                <td>${d}#${(document.getElementById(d) as Code).name}</td>
+                                <td>
+                                    <sl-button
+                                        @click=${() =>
+                                            (this.dependencies = this.dependencies.filter((dep) => dep !== d))}
+                                        size="small"
+                                    >
+                                        X
+                                    </sl-button>
+                                </td>
+                            </tr>`
+                        )}
+                        ${this.dependencies.length === 0
+                            ? html`<tr>
+                                  <td colspan="2"><i>No dependencies</i></td>
+                              </tr>`
+                            : ''}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>
+                                <sl-button
+                                    @click=${() => {
+                                        this.dependencies = [];
+                                    }}
+                                    size="small"
+                                    variant="danger"
+                                    outline
+                                    >Clear dependencies</sl-button
+                                >
+                            </td>
+                            <td>
+                                <sl-button
+                                    @click=${this.addDependencyAddListener}
+                                    variant=${this.dependecyListening ? 'primary' : 'neutral'}
+                                    size="small"
+                                    outline
+                                    >Add</sl-button
+                                >
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </sl-details>
         </aside>`;
     }
 
@@ -374,18 +450,86 @@ export default class Code extends LitElementWw {
         }
     }
 
+    private addDependency(codeCell: Code) {
+        if (codeCell === this) {
+            console.warn('Cannot add self as dependency');
+            return;
+        }
+
+        if (this.dependencies.includes(codeCell.id)) {
+            console.warn('Dependency already added');
+        } else {
+            //Check for circular dependencies
+            if (codeCell.dependencies.includes(this.id)) {
+                console.warn('Circular dependency detected');
+                return;
+            }
+
+            this.dependencies.push(codeCell.id);
+            this.dependencies = [...this.dependencies];
+        }
+    }
+
+    private addDependencyAddListener() {
+        //one time event listener on click
+        window.addEventListener(
+            'mousedown',
+            (e) => {
+                console.log(e.target);
+                //check if the target is a code cell
+                if (e.target && (e.target as HTMLElement).tagName === 'WW-CODE') {
+                    const target = e.target as Code;
+                    this.addDependency(target);
+                } else {
+                    console.warn('Target is not a code cell');
+                }
+
+                document.body.style.cursor = 'default';
+                this.dependecyListening = false;
+            },
+            { once: true }
+        );
+
+        document.body.style.cursor = 'crosshair';
+        this.dependecyListening = true;
+    }
+
     private async runCode() {
         if (!this.codeRunner) {
             return;
         }
+        this.results = [];
+        console.log(this.dependencies);
+        let allRun = true;
+        if (this.dependencies.length > 0) {
+            for (const dependency of this.dependencies) {
+                const dependencyElement = document.getElementById(dependency);
+                if (dependencyElement) {
+                    if (!(dependencyElement as Code).didRunOnce) {
+                        this.results.push({
+                            color: 'red',
+                            text: `Dependency ${
+                                (document.getElementById(dependency) as Code).name
+                            } did not run yet. Please run it first.`,
+                        });
+                        allRun = false;
+                    }
+                }
+            }
+        }
+
+        if (!allRun) {
+            return;
+        }
 
         this.executionCount++;
-        this.results = [];
         const code = this.codeMirror.state.doc.toString();
         const startTime = performance.now();
         await this.codeRunner(code, this);
         const endTime = performance.now();
         this.executionTime = endTime - startTime;
+
+        this.didRunOnce = true;
     }
 
     private changeLanguage(language: any) {

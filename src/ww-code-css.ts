@@ -256,4 +256,21 @@ export const style = css`
         margin-left: auto;
         max-width: 150px;
     }
+
+    sl-details {
+        width: 100%;
+    }
+
+    sl-input {
+        width: 100%;
+    }
+
+    sl-details::part(content) {
+        display: flex;
+        flex-direction: column;
+    }
+
+    sl-details > sl-switch {
+        margin-bottom: 0.5rem;
+    }
 `;

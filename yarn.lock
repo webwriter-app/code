@@ -75,6 +75,15 @@
     "@codemirror/language" "^6.8.0"
     "@lezer/python" "^1.1.4"
 
+"@codemirror/lang-wast@^6.0.1":
+  "integrity" "sha512-sQLsqhRjl2MWG3rxZysX+2XAyed48KhLBHLgq9xcKxIJu3npH/G+BIXW5NM5mHeDUjG0jcGh9BcjP0NfMStuzA=="
+  "resolved" "https://registry.npmjs.org/@codemirror/lang-wast/-/lang-wast-6.0.1.tgz"
+  "version" "6.0.1"
+  dependencies:
+    "@codemirror/language" "^6.0.0"
+    "@lezer/highlight" "^1.0.0"
+    "@lezer/lr" "^1.0.0"
+
 "@codemirror/language@^6.0.0", "@codemirror/language@^6.4.0", "@codemirror/language@^6.6.0", "@codemirror/language@^6.8.0", "@codemirror/language@>=6.9.1 <7.0.0-0":
   "integrity" "sha512-lWRP3Y9IUdOms6DXuBpoWwjkR7yRmnS0hKYCbSfPz9v6Em1A1UCRujAkDiCrdYfs1Z0Eu4dGtwovNPStIfkgNA=="
   "resolved" "https://registry.npmjs.org/@codemirror/language/-/language-6.9.1.tgz"
@@ -652,6 +661,11 @@
   "integrity" "sha512-kwDPIFCGx0NZHog36dj+tHiwP4QMzsZ3AgMViUBKI0+V5n4U0ufTCUMhnQ04diaRI8EX/QcPfql7zlhZ7j4zgg=="
   "resolved" "https://registry.npmjs.org/base-64/-/base-64-1.0.0.tgz"
   "version" "1.0.0"
+
+"binaryen@^116.0.0":
+  "integrity" "sha512-Hp0dXC6Cb/rTwWEoUS2BRghObE7g/S9umKtxuTDt3f61G6fNTE/YVew/ezyy3IdHcLx3f17qfh6LwETgCfvWkQ=="
+  "resolved" "https://registry.npmjs.org/binaryen/-/binaryen-116.0.0.tgz"
+  "version" "116.0.0"
 
 "brace-expansion@^1.1.7":
   "integrity" "sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA=="
@@ -2142,9 +2156,10 @@
     "for-each" "^0.3.3"
     "is-typed-array" "^1.1.9"
 
-"typescript@*", "typescript@>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta", "typescript@file:../../../AppData/Roaming/npm/node_modules/typescript":
-  "resolved" "file:../../../AppData/Roaming/npm/node_modules/typescript"
-  "version" "5.0.4"
+"typescript@*", "typescript@>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta", "typescript@>=4.8.3 <5.0.0-0":
+  "integrity" "sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g=="
+  "resolved" "https://registry.npmjs.org/typescript/-/typescript-4.9.5.tgz"
+  "version" "4.9.5"
 
 "unbox-primitive@^1.0.2":
   "integrity" "sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw=="
