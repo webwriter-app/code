@@ -1,9 +1,10 @@
 import '@shoelace-style/shoelace/dist/themes/light.css';
 import { LitElementWw } from '@webwriter/lit';
 import { property, customElement, query } from 'lit/decorators.js';
-import { PropertyValueMap, html } from 'lit';
+import { LitElement, PropertyValueMap, html } from 'lit';
 
 import { style } from './ww-code-css';
+import { v4 as uuidv4 } from 'uuid';
 
 // import readOnlyRangesExtension from 'codemirror-readonly-ranges';
 
@@ -41,7 +42,7 @@ export type LanguageModule = {
     languageExtension: LanguageSupport;
 };
 
-@customElement('ww-code')
+@customElement('webwriter-code')
 export default class Code extends LitElementWw {
     static styles = style;
 
@@ -116,6 +117,8 @@ export default class Code extends LitElementWw {
         return this.languageModule.name;
     }
 
+    static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
+
     set languageName(value: string) {
         this.languageModule = Code.languages.find((l) => l.name === value) || Code.languages[0];
     }
@@ -163,14 +166,19 @@ export default class Code extends LitElementWw {
         return componentList;
     }
 
+    private isEditable() {
+        return this.contentEditable === 'true' || this.contentEditable === '';
+    }
+
     focus() {
-        this.codeMirror?.focus();
+        // this.codeMirror?.focus();
     }
 
     @query('pre')
     pre?: HTMLPreElement;
 
     firstUpdated() {
+        this.id = uuidv4();
         this.codeMirror = this.createCodeMirror(this.pre);
         // this.codeMirror.focus();
         if (this.iframePreview) {
@@ -219,7 +227,7 @@ export default class Code extends LitElementWw {
     }
 
     getVisibleStyle() {
-        if (this.editable) {
+        if (this.isEditable()) {
             return this.visible ? '' : 'opacity: 0.5';
         }
         return this.visible ? '' : 'display: none';
@@ -231,7 +239,7 @@ export default class Code extends LitElementWw {
                 ${style}
             </style>
             ${this.Code()} ${this.Footer()} ${this.codeRunner !== undefined ? this.Output() : null}
-            ${this.editable ? this.Options() : ''}
+            ${this.isEditable() ? this.Options() : ''}
         `;
     }
 
@@ -284,9 +292,9 @@ export default class Code extends LitElementWw {
     }
 
     Options() {
-        return html`<aside part="action" style="z-index: 1000">
+        return html`<aside part="options" style="z-index: 1000">
             <sl-input
-                @sl-change=${(e: any) => (this.name = e.target.value)}
+                @sl-input=${(e: any) => (this.name = e.target.value)}
                 value=${this.name}
                 placeholder="Code Cell Name"
             ></sl-input>
@@ -375,7 +383,7 @@ export default class Code extends LitElementWw {
                     <tbody>
                         ${this.dependencies.map(
                             (d) => html`<tr>
-                                <td>${d}#${(document.getElementById(d) as Code).name}</td>
+                                <td>${d}#${(document.getElementById(d) as Code)?.name}</td>
                                 <td>
                                     <sl-button
                                         @click=${() =>
@@ -451,6 +459,8 @@ export default class Code extends LitElementWw {
     }
 
     private addDependency(codeCell: Code) {
+        console.log(codeCell, this.dependencies);
+
         if (codeCell === this) {
             console.warn('Cannot add self as dependency');
             return;
@@ -477,7 +487,7 @@ export default class Code extends LitElementWw {
             (e) => {
                 console.log(e.target);
                 //check if the target is a code cell
-                if (e.target && (e.target as HTMLElement).tagName === 'WW-CODE') {
+                if (e.target && (e.target as HTMLElement).tagName === 'WEBWRITER-CODE') {
                     const target = e.target as Code;
                     this.addDependency(target);
                 } else {
@@ -556,7 +566,7 @@ export default class Code extends LitElementWw {
     };
 
     private makeLineReadOnly = (line: number) => {
-        if (!this.editable) {
+        if (!this.isEditable()) {
             return;
         }
 
