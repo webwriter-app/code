@@ -1,6 +1,6 @@
 {
     "name": "@webwriter/code",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "keywords": [
         "webwriter-widget",
         "code",
@@ -13,7 +13,8 @@
     "contributors": [
         "Erik Viere",
         "Jorik van Genuchten"
-    ],
+    ], 
+    "description": "append highlighted code snippets to your exercises and run them. Supports a variety of programming languages.",
     "exports": {
         "./widgets/webwriter-code": "./src/ww-code.ts"
     },
@@ -37,7 +38,7 @@
         "@codemirror/view": ">=6.21.3 <7.0.0-0",
         "@replit/codemirror-indentation-markers": ">=6.5.0 <7.0.0-0",
         "@shoelace-style/shoelace": ">=2.9.0 <3.0.0-0",
-        "@webwriter/lit": "^1.6.3",
+        "@webwriter/lit": "^2.0.0",
         "binaryen": ">=116.0.0 <117.0.0-0",
         "codemirror-readonly-ranges": ">=0.1.0-alpha.1 <0.2.0-0",
         "lit": ">=3.0.0 <4.0.0-0",

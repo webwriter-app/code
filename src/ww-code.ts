@@ -46,14 +46,14 @@ export type LanguageModule = {
 export default class Code extends LitElementWw {
     static styles = style;
 
-    static JSONConverter = {
-        fromAttribute: (value: string) => {
-            return JSON.parse(value);
-        },
-        toAttribute: (value: Array<number>) => {
-            return JSON.stringify(value);
-        },
-    };
+    // static JSONConverter = {
+    //     fromAttribute: (value: string) => {
+    //         return JSON.parse(value);
+    //     },
+    //     toAttribute: (value: Array<number>) => {
+    //         return JSON.stringify(value);
+    //     },
+    // };
 
     static languages: LanguageModule[] = [
         javascriptModule,
@@ -66,54 +66,54 @@ export default class Code extends LitElementWw {
     codeMirror: EditorView = new EditorView();
 
     @property({ type: Array, attribute: true, reflect: true })
-    lockedLines: number[] = [];
+    accessor lockedLines: number[] = [];
 
     @property({ type: String, attribute: true, reflect: true })
-    name: string = '';
+    accessor name: string = '';
 
     @property({ type: Boolean })
-    didRunOnce: boolean = false;
+    accessor didRunOnce: boolean = false;
 
     @property({ type: Array, attribute: true, reflect: true })
-    dependencies: string[] = [];
+    accessor dependencies: string[] = [];
 
     @property({ type: Object, attribute: true, reflect: true })
-    runAsModule = false;
+    accessor runAsModule = false;
 
     @property({ type: Object, attribute: true, reflect: true })
-    visible = true;
+    accessor visible = true;
 
     @property({ type: Object, attribute: true, reflect: true })
-    autoRun = false;
+    accessor autoRun = false;
 
     @property({ type: Object, attribute: true, reflect: true })
-    runnable = true;
+    accessor runnable = true;
 
     @property({ type: Object, attribute: true, reflect: true })
-    autocomplete = false;
+    accessor autocomplete = false;
 
     @property({ type: Object, attribute: true, reflect: true })
-    hideExecutionTime = true;
+    accessor hideExecutionTime = true;
 
     @property({ type: Object, attribute: true, reflect: true })
-    hideExecutionCount = true;
+    accessor hideExecutionCount = true;
 
     @property({ attribute: true, reflect: true })
-    code = this.codeMirror.state.doc.toString();
+    accessor code = this.codeMirror.state.doc.toString();
 
     @property({ type: Object, attribute: true, reflect: true })
-    canChangeLanguage = true;
+    accessor canChangeLanguage = true;
 
     @property({ type: Number, attribute: true, reflect: true })
-    executionCount = 0;
+    accessor executionCount = 0;
 
     @property({ type: Object, attribute: true, reflect: true })
-    globalExecution = true;
+    accessor globalExecution = true;
 
     private disabledLines: Array<number> = [];
 
-    @property({ attribute: true, reflect: true })
-    get languageName() {
+    // @property({ attribute: true, reflect: true })
+    public get languageName() {
         return this.languageModule.name;
     }
 
@@ -124,26 +124,35 @@ export default class Code extends LitElementWw {
     }
 
     @property({ attribute: false })
-    languageModule: LanguageModule = Code.languages[0];
+    accessor languageModule: LanguageModule = Code.languages[0];
 
     @property({ attribute: false })
-    errorListener: any;
+    accessor errorListener: any;
 
     @property({ attribute: false })
-    dependecyListening: boolean = false;
+    accessor dependecyListening: boolean = false;
 
     private get codeRunner() {
         return this.languageModule.executionFunction;
     }
 
-    @property({ type: Array, attribute: true, reflect: true, converter: Code.JSONConverter })
-    results: Array<{ text: string; color: string } | undefined> = [];
+    @property({ type: Array, attribute: true, reflect: true, converter:
+        {
+            fromAttribute: (value: string) => {
+                return JSON.parse(value);
+            },
+            toAttribute: (value: Array<number>) => {
+                return JSON.stringify(value);
+            },
+        }
+    })
+    accessor results: Array<{ text: string; color: string } | undefined> = [];
 
     @property({ attribute: false })
-    executionTime: number = 0;
+    accessor executionTime: number = 0;
 
     @query('#iframePreview')
-    private iframePreview: HTMLIFrameElement | undefined;
+    private accessor iframePreview: HTMLIFrameElement | undefined;
 
     language = new Compartment();
     autocompletion = new Compartment();
@@ -175,7 +184,8 @@ export default class Code extends LitElementWw {
     }
 
     @query('pre')
-    pre?: HTMLPreElement;
+    accessor pre!: HTMLPreElement;
+
 
     firstUpdated() {
         this.id = uuidv4();

@@ -18,9 +18,9 @@
     "noFallthroughCasesInSwitch": true,
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
+    "experimentalDecorators": false,
     "forceConsistentCasingInFileNames": true,
-    "useDefineForClassFields": false,
+    "useDefineForClassFields": true,
     "skipLibCheck": true
   },
   "include": [
