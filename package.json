@@ -16,7 +16,8 @@
     ], 
     "description": "Write and run code as a code cell. Supports several languages (HTML/CSS/JS, TypeScript, Python).",
     "exports": {
-        "./widgets/webwriter-code": "./src/ww-code.ts"
+        "./widgets/webwriter-code": "./src/ww-code.ts",
+        "./*": {"source": "./*", "default": null}
     },
     "scripts": {
         "dev": "vite --port 3000",
