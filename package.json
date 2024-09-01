@@ -14,7 +14,7 @@
         "Erik Viere",
         "Jorik van Genuchten"
     ], 
-    "description": "append highlighted code snippets to your exercises and run them. Supports a variety of programming languages.",
+    "description": "Write and run code as a code cell. Supports several languages (HTML/CSS/JS, TypeScript, Python).",
     "exports": {
         "./widgets/webwriter-code": "./src/ww-code.ts"
     },
