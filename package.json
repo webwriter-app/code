@@ -1,6 +1,6 @@
 {
     "name": "@webwriter/code",
-    "version": "1.0.1",
+    "version": "2.0.0",
     "keywords": [
         "webwriter-widget",
         "code",
@@ -13,16 +13,17 @@
     "contributors": [
         "Erik Viere",
         "Jorik van Genuchten"
-    ], 
+    ],
     "description": "Write and run code as a code cell. Supports several languages (HTML/CSS/JS, TypeScript, Python).",
     "exports": {
-        "./widgets/webwriter-code": "./src/ww-code.ts",
-        "./*": {"source": "./*", "default": null}
+        "./widgets/webwriter-code.*": {
+          "source": "./src/ww-code.ts",
+          "default": "./dist/widgets/ww-code.*"
+        },
+        "./package.json": "./package.json"
     },
     "scripts": {
-        "dev": "vite --port 3000",
-        "build": "vite build",
-        "preview": "vite preview"
+      "prepublishOnly": "npx @webwriter/build"
     },
     "dependencies": {
         "@codemirror/autocomplete": ">=6.10.2 <7.0.0-0",
