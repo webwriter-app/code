@@ -1,7 +1,34 @@
 import { pythonLanguage } from '@codemirror/lang-python';
 import { CompletionContext, snippetCompletion } from '@codemirror/autocomplete';
 import { LanguageSupport } from '@codemirror/language';
-// import { loadPyodide } from 'pyodide';
+import Code from '../ww-code';
+import workerurl from './pyWorker'
+
+const pyodideWorker: Worker = new Worker(workerurl)
+
+const callbacks: object = {};
+
+pyodideWorker.onmessage = (event) => {
+  const { id, ...data } = event.data;
+  const onSuccess = callbacks[id];
+  delete callbacks[id];
+  onSuccess(data);
+};
+
+const asyncRun = (() => {
+  let id = 0;
+  return (script: any, context: any) => {
+    id = (id + 1) % Number.MAX_SAFE_INTEGER;
+    return new Promise((onSuccess) => {
+      callbacks[id] = onSuccess;
+      pyodideWorker.postMessage({
+        ...context,
+        python: script,
+        id,
+      });
+    });
+  };
+})();
 
 //define the autocompletion for python
 //these are probably not all the keywords
@@ -44,39 +71,20 @@ function pythonCompletions(context: CompletionContext) {
         ],
     };
 }
-// import { pyodide_asm_js } from '../pyodide/pyodide.asm.js';
-// import { repodata_json } from '../pyodide/repodata.json';
 
-// const { fetch: originalFetch } = window;
+const executePython = async (code: string, context: Code) => {
 
-// window.fetch = async (...args) => {
-//     let [resource, config] = args;
-//     // request interceptor here
-//     console.log(resource);
-//     // if (resource.toString().includes('repodata.json')) {
-//     //     return await originalFetch(URL.createObjectURL(repodata_json), config);
-//     // }
-//     // if (resource.toString().includes('pyodide.asm.js')) {
-//     //     return await originalFetch(URL.createObjectURL(pyodide_asm_js), config);
-//     // }
-//     // if (resource.toString().includes('pyodide.asm.wasm')) {
-//     //     return await originalFetch(URL.createObjectURL(pyodide_asm_wasm), config);
-//     // }
+    let res: object = await asyncRun(code, "undefiend") as object
 
-//     const response = await originalFetch(resource, config);
-//     // response interceptor here
-//     return response;
-// };
+    if(typeof res["error"] != "undefined"){
+        context.results.push({text: res["error"], color: "0x0000"})
+    }else{
+        console.stdlog = console.log.bind(console)
+        context.results.push({text: res["results"], color: "0x0000"})  
+    }
+    console.log(res)
+    return "res"
 
-// console.log(URL.createObjectURL(pyodide_asm_js));
-
-//currently no execution function, so return null to remove the execute button
-const executePython = async (code: string) => {
-    // let pyodide = await loadPyodide({
-    //     indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.23.3/full/',
-    // });
-    // let res = await pyodide.runPythonAsync(code);
-    // return res;
 };
 
 //add the autocompletion to the language function
@@ -86,6 +94,6 @@ function python() {
 
 export const pythonModule = {
     name: 'Python',
-    executionFunction: undefined,
+    executionFunction: executePython,
     languageExtension: python(),
 };
