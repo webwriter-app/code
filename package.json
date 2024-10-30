@@ -1,6 +1,6 @@
 {
     "name": "@webwriter/code",
-    "version": "2.0.1",
+    "version": "2.0.4",
     "keywords": [
         "webwriter-widget",
         "code",
@@ -44,7 +44,6 @@
         "binaryen": ">=116.0.0 <117.0.0-0",
         "codemirror-readonly-ranges": ">=0.1.0-alpha.1 <0.2.0-0",
         "lit": ">=3.0.0 <4.0.0-0",
-        "pyodide": "0.26.3",
         "range-analyzer": ">=0.1.1-alpha.2 <0.2.0-0",
         "tslib": ">=2.6.2 <3.0.0-0",
         "typescript": ">=4.9.5 <5.0.0-0",
