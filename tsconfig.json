@@ -25,6 +25,7 @@
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
     "skipLibCheck": true,
+    "esModuleInterop": true,
     "types": [
       "node"
     ]

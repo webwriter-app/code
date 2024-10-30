@@ -445,9 +445,10 @@ export default class Code extends LitElementWw {
             case 'JS':
             case 'TS':
             case 'Python':
+            case 'WebAssembly':
                 const outputs = this.results
                     .filter((r) => r !== undefined)
-                    .map((r) => html`<code style="color:${r?.color}">${r?.text}</code>`);
+                    .map((r) => html`<pre style="color:${r?.color}">${r?.text}</pre>`);
                 return html` <div class="outputs">${outputs}</div>
                     <div class="executionTime">${this.executionTime.toFixed(1)}ms</div>`;
             case 'HTML':

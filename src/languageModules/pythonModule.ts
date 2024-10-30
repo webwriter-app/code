@@ -4,7 +4,7 @@ import { LanguageSupport } from '@codemirror/language';
 import Code from '../ww-code';
 import workerurl from './pyWorker'
 
-const pyodideWorker: Worker = new Worker(workerurl)
+const pyodideWorker: Worker = new Worker(workerurl, {type: "classic"})
 
 const callbacks: object = {};
 
@@ -77,12 +77,12 @@ const executePython = async (code: string, context: Code) => {
     let res: object = await asyncRun(code, "undefiend") as object
 
     if(typeof res["error"] != "undefined"){
-        context.results.push({text: res["error"], color: "0x0000"})
+        let errText: string = "File "+res["error"].split("File").pop()
+        context.results.push({text: errText, color: "red"})
     }else{
-        console.stdlog = console.log.bind(console)
         context.results.push({text: res["results"], color: "0x0000"})  
     }
-    console.log(res)
+    // console.log(res)
     return "res"
 
 };
