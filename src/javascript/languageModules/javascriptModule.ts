@@ -1,16 +1,44 @@
 import { javascript } from '@codemirror/lang-javascript';
 import Code from '../ww-code-javascript';
+import workerurl from './jsWorker'
 
 // bind function to code cell
 // capture console calls
 // Redirect results to code cell output
 
-const executeJavascript = (code: string, context: Code) => {
+const javascriptWorker: Worker = new Worker(workerurl, {type: "classic"})
+
+const callbacks: object = {};
+
+javascriptWorker.onmessage = (event) => {
+  const { id, ...data } = event.data;
+  const onSuccess = callbacks[id];
+  delete callbacks[id];
+  onSuccess(data);
+};
+
+const asyncRun = (() => {
+  let id = 0;
+  return (script: any, context: any) => {
+    id = (id + 1) % Number.MAX_SAFE_INTEGER;
+    return new Promise((onSuccess) => {
+      callbacks[id] = onSuccess;
+      javascriptWorker.postMessage({
+        ...context,
+        code: script,
+        id,
+      });
+    });
+  };
+})();
+
+const executeJavascript = async (code: string, context: Code) => {
     const oldConsole = window.console;
     window.console = customConsole(context);
     try {
-        const result = context.globalExecution ? unScopeEval(code, context) : scopedEval(code, context);
-        context.results.push({ color: 'inherit', text: result });
+        const result = context.globalExecution ? unScopeEval(code, context) : await asyncRun(code, "undefined");
+        
+        context.globalExecution ? {} : JSON.parse(result["results"]).forEach(entry => {if(!context.results.includes(entry)){context.results.push(entry)}});
         return result;
     } catch (e) {
         context.results.push({ color: 'red', text: e.message });
