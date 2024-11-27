@@ -1,6 +1,5 @@
 import '@shoelace-style/shoelace/dist/themes/light.css';
 import { customElement } from 'lit/decorators.js';
-import { PropertyValueMap } from 'lit';
 
 import Code from '../shared/ww-code-template'
 
