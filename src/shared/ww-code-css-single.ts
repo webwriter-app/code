@@ -147,6 +147,7 @@ export const style = css`
     }
 
     .htmlPreview {
+        font-family: "Arial";
         width: 100%;
         margin: 1rem;
     }
