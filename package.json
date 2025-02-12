@@ -59,6 +59,7 @@
 			"source": "./src/html/ww-code-html.ts",
 			"default": "./dist/widgets/ww-code-html.*"
 		},
+        "./snippets/HTML.html":"./snippets/html.html",
 		"./widgets/webwriter-code-javascript.*": {
 			"source": "./src/javascript/ww-code-javascript.ts",
 			"default": "./dist/widgets/ww-code-javascript.*"
@@ -81,11 +82,6 @@
 		".": {
 			"label": {
 				"_": "Code"
-			}
-		},
-		"./widgets/webwriter-code-html": {
-			"label": {
-				"_": "HTML"
 			}
 		},
 		"./widgets/webwriter-code-javascript": {
