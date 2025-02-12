@@ -311,7 +311,7 @@ export default abstract class Code extends LitElementWw {
                     ?disabled=${this.codeRunner === undefined}
                     >Global execution</sl-switch
                 >
-                <sl-switch
+                <!-- <sl-switch
                     @sl-change=${(event: any) => {
                         if (event.target) {
                             let target = event.target as SlSwitch;
@@ -321,7 +321,7 @@ export default abstract class Code extends LitElementWw {
                     ?disabled=${!this.globalExecution || this.codeRunner === undefined}
                     ?checked=${this.runAsModule}
                     >Run as module</sl-switch
-                >
+                > -->
                 <sl-switch
                     @sl-change=${(e: any) => (this.autoRun = e.target.checked)}
                     ?checked=${this.autoRun}
@@ -330,7 +330,7 @@ export default abstract class Code extends LitElementWw {
                 >
             </sl-details>
             <sl-details summary="Editor">
-                <sl-switch
+                <!-- <sl-switch
                     @sl-change=${(event: any) => {
                         if (event.target) {
                             let target = event.target as SlSwitch;
@@ -339,7 +339,7 @@ export default abstract class Code extends LitElementWw {
                     }}
                     ?checked=${this.canChangeLanguage}
                     >Allow Language change</sl-switch
-                >
+                > -->
                 <sl-switch
                     @sl-change=${(event: any) => {
                         if (event.target) {
@@ -368,7 +368,7 @@ export default abstract class Code extends LitElementWw {
                 >
                 <sl-button @click=${() => (this.executionCount = 0)}>Reset execution count</sl-button>
             </sl-details>
-            <sl-details summary="Dependencies" ?disabled=${this.codeRunner === undefined}>
+            <!-- <sl-details summary="Dependencies" ?disabled=${this.codeRunner === undefined}>
                 <table>
                     <tbody>
                         ${this.dependencies.map(
@@ -416,7 +416,7 @@ export default abstract class Code extends LitElementWw {
                         </tr>
                     </tfoot>
                 </table>
-            </sl-details>
+            </sl-details> -->
         </aside>`;
     }
 
