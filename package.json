@@ -1,6 +1,6 @@
 {
 	"name": "@webwriter/code",
-	"version": "2.0.8",
+	"version": "2.0.9",
 	"description": "Write and run code as a code cell. Supports several languages (HTML/CSS/JS, TypeScript, Python).",
 	"keywords": [
 		"webwriter-widget",
@@ -59,7 +59,7 @@
 			"source": "./src/html/ww-code-html.ts",
 			"default": "./dist/widgets/ww-code-html.*"
 		},
-        "./snippets/HTML.html":"./snippets/html.html",
+		"./snippets/HTML.html": "./snippets/html.html",
 		"./widgets/webwriter-code-javascript.*": {
 			"source": "./src/javascript/ww-code-javascript.ts",
 			"default": "./dist/widgets/ww-code-javascript.*"
@@ -76,7 +76,8 @@
 			"source": "./src/webassembly/ww-code-webassembly.ts",
 			"default": "./dist/widgets/ww-code-webassembly.*"
 		},
-		"./package.json": "./package.json"
+		"./package.json": "./package.json",
+		"./icon": "./icon.svg"
 	},
 	"editingConfig": {
 		".": {

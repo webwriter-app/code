@@ -283,11 +283,11 @@ export default abstract class Code extends LitElementWw {
 
     Options() {
         return html`<aside part="options" style="z-index: 1000">
-            <sl-input
+            <!-- <sl-input
                 @sl-input=${(e: any) => (this.name = e.target.value)}
                 value=${this.name}
                 placeholder="Code Cell Name"
-            ></sl-input>
+            ></sl-input> -->
             <sl-details summary="Execution" ?disabled=${this.codeRunner === undefined}>
                 <sl-switch
                     @sl-change=${(event: any) => {
