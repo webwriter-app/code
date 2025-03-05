@@ -216,6 +216,18 @@ export default abstract class Code extends LitElementWw {
         // this.codeMirror.focus();
     }
 
+    pasteCode(e: KeyboardEvent) {
+        if(e.ctrlKey && e.key==="v"){
+            navigator.clipboard
+            .readText()
+            .then((clipText) => {
+                this.codeMirror.dispatch({
+                    changes: { from: 0, to: this.codeMirror.state.doc.length, insert: this.codeMirror.state.doc.toString()+clipText },
+                });
+            });
+        }
+    }
+
     getVisibleStyle() {
         if (this.isEditable()) {
             return this.visible ? '' : 'opacity: 0.5';
@@ -234,7 +246,7 @@ export default abstract class Code extends LitElementWw {
     }
 
     Code() {
-        return html`<pre style=${this.getVisibleStyle()}></pre>`;
+        return html`<pre style=${this.getVisibleStyle()} @keydown=${(e: KeyboardEvent)=>(this.pasteCode(e))}></pre>`;
     }
 
     Footer() {

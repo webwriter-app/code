@@ -1,109 +1,114 @@
 {
-	"name": "@webwriter/code",
-	"version": "2.0.9",
-	"description": "Write and run code as a code cell. Supports several languages (HTML/CSS/JS, TypeScript, Python).",
-	"keywords": [
-		"webwriter-widget",
-		"code",
-		"js",
-		"html",
-		"css"
-	],
-	"license": "MIT",
-	"author": "",
-	"contributors": [
-		"Erik Viere",
-		"Jorik van Genuchten"
-	],
-	"scripts": {
-		"prepublishOnly": "npx @webwriter/build"
-	},
-	"dependencies": {
-		"@codemirror/autocomplete": ">=6.10.2 <7.0.0-0",
-		"@codemirror/commands": ">=6.3.0 <7.0.0-0",
-		"@codemirror/lang-css": ">=6.2.1 <7.0.0-0",
-		"@codemirror/lang-html": ">=6.4.6 <7.0.0-0",
-		"@codemirror/lang-javascript": ">=6.2.1 <7.0.0-0",
-		"@codemirror/lang-python": ">=6.1.3 <7.0.0-0",
-		"@codemirror/lang-wast": ">=6.0.1 <7.0.0-0",
-		"@codemirror/language": ">=6.9.1 <7.0.0-0",
-		"@codemirror/search": ">=6.5.4 <7.0.0-0",
-		"@codemirror/state": ">=6.3.0 <7.0.0-0",
-		"@codemirror/theme-one-dark": ">=6.1.2 <7.0.0-0",
-		"@codemirror/view": ">=6.21.3 <7.0.0-0",
-		"@replit/codemirror-indentation-markers": ">=6.5.0 <7.0.0-0",
-		"@shoelace-style/shoelace": ">=2.9.0 <3.0.0-0",
-		"@webwriter/lit": "^2.0.0",
-		"binaryen": ">=116.0.0 <117.0.0-0",
-		"codemirror-readonly-ranges": ">=0.1.0-alpha.1 <0.2.0-0",
-		"lit": ">=3.0.0 <4.0.0-0",
-		"range-analyzer": ">=0.1.1-alpha.2 <0.2.0-0",
-		"tslib": ">=2.6.2 <3.0.0-0",
-		"typescript": ">=4.9.5 <5.0.0-0",
-		"uuid": "^9.0.1"
-	},
-	"devDependencies": {
-		"@types/node": ">=18.7.21 <19.0.0-0",
-		"@types/uuid": "^9.0.8",
-		"@typescript-eslint/eslint-plugin": ">=5.38.1 <6.0.0-0",
-		"eslint": ">=8.24.0 <9.0.0-0",
-		"eslint-config-standard-with-typescript": ">=23.0.0 <24.0.0-0",
-		"eslint-plugin-import": ">=2.26.0 <3.0.0-0",
-		"eslint-plugin-n": ">=15.3.0 <16.0.0-0",
-		"eslint-plugin-promise": ">=6.0.1 <7.0.0-0",
-		"vite": ">=3.0.0 <4.0.0-0"
-	},
-	"type": "module",
-	"exports": {
-		"./widgets/webwriter-code-html.*": {
-			"source": "./src/html/ww-code-html.ts",
-			"default": "./dist/widgets/ww-code-html.*"
-		},
-		"./snippets/HTML.html": "./snippets/html.html",
-		"./widgets/webwriter-code-javascript.*": {
-			"source": "./src/javascript/ww-code-javascript.ts",
-			"default": "./dist/widgets/ww-code-javascript.*"
-		},
-		"./widgets/webwriter-code-typescript.*": {
-			"source": "./src/typescript/ww-code-typescript.ts",
-			"default": "./dist/widgets/ww-code-typescript.*"
-		},
-		"./widgets/webwriter-code-python.*": {
-			"source": "./src/python/ww-code-python.ts",
-			"default": "./dist/widgets/ww-code-python.*"
-		},
-		"./widgets/webwriter-code-webassembly.*": {
-			"source": "./src/webassembly/ww-code-webassembly.ts",
-			"default": "./dist/widgets/ww-code-webassembly.*"
-		},
-		"./package.json": "./package.json",
-		"./icon": "./icon.svg"
-	},
-	"editingConfig": {
-		".": {
-			"label": {
-				"_": "Code"
-			}
-		},
-		"./widgets/webwriter-code-javascript": {
-			"label": {
-				"_": "JavaScript"
-			}
-		},
-		"./widgets/webwriter-code-typescript": {
-			"label": {
-				"_": "TypeScript"
-			}
-		},
-		"./widgets/webwriter-code-python": {
-			"label": {
-				"_": "Python"
-			}
-		},
-		"./widgets/webwriter-code-webassembly": {
-			"label": {
-				"_": "WebAssembly"
-			}
-		}
-	}
+    "name": "@webwriter/code",
+    "version": "2.0.10",
+    "description": "Write and run code as a code cell. Supports several languages (HTML/CSS/JS, TypeScript, Python).",
+    "keywords": [
+        "webwriter-widget",
+        "widget-lang-en",
+        "iscedf2013-06",
+        "isced2011-2",
+        "isced2011-3",
+        "isced2011-6",
+        "code",
+        "js",
+        "html",
+        "css"
+    ],
+    "license": "MIT",
+    "author": "",
+    "contributors": [
+        "Erik Viere",
+        "Jorik van Genuchten"
+    ],
+    "scripts": {
+        "prepublishOnly": "npx @webwriter/build"
+    },
+    "dependencies": {
+        "@codemirror/autocomplete": ">=6.10.2 <7.0.0-0",
+        "@codemirror/commands": ">=6.3.0 <7.0.0-0",
+        "@codemirror/lang-css": ">=6.2.1 <7.0.0-0",
+        "@codemirror/lang-html": ">=6.4.6 <7.0.0-0",
+        "@codemirror/lang-javascript": ">=6.2.1 <7.0.0-0",
+        "@codemirror/lang-python": ">=6.1.3 <7.0.0-0",
+        "@codemirror/lang-wast": ">=6.0.1 <7.0.0-0",
+        "@codemirror/language": ">=6.9.1 <7.0.0-0",
+        "@codemirror/search": ">=6.5.4 <7.0.0-0",
+        "@codemirror/state": ">=6.3.0 <7.0.0-0",
+        "@codemirror/theme-one-dark": ">=6.1.2 <7.0.0-0",
+        "@codemirror/view": ">=6.21.3 <7.0.0-0",
+        "@replit/codemirror-indentation-markers": ">=6.5.0 <7.0.0-0",
+        "@shoelace-style/shoelace": ">=2.9.0 <3.0.0-0",
+        "@webwriter/lit": "^2.0.0",
+        "binaryen": ">=116.0.0 <117.0.0-0",
+        "codemirror-readonly-ranges": ">=0.1.0-alpha.1 <0.2.0-0",
+        "lit": ">=3.0.0 <4.0.0-0",
+        "range-analyzer": ">=0.1.1-alpha.2 <0.2.0-0",
+        "tslib": ">=2.6.2 <3.0.0-0",
+        "typescript": ">=4.9.5 <5.0.0-0",
+        "uuid": "^9.0.1"
+    },
+    "devDependencies": {
+        "@types/node": ">=18.7.21 <19.0.0-0",
+        "@types/uuid": "^9.0.8",
+        "@typescript-eslint/eslint-plugin": ">=5.38.1 <6.0.0-0",
+        "eslint": ">=8.24.0 <9.0.0-0",
+        "eslint-config-standard-with-typescript": ">=23.0.0 <24.0.0-0",
+        "eslint-plugin-import": ">=2.26.0 <3.0.0-0",
+        "eslint-plugin-n": ">=15.3.0 <16.0.0-0",
+        "eslint-plugin-promise": ">=6.0.1 <7.0.0-0",
+        "vite": ">=3.0.0 <4.0.0-0"
+    },
+    "type": "module",
+    "exports": {
+        "./widgets/webwriter-code-html.*": {
+            "source": "./src/html/ww-code-html.ts",
+            "default": "./dist/widgets/ww-code-html.*"
+        },
+        "./snippets/HTML.html": "./snippets/html.html",
+        "./widgets/webwriter-code-javascript.*": {
+            "source": "./src/javascript/ww-code-javascript.ts",
+            "default": "./dist/widgets/ww-code-javascript.*"
+        },
+        "./widgets/webwriter-code-typescript.*": {
+            "source": "./src/typescript/ww-code-typescript.ts",
+            "default": "./dist/widgets/ww-code-typescript.*"
+        },
+        "./widgets/webwriter-code-python.*": {
+            "source": "./src/python/ww-code-python.ts",
+            "default": "./dist/widgets/ww-code-python.*"
+        },
+        "./widgets/webwriter-code-webassembly.*": {
+            "source": "./src/webassembly/ww-code-webassembly.ts",
+            "default": "./dist/widgets/ww-code-webassembly.*"
+        },
+        "./package.json": "./package.json",
+        "./icon": "./icon.svg"
+    },
+    "editingConfig": {
+        ".": {
+            "label": {
+                "_": "Code"
+            }
+        },
+        "./widgets/webwriter-code-javascript": {
+            "label": {
+                "_": "JavaScript"
+            }
+        },
+        "./widgets/webwriter-code-typescript": {
+            "label": {
+                "_": "TypeScript"
+            }
+        },
+        "./widgets/webwriter-code-python": {
+            "label": {
+                "_": "Python"
+            }
+        },
+        "./widgets/webwriter-code-webassembly": {
+            "label": {
+                "_": "WebAssembly"
+            }
+        }
+    }
 }
