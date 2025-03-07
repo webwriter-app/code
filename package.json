@@ -1,6 +1,6 @@
 {
     "name": "@webwriter/code",
-    "version": "2.0.10",
+    "version": "2.1.0",
     "description": "Write and run code as a code cell. Supports several languages (HTML/CSS/JS, TypeScript, Python).",
     "keywords": [
         "webwriter-widget",
@@ -88,6 +88,9 @@
         ".": {
             "label": {
                 "_": "Code"
+            },
+            "description": {
+                "de": "Schreiben und Ausführen von Code in einzelnen Codezellen. Unterstützt mehrere Sprachen (HTML/CSS/JS, TypeScript, Python)."
             }
         },
         "./widgets/webwriter-code-javascript": {
