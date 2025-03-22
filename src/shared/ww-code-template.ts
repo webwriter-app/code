@@ -161,7 +161,7 @@ export default abstract class Code extends LitElementWw {
 
 
     firstUpdated() {
-        this.id = uuidv4();
+        this.name = uuidv4();
         this.codeMirror = this.createCodeMirror(this.pre);
         // this.codeMirror.focus();
         if (this.iframePreview) {
@@ -475,16 +475,16 @@ export default abstract class Code extends LitElementWw {
             return;
         }
 
-        if (this.dependencies.includes(codeCell.id)) {
+        if (this.dependencies.includes(codeCell.name)) {
             console.warn('Dependency already added');
         } else {
             //Check for circular dependencies
-            if (codeCell.dependencies.includes(this.id)) {
+            if (codeCell.dependencies.includes(this.name)) {
                 console.warn('Circular dependency detected');
                 return;
             }
 
-            this.dependencies.push(codeCell.id);
+            this.dependencies.push(codeCell.name);
             this.dependencies = [...this.dependencies];
         }
     }
