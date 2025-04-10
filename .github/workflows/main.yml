@@ -1,0 +1,8 @@
+name: Publish
+on:
+  release: 
+    types: [published]
+jobs:
+  publish:
+    uses: webwriter-app/_package-concepts/.github/workflows/publish_pkg.yml@main
+    secrets: inherit
