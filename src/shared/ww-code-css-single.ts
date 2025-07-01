@@ -1,4 +1,4 @@
-import { css } from 'lit';
+import { css } from "lit";
 export const style = css`
     :host {
         display: flex;
@@ -12,22 +12,22 @@ export const style = css`
         --theme-color-hover: #fff;
     }
 
-    aside[part='action'] {
+    aside[part="action"] {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
     }
 
-    :host(:not([editable])) aside[part='action'] {
+    :host(:not([editable])) aside[part="action"] {
         display: none !important;
     }
 
-    aside[part='action'] sl-divider {
+    aside[part="action"] sl-divider {
         width: 100%;
     }
 
-    aside[part='action'] > * {
+    aside[part="action"] > * {
         margin: 0.5rem;
     }
 
@@ -127,7 +127,7 @@ export const style = css`
         footer,
         div.cm-gutter.cm-lock-gutter,
         div.cm-gutter.cm-foldGutter,
-        aside[part='action'] {
+        aside[part="action"] {
             display: none !important;
         }
 
@@ -188,8 +188,11 @@ export const style = css`
         user-select: none;
         white-space: nowrap;
         vertical-align: middle;
-        transition: var(--sl-transition-x-fast) background-color, var(--sl-transition-x-fast) color,
-            var(--sl-transition-x-fast) border, var(--sl-transition-x-fast) box-shadow;
+        transition:
+            var(--sl-transition-x-fast) background-color,
+            var(--sl-transition-x-fast) color,
+            var(--sl-transition-x-fast) border,
+            var(--sl-transition-x-fast) box-shadow;
         cursor: inherit;
 
         justify-self: flex-start;
@@ -231,8 +234,11 @@ export const style = css`
         user-select: none;
         white-space: nowrap;
         vertical-align: middle;
-        transition: var(--sl-transition-x-fast) background-color, var(--sl-transition-x-fast) color,
-            var(--sl-transition-x-fast) border, var(--sl-transition-x-fast) box-shadow;
+        transition:
+            var(--sl-transition-x-fast) background-color,
+            var(--sl-transition-x-fast) color,
+            var(--sl-transition-x-fast) border,
+            var(--sl-transition-x-fast) box-shadow;
         cursor: inherit;
 
         float: right;

@@ -1,9 +1,9 @@
-import * as ts from 'typescript';
+import * as ts from "typescript";
 
-import { javascript } from '@codemirror/lang-javascript';
-import { javascriptModule } from './javascriptModule';
+import { javascript } from "@codemirror/lang-javascript";
+import { javascriptModule } from "./javascriptModule";
 
-import Code from '../ww-code-typescript';
+import Code from "../ww-code-typescript";
 
 // bind function to code cell
 // capture console calls
@@ -23,18 +23,18 @@ const executeTypescript = (code: string, context: Code) => {
         jsCode.diagnostics.forEach((diagnostic) => {
             if (diagnostic.category === ts.DiagnosticCategory.Error) {
                 context.results.push({
-                    color: 'red',
-                    text: `${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`,
+                    color: "red",
+                    text: `${ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")}`,
                 });
             } else if (diagnostic.category === ts.DiagnosticCategory.Warning) {
                 context.results.push({
-                    color: 'orange',
-                    text: `${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`,
+                    color: "orange",
+                    text: `${ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")}`,
                 });
             } else {
                 context.results.push({
-                    color: 'inherit',
-                    text: `${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`,
+                    color: "inherit",
+                    text: `${ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")}`,
                 });
             }
         });
@@ -47,7 +47,7 @@ const executeTypescript = (code: string, context: Code) => {
 };
 
 export const typescriptModule = {
-    name: 'TS',
+    name: "TS",
     executionFunction: executeTypescript,
     languageExtension: javascript({
         typescript: true,

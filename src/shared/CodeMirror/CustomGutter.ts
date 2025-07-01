@@ -1,10 +1,10 @@
-import { Line, RangeSet, StateEffect, StateField } from '@codemirror/state';
-import { EditorView, GutterMarker, gutter } from '@codemirror/view';
+import { Line, RangeSet, StateEffect, StateField } from "@codemirror/state";
+import { EditorView, GutterMarker, gutter } from "@codemirror/view";
 
 export default function CustomGutter(
     name: String,
     marker: GutterMarker,
-    callback: (view: EditorView, pos: number) => void
+    callback: (view: EditorView, pos: number) => void,
 ) {
     const effect = StateEffect.define<{ pos: number; on: boolean }>({
         map: (val, mapping) => ({ pos: mapping.mapPos(val.pos), on: val.on }),

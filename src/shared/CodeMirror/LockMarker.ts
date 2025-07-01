@@ -1,4 +1,4 @@
-import { GutterMarker } from '@codemirror/view';
+import { GutterMarker } from "@codemirror/view";
 
 /*
  * This is a custom gutter marker that displays a lock icon.
@@ -6,8 +6,8 @@ import { GutterMarker } from '@codemirror/view';
  */
 export default class LockMarker extends GutterMarker {
     toDOM() {
-        let icon = document.createElement('sl-icon');
-        icon.name = 'lock';
+        let icon = document.createElement("sl-icon");
+        icon.name = "lock";
         return icon;
     }
 }
