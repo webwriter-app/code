@@ -18,12 +18,11 @@ import { basicSetup } from "./codemirror-setup";
 import { highlightSelection } from "./highlight";
 
 // Shoelace Components
-import { SlButton, SlDetails, SlInput, SlSwitch } from "@shoelace-style/shoelace";
+import { SlButton, SlDetails, SlIcon, SlInput, SlSwitch } from "@shoelace-style/shoelace";
+import "./shoelace-icons";
 
 import CustomGutter from "./CodeMirror/CustomGutter";
 import LockMarker from "./CodeMirror/LockMarker";
-
-import { faCirclePlay, faPlay } from "./fontawesome.css";
 
 export default abstract class Code extends LitElementWw {
     static styles = style;
@@ -141,6 +140,7 @@ export default abstract class Code extends LitElementWw {
             "sl-input": SlInput,
             "sl-switch": SlSwitch,
             "sl-details": SlDetails,
+            "sl-icon": SlIcon,
         } as any;
 
         return componentList;
@@ -262,7 +262,8 @@ export default abstract class Code extends LitElementWw {
                 @click="${this.runCode}"
                 style=${this.runnable && this.codeRunner !== undefined ? "" : "display: none"}
             >
-                ${this.autoRun ? faCirclePlay : faPlay} Run
+                <sl-icon name="${this.autoRun ? "play-circle" : "play-fill"}" slot="prefix"></sl-icon>
+                Run
                 ${this.globalExecution ? "" : "in isolation"}${this.runAsModule && this.globalExecution
                     ? " as module"
                     : ""}
