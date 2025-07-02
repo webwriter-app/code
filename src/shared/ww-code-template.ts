@@ -1,32 +1,29 @@
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { LitElementWw } from "@webwriter/lit";
-import { property, query } from "lit/decorators.js";
 import { LitElement, PropertyValueMap, html } from "lit";
+import { property, query } from "lit/decorators.js";
 
-import { style } from "./ww-code-css-single";
 import { v4 as uuidv4 } from "uuid";
+import { style } from "./ww-code-css-single";
 
 // import readOnlyRangesExtension from 'codemirror-readonly-ranges';
 
 // CodeMirror
-import { syntaxHighlighting } from "@codemirror/language";
-import { oneDarkHighlightStyle } from "@codemirror/theme-one-dark";
-import { EditorState, Compartment } from "@codemirror/state";
 import { autocompletion } from "@codemirror/autocomplete";
+import { syntaxHighlighting } from "@codemirror/language";
+import { Compartment, EditorState } from "@codemirror/state";
+import { oneDarkHighlightStyle } from "@codemirror/theme-one-dark";
 import { EditorView } from "@codemirror/view";
 import { basicSetup } from "./codemirror-setup";
 import { highlightSelection } from "./highlight";
 
 // Shoelace Components
-import SlButton from "@shoelace-style/shoelace/dist/components/button/button.component.js";
-import SlSwitch from "@shoelace-style/shoelace/dist/components/switch/switch.component.js";
-import SlInput from "@shoelace-style/shoelace/dist/components/input/input.component.js";
-import SLDetails from "@shoelace-style/shoelace/dist/components/details/details.component.js";
+import { SlButton, SlDetails, SlInput, SlSwitch } from "@shoelace-style/shoelace";
 
-import LockMarker from "./CodeMirror/LockMarker";
 import CustomGutter from "./CodeMirror/CustomGutter";
+import LockMarker from "./CodeMirror/LockMarker";
 
-import { faPlay, faCirclePlay } from "./fontawesome.css";
+import { faCirclePlay, faPlay } from "./fontawesome.css";
 
 export default abstract class Code extends LitElementWw {
     static styles = style;
@@ -143,7 +140,7 @@ export default abstract class Code extends LitElementWw {
             "sl-button": SlButton,
             "sl-input": SlInput,
             "sl-switch": SlSwitch,
-            "sl-details": SLDetails,
+            "sl-details": SlDetails,
         } as any;
 
         return componentList;
@@ -244,10 +241,7 @@ export default abstract class Code extends LitElementWw {
 
     render() {
         return html`
-            <style>
-                ${style}
-            </style>
-            ${this.Code()} ${this.Footer()} ${this.codeRunner !== undefined ? this.Output() : null}
+            ${this.Code()} ${this.Controls()} ${this.codeRunner !== undefined ? this.Output() : null}
             ${this.isEditable() ? this.Options() : ""}
         `;
     }
@@ -259,10 +253,11 @@ export default abstract class Code extends LitElementWw {
         ></pre>`;
     }
 
-    Footer() {
-        return html`<footer style=${this.getVisibleStyle()}>
-            <button
-                class="ww-code-button"
+    Controls() {
+        return html`<div class="controls" style=${this.getVisibleStyle()}>
+            <sl-button
+                variant="primary"
+                size="small"
                 ?disabled=${this.codeRunner === undefined}
                 @click="${this.runCode}"
                 style=${this.runnable && this.codeRunner !== undefined ? "" : "display: none"}
@@ -272,9 +267,10 @@ export default abstract class Code extends LitElementWw {
                     ? " as module"
                     : ""}
                 ${this.hideExecutionCount ? "" : `(${this.executionCount})`}
-            </button>
-            <button
-                class="ww-code-button"
+            </sl-button>
+            <div class="language-label">${this.languageModule.name}</div>
+            <sl-button
+                size="small"
                 @click=${() => {
                     this.results = [];
                     this.executionTime = 0;
@@ -283,23 +279,8 @@ export default abstract class Code extends LitElementWw {
                 style=${this.runnable && this.codeRunner !== undefined ? "" : "display: none"}
             >
                 Clear Output
-            </button>
-            <select
-                value=${this.languageModule.name}
-                ?disabled=${true}
-                class="ww-code-select"
-                @change=${(e: any) => {
-                    this.changeLanguage(this.languageModule.name.find((l) => l.name === e.target.value));
-                }}
-            >
-                ${this.languages.map(
-                    (l) =>
-                        html` <option value="${l.name}" ?selected=${l.name === this.languageModule.name}>
-                            ${l.name}
-                        </option>`,
-                )}
-            </select>
-        </footer>`;
+            </sl-button>
+        </div>`;
     }
 
     Output() {
