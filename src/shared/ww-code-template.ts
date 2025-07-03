@@ -3,44 +3,30 @@ import { LitElementWw } from "@webwriter/lit";
 import { LitElement, PropertyValueMap, html } from "lit";
 import { property, query } from "lit/decorators.js";
 
-import { v4 as uuidv4 } from "uuid";
 import { style } from "./ww-code-css-single";
 
 // import readOnlyRangesExtension from 'codemirror-readonly-ranges';
 
 // CodeMirror
 import { autocompletion } from "@codemirror/autocomplete";
-import { syntaxHighlighting } from "@codemirror/language";
+import { LanguageSupport, syntaxHighlighting } from "@codemirror/language";
 import { Compartment, EditorState } from "@codemirror/state";
 import { oneDarkHighlightStyle } from "@codemirror/theme-one-dark";
 import { EditorView } from "@codemirror/view";
 import { basicSetup } from "./codemirror-setup";
-import { highlightSelection } from "./highlight";
 
 // Shoelace Components
 import { SlButton, SlDetails, SlIcon, SlInput, SlSwitch } from "@shoelace-style/shoelace";
 import "./shoelace-icons";
 
-import CustomGutter from "./CodeMirror/CustomGutter";
-import LockMarker from "./CodeMirror/LockMarker";
-
 export type LanguageModule = {
     name: string;
-    executionFunction: ((code: string, context: CodeJS) => any) | undefined;
+    executionFunction: ((code: string, context: Code) => any) | undefined;
     languageExtension: LanguageSupport;
 };
 
 export default abstract class Code extends LitElementWw {
     static styles = style;
-
-    // static JSONConverter = {
-    //     fromAttribute: (value: string) => {
-    //         return JSON.parse(value);
-    //     },
-    //     toAttribute: (value: Array<number>) => {
-    //         return JSON.stringify(value);
-    //     },
-    // };
 
     codeMirror: EditorView = new EditorView();
 
@@ -53,48 +39,37 @@ export default abstract class Code extends LitElementWw {
     @property({ type: Boolean })
     accessor didRunOnce: boolean = false;
 
-    @property({ type: Array, attribute: true, reflect: true })
-    accessor dependencies: string[] = [];
-
-    @property({ type: Object, attribute: true, reflect: true })
-    accessor runAsModule = false;
-
-    @property({ type: Object, attribute: true, reflect: true })
+    @property({ type: Boolean, attribute: true, reflect: true })
     accessor visible = true;
 
-    @property({ type: Object, attribute: true, reflect: true })
+    @property({ type: Boolean, attribute: true, reflect: true })
     accessor autoRun = false;
 
-    @property({ type: Object, attribute: true, reflect: true })
+    @property({ type: Boolean, attribute: true, reflect: true })
     accessor runnable = true;
 
-    @property({ type: Object, attribute: true, reflect: true })
+    @property({ type: Boolean, attribute: true, reflect: true })
     accessor autocomplete = false;
 
-    @property({ type: Object, attribute: true, reflect: true })
+    @property({ type: Boolean, attribute: true, reflect: true })
     accessor hideExecutionTime = true;
 
-    @property({ type: Object, attribute: true, reflect: true })
+    @property({ type: Boolean, attribute: true, reflect: true })
     accessor hideExecutionCount = true;
 
     @property({ attribute: true, reflect: true })
     accessor code = this.codeMirror.state.doc.toString();
 
-    @property({ type: Object, attribute: true, reflect: true })
-    accessor canChangeLanguage = true;
-
     @property({ type: Number, attribute: true, reflect: true })
     accessor executionCount = 0;
 
-    @property({ type: Object, attribute: true, reflect: true })
+    @property({ type: Boolean, attribute: true, reflect: true })
     accessor globalExecution = true;
-
-    disabledLines: Array<number> = [];
 
     static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
 
     @property({ attribute: false })
-    accessor languageModule: LanguageModule;
+    accessor languageModule!: LanguageModule;
 
     @property({ attribute: false })
     accessor languages: any;
@@ -136,10 +111,6 @@ export default abstract class Code extends LitElementWw {
     theme = new Compartment();
     highlightStyle = new Compartment();
 
-    lockGutter = CustomGutter("lock", new LockMarker(), (_: EditorView, l: number) =>
-        this.makeLineReadOnly(this.codeMirror.state.doc.lineAt(l).number),
-    );
-
     static get scopedElements() {
         let componentList = {
             "sl-button": SlButton,
@@ -156,26 +127,17 @@ export default abstract class Code extends LitElementWw {
         return this.contentEditable === "true" || this.contentEditable === "";
     }
 
-    focus() {
-        // this.codeMirror?.focus();
-    }
-
     @query("pre")
     accessor pre!: HTMLPreElement;
 
     firstUpdated() {
-        this.name = uuidv4();
         this.codeMirror = this.createCodeMirror(this.pre);
-        // this.codeMirror.focus();
         if (this.iframePreview) {
             this.iframePreview.addEventListener("load", () => {
                 if (this.iframePreview && this.iframePreview.contentWindow) {
                     this.iframePreview.height = this.iframePreview.contentWindow.document.body.scrollHeight + 16 + "px";
                 }
             });
-        }
-        for (const line of this.lockedLines) {
-            this.makeLineReadOnly(line);
         }
 
         window.addEventListener("error", (e) => {
@@ -208,8 +170,6 @@ export default abstract class Code extends LitElementWw {
         if (_changedProperties.has("languageName")) {
             this.codeMirror.dispatch({ effects: this.language.reconfigure(this.languageModule.languageExtension) });
         }
-
-        // console.log(_changedProperties);
     }
 
     changeLanguage(language: any) {
@@ -232,8 +192,9 @@ export default abstract class Code extends LitElementWw {
             });
         }
         if (e.ctrlKey && e.key === "c") {
-            if (window.getSelection) {
-                navigator.clipboard.writeText(window.getSelection().toString());
+            const selection = window.getSelection();
+            if (selection != null) {
+                navigator.clipboard.writeText(selection.toString());
             }
         }
     }
@@ -269,10 +230,7 @@ export default abstract class Code extends LitElementWw {
                 style=${this.runnable && this.codeRunner !== undefined ? "" : "display: none"}
             >
                 <sl-icon name="${this.autoRun ? "play-circle" : "play-fill"}" slot="prefix"></sl-icon>
-                Run
-                ${this.globalExecution ? "" : "in isolation"}${this.runAsModule && this.globalExecution
-                    ? " as module"
-                    : ""}
+                Run ${this.globalExecution ? "" : "in isolation"}
                 ${this.hideExecutionCount ? "" : `(${this.executionCount})`}
             </sl-button>
             <div class="language-label">${this.languageModule.name}</div>
@@ -296,11 +254,6 @@ export default abstract class Code extends LitElementWw {
 
     Options() {
         return html`<aside part="options" style="z-index: 1000">
-            <!-- <sl-input
-                @sl-input=${(e: any) => (this.name = e.target.value)}
-                value=${this.name}
-                placeholder="Code Cell Name"
-            ></sl-input> -->
             <sl-details summary="Execution" ?disabled=${this.codeRunner === undefined}>
                 <sl-switch
                     @sl-change=${(event: any) => {
@@ -324,17 +277,6 @@ export default abstract class Code extends LitElementWw {
                     ?disabled=${this.codeRunner === undefined}
                     >Global execution</sl-switch
                 >
-                <!-- <sl-switch
-                    @sl-change=${(event: any) => {
-                    if (event.target) {
-                        let target = event.target as SlSwitch;
-                        this.runAsModule = target.checked;
-                    }
-                }}
-                    ?disabled=${!this.globalExecution || this.codeRunner === undefined}
-                    ?checked=${this.runAsModule}
-                    >Run as module</sl-switch
-                > -->
                 <sl-switch
                     @sl-change=${(e: any) => (this.autoRun = e.target.checked)}
                     ?checked=${this.autoRun}
@@ -343,16 +285,6 @@ export default abstract class Code extends LitElementWw {
                 >
             </sl-details>
             <sl-details summary="Editor">
-                <!-- <sl-switch
-                    @sl-change=${(event: any) => {
-                    if (event.target) {
-                        let target = event.target as SlSwitch;
-                        this.canChangeLanguage = target.checked;
-                    }
-                }}
-                    ?checked=${this.canChangeLanguage}
-                    >Allow Language change</sl-switch
-                > -->
                 <sl-switch
                     @sl-change=${(event: any) => {
                         if (event.target) {
@@ -381,55 +313,6 @@ export default abstract class Code extends LitElementWw {
                 >
                 <sl-button @click=${() => (this.executionCount = 0)}>Reset execution count</sl-button>
             </sl-details>
-            <!-- <sl-details summary="Dependencies" ?disabled=${this.codeRunner === undefined}>
-                <table>
-                    <tbody>
-                        ${this.dependencies.map(
-                (d) =>
-                    html`<tr>
-                        <td>${d}#${(document.getElementById(d) as Code)?.name}</td>
-                        <td>
-                            <sl-button
-                                @click=${() => (this.dependencies = this.dependencies.filter((dep) => dep !== d))}
-                                size="small"
-                            >
-                                X
-                            </sl-button>
-                        </td>
-                    </tr>`,
-            )}
-                        ${this.dependencies.length === 0
-                ? html`<tr>
-                      <td colspan="2"><i>No dependencies</i></td>
-                  </tr>`
-                : ""}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td>
-                                <sl-button
-                                    @click=${() => {
-                this.dependencies = [];
-            }}
-                                    size="small"
-                                    variant="danger"
-                                    outline
-                                    >Clear dependencies</sl-button
-                                >
-                            </td>
-                            <td>
-                                <sl-button
-                                    @click=${this.addDependencyAddListener}
-                                    variant=${this.dependecyListening ? "primary" : "neutral"}
-                                    size="small"
-                                    outline
-                                    >Add</sl-button
-                                >
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </sl-details> -->
         </aside>`;
     }
 
@@ -440,72 +323,15 @@ export default abstract class Code extends LitElementWw {
             case "Python":
             case "WebAssembly":
                 const outputs = this.results
-                    .filter((r) => r !== undefined)
-                    .map((r) => html`<pre style="color:${r?.color}">${r?.text}</pre>`);
+                    .filter((r: any) => r !== undefined)
+                    .map((r: any) => html`<pre style="color:${r?.color}">${r?.text}</pre>`);
                 return html` <div class="outputs">${outputs}</div>
                     <div class="executionTime">${this.executionTime.toFixed(1)}ms</div>`;
             case "HTML":
                 return html` <iframe id="iframePreview" class="htmlPreview" srcdoc=${this.results[0]}></iframe>`;
-            case "CSS":
-                const src = `
-                    <style>
-                        html, body {
-                            overflow: hidden;
-                        }
-                        ${this.results[0]}
-                    </style>
-                    <div class="cssPreview"></div>
-                `;
-                return html` <iframe id="iframePreview" class="cssPreviewWrapper" srcdoc=${src} seamless></iframe> `;
             default:
                 return html``;
         }
-    }
-
-    addDependency(codeCell: Code) {
-        console.log(codeCell, this.dependencies);
-
-        if (codeCell === this) {
-            console.warn("Cannot add self as dependency");
-            return;
-        }
-
-        if (this.dependencies.includes(codeCell.name)) {
-            console.warn("Dependency already added");
-        } else {
-            //Check for circular dependencies
-            if (codeCell.dependencies.includes(this.name)) {
-                console.warn("Circular dependency detected");
-                return;
-            }
-
-            this.dependencies.push(codeCell.name);
-            this.dependencies = [...this.dependencies];
-        }
-    }
-
-    addDependencyAddListener() {
-        //one time event listener on click
-        window.addEventListener(
-            "mousedown",
-            (e) => {
-                console.log(e.target);
-                //check if the target is a code cell
-                if (e.target && (e.target as HTMLElement).tagName === "WEBWRITER-CODE") {
-                    const target = e.target as Code;
-                    this.addDependency(target);
-                } else {
-                    console.warn("Target is not a code cell");
-                }
-
-                document.body.style.cursor = "default";
-                this.dependecyListening = false;
-            },
-            { once: true },
-        );
-
-        document.body.style.cursor = "crosshair";
-        this.dependecyListening = true;
     }
 
     async runCode() {
@@ -513,28 +339,6 @@ export default abstract class Code extends LitElementWw {
             return;
         }
         this.results = [];
-        console.log(this.dependencies);
-        let allRun = true;
-        if (this.dependencies.length > 0) {
-            for (const dependency of this.dependencies) {
-                const dependencyElement = document.getElementById(dependency);
-                if (dependencyElement) {
-                    if (!(dependencyElement as Code).didRunOnce) {
-                        this.results.push({
-                            color: "red",
-                            text: `Dependency ${
-                                (document.getElementById(dependency) as Code).name
-                            } did not run yet. Please run it first.`,
-                        });
-                        allRun = false;
-                    }
-                }
-            }
-        }
-
-        if (!allRun) {
-            return;
-        }
 
         this.executionCount++;
         const code = this.codeMirror.state.doc.toString();
@@ -551,60 +355,7 @@ export default abstract class Code extends LitElementWw {
         this.codeMirror.dispatch({
             effects: this.autocompletion.reconfigure(value ? autocompletion() : []),
         });
-        // this.codeMirror.focus();
     }
-
-    getReadOnlyRanges = (targetState: EditorState): Array<{ from: number | undefined; to: number | undefined }> => {
-        return this.disabledLines.map((line) => {
-            return { from: targetState.doc.line(line).from, to: targetState.doc.line(line).to };
-        });
-    };
-
-    makeLineReadOnly = (line: number) => {
-        if (!this.isEditable()) {
-            return;
-        }
-
-        const state = this.codeMirror.state;
-        const lineStart = this.codeMirror.state.doc.line(line).from;
-        const lineEnd = this.codeMirror.state.doc.line(line).to;
-
-        if (!this.disabledLines.includes(line)) {
-            this.disabledLines.push(line);
-            if (this.codeMirror.state.doc.line(line).text !== "") {
-                highlightSelection(this.codeMirror, [{ from: lineStart, to: lineEnd }]);
-            }
-            this.codeMirror.dispatch({
-                effects: this.lockGutter.effect.of({ pos: lineStart, on: true }),
-            });
-        } else {
-            // dirty fix to remove the highlight
-            this.disabledLines = this.disabledLines.filter((l) => l !== line);
-            this.codeMirror.dispatch({
-                changes: {
-                    from: state.doc.line(line).from,
-                    to: state.doc.line(line).to,
-                    insert: "",
-                },
-            });
-            this.codeMirror.dispatch({
-                changes: {
-                    from: state.doc.line(line).from,
-                    to: undefined,
-                    insert: state.doc.line(line).text,
-                },
-            });
-            this.codeMirror.dispatch({
-                effects: this.lockGutter.effect.of({ pos: lineStart, on: false }),
-            });
-        }
-
-        /* this.codeMirror.dispatch({
-            effects: this.readOnlyRanges.reconfigure(readOnlyRangesExtension(this.getReadOnlyRanges)),
-        });*/
-
-        this.lockedLines = [...this.disabledLines];
-    };
 
     createCodeMirror(parentObject: any) {
         const editorView = new EditorView({
@@ -616,8 +367,6 @@ export default abstract class Code extends LitElementWw {
                     this.autocompletion.of(autocompletion()),
                     this.theme.of([]),
                     this.highlightStyle.of(syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })),
-                    // this.readOnlyRanges.of(readOnlyRangesExtension(this.getReadOnlyRanges)),
-                    // this.lockGutter.gutter,
                     EditorView.updateListener.of((update) => {
                         if (update.docChanged) {
                             this.code = update.state.doc.toString();
