@@ -3,7 +3,7 @@ export const style = css`
     /* --- Widget --- */
     :host {
         display: block;
-        border: solid 1px var(--sl-color-neutral-200);
+        border: solid 1px var(--sl-color-neutral-300);
         border-radius: var(--sl-border-radius-medium);
         overflow: hidden;
     }
@@ -62,7 +62,7 @@ export const style = css`
         padding: var(--sl-spacing-x-small);
         gap: var(--sl-spacing-x-small);
 
-        border-top: solid 1px var(--sl-color-neutral-200);
+        border-top: solid 1px var(--sl-color-neutral-300);
     }
 
     .language-label {
@@ -83,14 +83,11 @@ export const style = css`
     }
 
     output {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
+        display: block;
         width: 100%;
         box-sizing: border-box;
         min-height: 2.75rem;
-        border-top: solid 1px var(--sl-color-neutral-200);
+        border-top: solid 1px var(--sl-color-neutral-300);
     }
 
     output .outputs {

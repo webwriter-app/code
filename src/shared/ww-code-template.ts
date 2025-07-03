@@ -24,6 +24,12 @@ import "./shoelace-icons";
 import CustomGutter from "./CodeMirror/CustomGutter";
 import LockMarker from "./CodeMirror/LockMarker";
 
+export type LanguageModule = {
+    name: string;
+    executionFunction: ((code: string, context: CodeJS) => any) | undefined;
+    languageExtension: LanguageSupport;
+};
+
 export default abstract class Code extends LitElementWw {
     static styles = style;
 
@@ -88,7 +94,7 @@ export default abstract class Code extends LitElementWw {
     static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
 
     @property({ attribute: false })
-    accessor languageModule: any;
+    accessor languageModule: LanguageModule;
 
     @property({ attribute: false })
     accessor languages: any;
@@ -116,7 +122,7 @@ export default abstract class Code extends LitElementWw {
             },
         },
     })
-    accessor results: Array<{ text: string; color: string } | undefined> = [];
+    accessor results: any = [];
 
     @property({ attribute: false })
     accessor executionTime: number = 0;
