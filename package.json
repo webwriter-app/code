@@ -62,7 +62,7 @@
             "default": "./dist/widgets/ww-code-javascript.*"
         },
         "./widgets/webwriter-code-typescript.*": {
-            "source": "./src/typescript/ww-code-typescript.ts",
+            "source": "./src/javascript/ww-code-typescript.ts",
             "default": "./dist/widgets/ww-code-typescript.*"
         },
         "./widgets/webwriter-code-python.*": {
