@@ -17,6 +17,8 @@ export const jsTemplateStyle = css`
         font-family: var(--sl-font-mono);
         line-height: 1;
         border-bottom: 1px solid var(--sl-color-neutral-300);
+
+        line-break: anywhere;
     }
 
     .log-line:last-child {
@@ -43,10 +45,11 @@ export const jsTemplateStyle = css`
         display: block;
     }
 
-    .log-value,
-    .log-value span {
+    .log-value {
         display: inline-block;
         vertical-align: text-top;
+        align-content: end;
+        min-height: 1.2em;
     }
 
     .log-null,

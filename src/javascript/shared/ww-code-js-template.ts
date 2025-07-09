@@ -157,10 +157,10 @@ export default abstract class CodeJsTemplate extends Code {
                     name="${object.value.expanded ? "caret-down-fill" : "caret-right-fill"}"
                     class="log-expand-icon"
                 ></sl-icon
-                ><span>{</span>${object.value.properties.slice(0, 3).map(({ key, value }, index) => {
+                >{${object.value.properties.slice(0, 3).map(({ key, value }, index) => {
                     if (index == 2) return ", …";
                     return html`${index === 1 ? ", " : ""}${key}: ${this.LogValue(value, false, true)}`;
-                })}<span>}</span>
+                })}}
             </div>
             ${!object.value.expanded
                 ? undefined
@@ -193,12 +193,12 @@ export default abstract class CodeJsTemplate extends Code {
                     name="${array.value.expanded ? "caret-down-fill" : "caret-right-fill"}"
                     class="log-expand-icon"
                 ></sl-icon
-                ><span class="log-value">[</span>
+                >[
                 ${array.value.values.slice(0, 5).map((value, index) => {
                     if (index == 4) return ", …";
                     return html`${index > 0 ? ", " : ""}${this.LogValue(value, false, true)}`;
                 })}
-                <span>]</span>
+                ]
             </div>
             ${!array.value.expanded
                 ? undefined
