@@ -61,8 +61,6 @@ export default abstract class CodeJsTemplate extends Code {
     private handleMessage(event: MessageEvent) {
         const message = event.data as FromWorkerMessage;
 
-        console.log(message);
-
         if (message.type == "log") {
             this.results = [...this.results, { label: message.label, logs: message.logs }];
         } else if (message.type === "consoleClear") {
