@@ -9,36 +9,19 @@ export const style = css`
     }
 
     /* --- Aside menu --- */
-    aside[part="action"] {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
+    aside[part="options"] {
+        padding-left: 5px;
     }
 
-    :host(:not([editable])) aside[part="action"] {
-        display: none !important;
+    aside[part="options"] h2 {
+        font-size: var(--sl-font-size-large);
+        font-weight: 600;
+        margin: 0;
+        margin-top: var(--sl-spacing-medium);
     }
 
-    aside[part="action"] sl-divider {
-        width: 100%;
-    }
-
-    aside[part="action"] > * {
-        margin: 0.5rem;
-    }
-
-    sl-details {
-        width: 100%;
-    }
-
-    sl-details::part(content) {
-        display: flex;
-        flex-direction: column;
-    }
-
-    sl-details > sl-switch {
-        margin-bottom: 0.5rem;
+    aside[part="options"] sl-button {
+        margin-top: var(--sl-spacing-x-small);
     }
 
     /* --- Editor --- */
@@ -108,10 +91,14 @@ export const style = css`
         margin: 0;
     }
 
+    .executionTime {
+        color: var(--sl-color-neutral-500);
+        font-size: var(--sl-font-size-medium);
+    }
+
     /* TODO: Handle printing well */
 
     /* --- Diagnostics --- */
-
     .diagnostics-container {
         font-family: var(--sl-font-mono);
         padding: var(--sl-spacing-x-small);

@@ -16,7 +16,11 @@ import { EditorView } from "@codemirror/view";
 import { basicSetup } from "./codemirror-setup";
 
 // Shoelace Components
-import { SlButton, SlDetails, SlIcon, SlInput, SlSwitch } from "@shoelace-style/shoelace";
+import SlButton from "@shoelace-style/shoelace/dist/components/button/button.js";
+import SlDetails from "@shoelace-style/shoelace/dist/components/details/details.js";
+import SlIcon from "@shoelace-style/shoelace/dist/components/icon/icon.js";
+import SlInput from "@shoelace-style/shoelace/dist/components/input/input.js";
+import SlSwitch from "@shoelace-style/shoelace/dist/components/switch/switch.js";
 import "./shoelace-icons";
 
 export type LanguageModule = {
@@ -39,9 +43,6 @@ export default abstract class Code extends LitElementWw {
 
     @property({ type: Array, attribute: true, reflect: true })
     accessor lockedLines: number[] = [];
-
-    @property({ type: String, attribute: true, reflect: true })
-    accessor name: string = "";
 
     @property({ type: Boolean })
     accessor didRunOnce: boolean = false;
@@ -70,9 +71,6 @@ export default abstract class Code extends LitElementWw {
     @property({ type: Number, attribute: true, reflect: true })
     accessor executionCount = 0;
 
-    @property({ type: Boolean, attribute: true, reflect: true })
-    accessor globalExecution = true;
-
     static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
 
     @property({ attribute: false })
@@ -80,12 +78,6 @@ export default abstract class Code extends LitElementWw {
 
     @property({ attribute: false })
     accessor languages: any;
-
-    @property({ attribute: false })
-    accessor errorListener: any;
-
-    @property({ attribute: false })
-    accessor dependecyListening: boolean = false;
 
     get codeRunner() {
         return this.languageModule.executionFunction;
@@ -143,16 +135,6 @@ export default abstract class Code extends LitElementWw {
 
     firstUpdated() {
         this.codeMirror = this.createCodeMirror(this.pre);
-
-        window.addEventListener("error", (e) => {
-            //Check if language is JS
-            if (this.languageModule.name !== "JS") {
-                return;
-            }
-
-            this.results.push({ color: "red", text: e.message });
-        });
-
         if (this.autoRun) {
             this.runCode();
         }
@@ -168,37 +150,6 @@ export default abstract class Code extends LitElementWw {
                 this.codeMirror.dispatch({
                     changes: { from: 0, to: this.codeMirror.state.doc.length, insert: this.code },
                 });
-            }
-        }
-
-        if (_changedProperties.has("languageName")) {
-            this.codeMirror.dispatch({ effects: this.language.reconfigure(this.languageModule.languageExtension) });
-        }
-    }
-
-    changeLanguage(language: any) {
-        this.results = [];
-        this.languageModule = language;
-        this.codeMirror.dispatch({ effects: this.language.reconfigure(this.languageModule.languageExtension) });
-        // this.codeMirror.focus();
-    }
-
-    handleKeyPress(e: KeyboardEvent) {
-        if (e.ctrlKey && e.key === "v") {
-            navigator.clipboard.readText().then((clipText) => {
-                this.codeMirror.dispatch({
-                    changes: {
-                        from: 0,
-                        to: this.codeMirror.state.doc.length,
-                        insert: this.codeMirror.state.doc.toString() + clipText,
-                    },
-                });
-            });
-        }
-        if (e.ctrlKey && e.key === "c") {
-            const selection = window.getSelection();
-            if (selection != null) {
-                navigator.clipboard.writeText(selection.toString());
             }
         }
     }
@@ -218,10 +169,7 @@ export default abstract class Code extends LitElementWw {
     }
 
     Code() {
-        return html`<pre
-            style=${this.getVisibleStyle()}
-            @keydown=${(e: KeyboardEvent) => this.handleKeyPress(e)}
-        ></pre>`;
+        return html`<pre style=${this.getVisibleStyle()}></pre>`;
     }
 
     Controls() {
@@ -234,9 +182,9 @@ export default abstract class Code extends LitElementWw {
                 style=${this.runnable && this.codeRunner !== undefined ? "" : "display: none"}
             >
                 <sl-icon name="${this.autoRun ? "play-circle" : "play-fill"}" slot="prefix"></sl-icon>
-                Run ${this.globalExecution ? "" : "in isolation"}
-                ${this.hideExecutionCount ? "" : `(${this.executionCount})`}
+                Run ${this.hideExecutionCount ? "" : `(${this.executionCount})`}
             </sl-button>
+            ${!this.hideExecutionTime ? html`<div class="executionTime">${this.executionTime.toFixed(1)}ms</div>` : ""}
             <div class="language-label">${this.languageModule.name}</div>
             <sl-button
                 size="small"
@@ -244,7 +192,6 @@ export default abstract class Code extends LitElementWw {
                     this.results = [];
                     this.diagnostics = [];
                     this.executionTime = 0;
-                    // this.codeMirror.focus();
                 }}
                 style=${this.runnable && this.codeRunner !== undefined ? "" : "display: none"}
             >
@@ -261,65 +208,52 @@ export default abstract class Code extends LitElementWw {
 
     Options() {
         return html`<aside part="options" style="z-index: 1000">
-            <sl-details summary="Execution" ?disabled=${this.codeRunner === undefined}>
-                <sl-switch
-                    @sl-change=${(event: any) => {
-                        if (event.target) {
-                            let target = event.target as SlSwitch;
-                            this.runnable = target.checked;
-                        }
-                    }}
-                    ?checked=${this.runnable}
-                    ?disabled=${this.codeRunner === undefined}
-                    >Allow Code execution</sl-switch
-                >
-                <sl-switch
-                    @sl-change=${(event: any) => {
-                        if (event.target) {
-                            let target = event.target as SlSwitch;
-                            this.globalExecution = target.checked;
-                        }
-                    }}
-                    ?checked=${this.globalExecution}
-                    ?disabled=${this.codeRunner === undefined}
-                    >Global execution</sl-switch
-                >
-                <sl-switch
-                    @sl-change=${(e: any) => (this.autoRun = e.target.checked)}
-                    ?checked=${this.autoRun}
-                    ?disabled=${this.codeRunner === undefined}
-                    >Run on load</sl-switch
-                >
-            </sl-details>
-            <sl-details summary="Editor">
-                <sl-switch
-                    @sl-change=${(event: any) => {
-                        if (event.target) {
-                            let target = event.target as SlSwitch;
-                            this.setAutocompletion(target.checked);
-                        }
-                    }}
-                    ?checked=${this.autocomplete}
-                    >Autocompletion</sl-switch
-                >
+            <h2>Execution</h2>
+            <sl-switch
+                @sl-change=${(event: any) => {
+                    if (event.target) {
+                        let target = event.target as SlSwitch;
+                        this.runnable = target.checked;
+                    }
+                }}
+                ?checked=${this.runnable}
+                ?disabled=${this.codeRunner === undefined}
+                >Allow Code execution</sl-switch
+            >
+            <sl-switch
+                @sl-change=${(e: any) => (this.autoRun = e.target.checked)}
+                ?checked=${this.autoRun}
+                ?disabled=${this.codeRunner === undefined}
+                >Run on load</sl-switch
+            >
+            <h2>Editor</h2>
+            <sl-switch
+                @sl-change=${(event: any) => {
+                    if (event.target) {
+                        let target = event.target as SlSwitch;
+                        this.setAutocompletion(target.checked);
+                    }
+                }}
+                ?checked=${this.autocomplete}
+                >Autocompletion</sl-switch
+            >
 
-                <sl-switch @sl-change=${(e: any) => (this.visible = e.target.checked)} ?checked=${this.visible}
-                    >Visible</sl-switch
-                >
-            </sl-details>
-            <sl-details summary="Results" ?disabled=${this.codeRunner === undefined}>
-                <sl-switch
-                    @sl-change=${(e: any) => (this.hideExecutionTime = !e.target.checked)}
-                    ?checked=${!this.hideExecutionTime}
-                    >Show execution time</sl-switch
-                >
-                <sl-switch
-                    @sl-change=${(e: any) => (this.hideExecutionCount = !e.target.checked)}
-                    ?checked=${!this.hideExecutionCount}
-                    >Show execution count</sl-switch
-                >
-                <sl-button @click=${() => (this.executionCount = 0)}>Reset execution count</sl-button>
-            </sl-details>
+            <sl-switch @sl-change=${(e: any) => (this.visible = e.target.checked)} ?checked=${this.visible}
+                >Visible</sl-switch
+            >
+
+            <h2>Results</h2>
+            <sl-switch
+                @sl-change=${(e: any) => (this.hideExecutionTime = !e.target.checked)}
+                ?checked=${!this.hideExecutionTime}
+                >Show execution time</sl-switch
+            >
+            <sl-switch
+                @sl-change=${(e: any) => (this.hideExecutionCount = !e.target.checked)}
+                ?checked=${!this.hideExecutionCount}
+                >Show execution count</sl-switch
+            >
+            <sl-button @click=${() => (this.executionCount = 0)}>Reset execution count</sl-button>
         </aside>`;
     }
 
@@ -331,8 +265,7 @@ export default abstract class Code extends LitElementWw {
                 const outputs = this.results
                     .filter((r: any) => r !== undefined)
                     .map((r: any) => html`<pre style="color:${r?.color}">${r?.text}</pre>`);
-                return html` <div class="outputs">${outputs}</div>
-                    <div class="executionTime">${this.executionTime.toFixed(1)}ms</div>`;
+                return html` <div class="outputs">${outputs}</div>`;
             case "HTML":
                 return html` <iframe
                     id="iframePreview"
