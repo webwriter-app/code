@@ -25,16 +25,12 @@ export type LanguageModule = {
     languageExtension: LanguageSupport;
 };
 
-export type Diagnostic =
-    | {
-          message: string;
-      }
-    | {
-          message: string;
-          start: number;
-          line: number;
-          character: number;
-      };
+export type Diagnostic = {
+    message: string;
+    start?: number;
+    line?: number;
+    character?: number;
+};
 
 export default abstract class Code extends LitElementWw {
     static styles = style;
@@ -116,6 +112,7 @@ export default abstract class Code extends LitElementWw {
     @property({ attribute: false })
     accessor executionTime: number = 0;
 
+    // @ts-expect-error
     @query("#iframePreview")
     accessor iframePreview: HTMLIFrameElement | undefined;
 
@@ -146,13 +143,6 @@ export default abstract class Code extends LitElementWw {
 
     firstUpdated() {
         this.codeMirror = this.createCodeMirror(this.pre);
-        if (this.iframePreview) {
-            this.iframePreview.addEventListener("load", () => {
-                if (this.iframePreview && this.iframePreview.contentWindow) {
-                    this.iframePreview.height = this.iframePreview.contentWindow.document.body.scrollHeight + 16 + "px";
-                }
-            });
-        }
 
         window.addEventListener("error", (e) => {
             //Check if language is JS
@@ -344,7 +334,12 @@ export default abstract class Code extends LitElementWw {
                 return html` <div class="outputs">${outputs}</div>
                     <div class="executionTime">${this.executionTime.toFixed(1)}ms</div>`;
             case "HTML":
-                return html` <iframe id="iframePreview" class="htmlPreview" srcdoc=${this.results[0]}></iframe>`;
+                return html` <iframe
+                    id="iframePreview"
+                    class="htmlPreview"
+                    srcdoc=${this.results[0]}
+                    sandbox="allow-scripts allow-modals"
+                ></iframe>`;
             default:
                 return html``;
         }
@@ -366,11 +361,11 @@ export default abstract class Code extends LitElementWw {
                                       @click=${(event: Event) => {
                                           event.preventDefault();
                                           this.codeMirror.focus();
-                                          this.codeMirror.dispatch({
-                                              selection: {
-                                                  anchor: d.start,
-                                              },
-                                          });
+                                          if (typeof d.start === "number") {
+                                              this.codeMirror.dispatch({
+                                                  selection: { anchor: d.start },
+                                              });
+                                          }
                                       }}
                                       >${d.line}:${d.character}</a
                                   >`
