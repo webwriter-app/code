@@ -1,7 +1,7 @@
 {
     "name": "@webwriter/code",
     "version": "2.1.2",
-    "description": "Write and run code as a code cell. Supports several languages (HTML/CSS/JS, TypeScript, Python).",
+    "description": "Write and run code as a code cell. Supports several languages (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
     "keywords": [
         "webwriter-widget",
         "widget-simulational",
@@ -14,7 +14,38 @@
         "code",
         "js",
         "html",
-        "css"
+        "css",
+        "widget-lang-de",
+        "widget-lang-ar",
+        "widget-lang-bg",
+        "widget-lang-cs",
+        "widget-lang-da",
+        "widget-lang-nl",
+        "widget-lang-et",
+        "widget-lang-fi",
+        "widget-lang-fr",
+        "widget-lang-el",
+        "widget-lang-hu",
+        "widget-lang-it",
+        "widget-lang-lv",
+        "widget-lang-lt",
+        "widget-lang-nb",
+        "widget-lang-pl",
+        "widget-lang-pt-PT",
+        "widget-lang-ro",
+        "widget-lang-ru",
+        "widget-lang-sk",
+        "widget-lang-sl",
+        "widget-lang-es",
+        "widget-lang-sv",
+        "widget-lang-tr",
+        "widget-lang-uk",
+        "widget-lang-pt-BR",
+        "widget-lang-ko",
+        "widget-lang-ja",
+        "widget-lang-id",
+        "widget-lang-zh-hans",
+        "widget-lang-zh-hant"
     ],
     "license": "MIT",
     "author": "",
@@ -42,6 +73,7 @@
         "@codemirror/state": ">=6.3.0 <7.0.0-0",
         "@codemirror/theme-one-dark": ">=6.1.2 <7.0.0-0",
         "@codemirror/view": ">=6.21.3 <7.0.0-0",
+        "@lit/localize": "^0.12.2",
         "@replit/codemirror-indentation-markers": ">=6.5.0 <7.0.0-0",
         "@shoelace-style/shoelace": ">=2.9.0 <3.0.0-0",
         "@webwriter/lit": "^2.0.0",
@@ -82,41 +114,15 @@
             "default": "./dist/widgets/ww-code-webassembly.*"
         },
         "./package.json": "./package.json",
-        "./icon": "./icon.svg"
+        "./icon": "./icon.svg",
+        "./editing-config.json": "./editing-config.json"
     },
     "editingConfig": {
-        ".": {
-            "label": {
-                "_": "Code"
-            },
-            "description": {
-                "de": "Schreiben und Ausführen von Code in einzelnen Codezellen. Unterstützt mehrere Sprachen (HTML/CSS/JS, TypeScript, Python)."
-            }
-        },
-        "./widgets/webwriter-code-javascript": {
-            "label": {
-                "_": "JavaScript"
-            }
-        },
-        "./widgets/webwriter-code-java": {
-            "label": {
-                "_": "Java"
-            }
-        },
-        "./widgets/webwriter-code-typescript": {
-            "label": {
-                "_": "TypeScript"
-            }
-        },
-        "./widgets/webwriter-code-python": {
-            "label": {
-                "_": "Python"
-            }
-        },
-        "./widgets/webwriter-code-webassembly": {
-            "label": {
-                "_": "WebAssembly"
-            }
-        }
+        ".": {},
+        "./widgets/webwriter-code-javascript": {},
+        "./widgets/webwriter-code-java": {},
+        "./widgets/webwriter-code-typescript": {},
+        "./widgets/webwriter-code-python": {},
+        "./widgets/webwriter-code-webassembly": {}
     }
 }

@@ -1,3 +1,4 @@
+import { msg } from "@lit/localize";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { LitElementWw } from "@webwriter/lit";
 import { LitElement, PropertyValueMap, html } from "lit";
@@ -182,7 +183,7 @@ export default abstract class Code extends LitElementWw {
                 style=${this.runnable && this.codeRunner !== undefined ? "" : "display: none"}
             >
                 <sl-icon name="${this.autoRun ? "play-circle" : "play-fill"}" slot="prefix"></sl-icon>
-                Run ${this.hideExecutionCount ? "" : `(${this.executionCount})`}
+                ${msg("Run")} ${this.hideExecutionCount ? "" : `(${this.executionCount})`}
             </sl-button>
             ${!this.hideExecutionTime ? html`<div class="executionTime">${this.executionTime.toFixed(1)}ms</div>` : ""}
             <div class="language-label">${this.languageModule.name}</div>
@@ -195,7 +196,7 @@ export default abstract class Code extends LitElementWw {
                 }}
                 style=${this.runnable && this.codeRunner !== undefined ? "" : "display: none"}
             >
-                Clear Output
+                ${msg("Clear Output")}
             </sl-button>
         </div>`;
     }
@@ -208,7 +209,7 @@ export default abstract class Code extends LitElementWw {
 
     Options() {
         return html`<aside part="options" style="z-index: 1000">
-            <h2>Execution</h2>
+            <h2>${msg("Execution")}</h2>
             <sl-switch
                 @sl-change=${(event: any) => {
                     if (event.target) {
@@ -218,15 +219,15 @@ export default abstract class Code extends LitElementWw {
                 }}
                 ?checked=${this.runnable}
                 ?disabled=${this.codeRunner === undefined}
-                >Allow Code execution</sl-switch
+                >${msg("Allow Code execution")}</sl-switch
             >
             <sl-switch
                 @sl-change=${(e: any) => (this.autoRun = e.target.checked)}
                 ?checked=${this.autoRun}
                 ?disabled=${this.codeRunner === undefined}
-                >Run on load</sl-switch
+                >${msg("Run on load")}</sl-switch
             >
-            <h2>Editor</h2>
+            <h2>${msg("Editor")}</h2>
             <sl-switch
                 @sl-change=${(event: any) => {
                     if (event.target) {
@@ -235,25 +236,25 @@ export default abstract class Code extends LitElementWw {
                     }
                 }}
                 ?checked=${this.autocomplete}
-                >Autocompletion</sl-switch
+                >${msg("Autocompletion")}</sl-switch
             >
 
             <sl-switch @sl-change=${(e: any) => (this.visible = e.target.checked)} ?checked=${this.visible}
-                >Visible</sl-switch
+                >${msg("Visible")}</sl-switch
             >
 
-            <h2>Results</h2>
+            <h2>${msg("Results")}</h2>
             <sl-switch
                 @sl-change=${(e: any) => (this.hideExecutionTime = !e.target.checked)}
                 ?checked=${!this.hideExecutionTime}
-                >Show execution time</sl-switch
+                >${msg("Show execution time")}</sl-switch
             >
             <sl-switch
                 @sl-change=${(e: any) => (this.hideExecutionCount = !e.target.checked)}
                 ?checked=${!this.hideExecutionCount}
-                >Show execution count</sl-switch
+                >${msg("Show execution count")}</sl-switch
             >
-            <sl-button @click=${() => (this.executionCount = 0)}>Reset execution count</sl-button>
+            <sl-button @click=${() => (this.executionCount = 0)}>${msg("Reset execution count")}</sl-button>
         </aside>`;
     }
 

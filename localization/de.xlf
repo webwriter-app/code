@@ -1,0 +1,54 @@
+<xliff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="lit-localize-inputs" datatype="plaintext" source-language="en" target-language="de">
+    <body>
+      <trans-unit id="s9fbbc819fe7e66aa">
+        <source>Run</source>
+        <target>Ausführen</target>
+      </trans-unit>
+      <trans-unit id="s47f7722202e53f2f">
+        <source>Clear Output</source>
+        <target>Ausgabe löschen</target>
+      </trans-unit>
+      <trans-unit id="s3c96a20baa10fa75">
+        <source>Execution</source>
+        <target>Ausführung</target>
+      </trans-unit>
+      <trans-unit id="sac95ed73c22266b9">
+        <source>Allow Code execution</source>
+        <target>Codeausführung zulassen</target>
+      </trans-unit>
+      <trans-unit id="sb1db8c15648f4579">
+        <source>Run on load</source>
+        <target>Beim Laden ausführen</target>
+      </trans-unit>
+      <trans-unit id="sa75b95980cd80e78">
+        <source>Editor</source>
+        <target>Editor</target>
+      </trans-unit>
+      <trans-unit id="sd8eae573769fbf94">
+        <source>Autocompletion</source>
+        <target>Autovervollständigung</target>
+      </trans-unit>
+      <trans-unit id="s83f26d02dd7aa681">
+        <source>Visible</source>
+        <target>Sichtbar</target>
+      </trans-unit>
+      <trans-unit id="sca1a826088564455">
+        <source>Results</source>
+        <target>Ausgabe</target>
+      </trans-unit>
+      <trans-unit id="s9c355ae1ea6d408f">
+        <source>Show execution time</source>
+        <target>Ausführungszeit anzeigen</target>
+      </trans-unit>
+      <trans-unit id="s780d4c126df3ab65">
+        <source>Show execution count</source>
+        <target>Ausführungszähler anzeigen</target>
+      </trans-unit>
+      <trans-unit id="se3a0e370891f1769">
+        <source>Reset execution count</source>
+        <target>Ausführungszähler zurücksetzen</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
