@@ -54,6 +54,10 @@ export const style = css`
         outline: none !important;
     }
 
+    .ͼ55 {
+        color: rgb(198, 120, 221);
+    }
+
     /* --- Controls --- */
     .controls {
         display: flex;

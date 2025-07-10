@@ -252,6 +252,7 @@ export default abstract class Code extends LitElementWw {
                 size="small"
                 @click=${() => {
                     this.results = [];
+                    this.diagnostics = [];
                     this.executionTime = 0;
                     // this.codeMirror.focus();
                 }}
@@ -334,10 +335,9 @@ export default abstract class Code extends LitElementWw {
 
     Result() {
         switch (this.languageModule.name) {
-            case "JS":
-            case "TS":
             case "Python":
             case "WebAssembly":
+            case "Java":
                 const outputs = this.results
                     .filter((r: any) => r !== undefined)
                     .map((r: any) => html`<pre style="color:${r?.color}">${r?.text}</pre>`);
@@ -388,6 +388,7 @@ export default abstract class Code extends LitElementWw {
             return;
         }
         this.results = [];
+        this.diagnostics = [];
 
         this.executionCount++;
         const code = this.codeMirror.state.doc.toString();

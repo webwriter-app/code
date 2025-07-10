@@ -7,3 +7,8 @@ declare module "worker:*" {
     const content: string;
     export default content;
 }
+
+declare module "*.tiff" {
+    const content: string;
+    export default content;
+}
