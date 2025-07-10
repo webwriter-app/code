@@ -55,7 +55,6 @@ export const javaModule: LanguageModule = {
 
         return new Promise((resolve, reject) => {
             runnerWorker.onmessage = ({ data }) => {
-                console.log(data);
                 if (data.type === "stdout") {
                     context.results = [...context.results, { text: data.data, color: "0x0000" }];
                 } else if (data.type === "stderr") {
