@@ -93,25 +93,4 @@ export const jsTemplateStyle = css`
         padding-top: 0.5em;
         padding-left: 1em;
     }
-
-    .diagnostics-container {
-        font-family: var(--sl-font-mono);
-        padding: var(--sl-spacing-x-small);
-    }
-
-    .diagnostics-list {
-        display: grid;
-        grid-template-columns: auto auto 1fr;
-        gap: var(--sl-spacing-x-small);
-    }
-
-    .diagnostic-icon {
-        color: var(--sl-color-danger-600);
-        transform: translateY(5px);
-    }
-
-    .diagnostic-line-number {
-        color: var(--sl-color-primary-700);
-        text-decoration: underline;
-    }
 `;

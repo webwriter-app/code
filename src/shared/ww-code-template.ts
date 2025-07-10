@@ -25,6 +25,17 @@ export type LanguageModule = {
     languageExtension: LanguageSupport;
 };
 
+export type Diagnostic =
+    | {
+          message: string;
+      }
+    | {
+          message: string;
+          start: number;
+          line: number;
+          character: number;
+      };
+
 export default abstract class Code extends LitElementWw {
     static styles = style;
 
@@ -98,6 +109,9 @@ export default abstract class Code extends LitElementWw {
         },
     })
     accessor results: any = [];
+
+    @property({ type: Array, attribute: true, reflect: true })
+    accessor diagnostics: Diagnostic[] = [];
 
     @property({ attribute: false })
     accessor executionTime: number = 0;
@@ -249,7 +263,9 @@ export default abstract class Code extends LitElementWw {
     }
 
     Output() {
-        return html`<output style=${this.getVisibleStyle()}> ${this.Result()} </output>`;
+        return html`<output style=${this.getVisibleStyle()}>
+            ${this.diagnostics?.length > 0 ? this.Diagnostics() : this.Result()}
+        </output>`;
     }
 
     Options() {
@@ -332,6 +348,39 @@ export default abstract class Code extends LitElementWw {
             default:
                 return html``;
         }
+    }
+
+    Diagnostics() {
+        return html`
+            <div class="diagnostics-container">
+                ${this.languageModule.name} compilation failed with ${this.diagnostics.length}
+                error${this.diagnostics.length > 1 ? "s" : ""}:
+                <div class="diagnostics-list">
+                    ${this.diagnostics.map(
+                        (d) => html`
+                            <sl-icon name="exclamation-triangle-fill" class="diagnostic-icon"></sl-icon>
+                            ${d.start
+                                ? html` <a
+                                      class="diagnostic-line-number"
+                                      href="#"
+                                      @click=${(event: Event) => {
+                                          event.preventDefault();
+                                          this.codeMirror.focus();
+                                          this.codeMirror.dispatch({
+                                              selection: {
+                                                  anchor: d.start,
+                                              },
+                                          });
+                                      }}
+                                      >${d.line}:${d.character}</a
+                                  >`
+                                : ""}
+                            <div class="diagnostic-message">${d.message}</div>
+                        `,
+                    )}
+                </div>
+            </div>
+        `;
     }
 
     async runCode() {

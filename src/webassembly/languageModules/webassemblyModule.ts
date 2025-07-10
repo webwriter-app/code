@@ -1,34 +1,60 @@
+import { wast } from "@codemirror/lang-wast";
+import WebAssemblyWorker from "worker:./webassembly.worker";
+import { LanguageModule } from "../../shared/ww-code-template";
 import Code from "../ww-code-webassembly";
 
-//Import WebAssembly from code mirror for syntax highlighting
-import { wast } from "@codemirror/lang-wast";
-import { WABT } from "./libwabt";
-// bind function to code cell
-// capture console calls
-// Redirect results to code cell output
+const webAssemblyWorker: Worker = new Worker(
+    URL.createObjectURL(new Blob([WebAssemblyWorker], { type: "application/javascript" })),
+    { type: "module" },
+);
 
-const wabt = await WABT();
+let currentId = 0;
+const callbacks: { [key: number]: (value: any) => void } = {};
 
-const executeWebassembly = (code: string, context: Code) => {
-    try {
-        let file = wabt.parseWat("file.wasm", code);
-        let binary = file.toBinary({ log: true });
-        console.log(binary.log);
-        let wasm = new WebAssembly.Module(binary.buffer);
-        let instance = new WebAssembly.Instance(wasm, {});
-        let { main } = instance.exports;
-        var res = main();
-    } catch (e) {
-        context.results.push({ text: e.message, color: "red" });
-        return undefined;
-    }
-    context.results.push({ text: res, color: "0x000000" });
-    return res;
-
-    return undefined;
+webAssemblyWorker.onmessage = (event) => {
+    const { id, ...data } = event.data;
+    const onSuccess = callbacks[id];
+    delete callbacks[id];
+    onSuccess(data);
 };
 
-export const webassemblyModule = {
+const executeWebassembly = async (code: string, context: Code) => {
+    const id = currentId++;
+
+    const res: any = await new Promise((onSuccess) => {
+        callbacks[id] = onSuccess;
+        webAssemblyWorker.postMessage({
+            code,
+            id,
+        });
+    });
+
+    if (res.error) {
+        const errorMessage: string = res.error;
+
+        const match = errorMessage.match(/file\.wasm:(\d+):(\d+): error: (.+)/);
+        if (match) {
+            const [, line, character, message] = match;
+            let start = context.codeMirror.state.doc.line(Number(line)).from + Number(character);
+            start = Math.min(start, context.codeMirror.state.doc.length);
+
+            context.diagnostics = [
+                {
+                    message: message.trim(),
+                    start,
+                    line: Number(line),
+                    character: Number(character),
+                },
+            ];
+        } else {
+            context.diagnostics = [{ message: errorMessage }];
+        }
+    } else {
+        context.results.push({ text: String(res.result), color: "0x0000" });
+    }
+};
+
+export const webassemblyModule: LanguageModule = {
     name: "WebAssembly",
     executionFunction: executeWebassembly,
     languageExtension: wast(),
