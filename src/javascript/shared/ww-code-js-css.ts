@@ -25,6 +25,10 @@ export const jsTemplateStyle = css`
         border-bottom: none;
     }
 
+    .log-icon {
+        height: 1.2em;
+    }
+
     .log-level-warning {
         background-color: var(--sl-color-warning-100);
     }
