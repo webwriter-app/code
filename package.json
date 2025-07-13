@@ -116,13 +116,5 @@
         "./package.json": "./package.json",
         "./icon": "./icon.svg",
         "./editing-config.json": "./editing-config.json"
-    },
-    "editingConfig": {
-        ".": {},
-        "./widgets/webwriter-code-javascript": {},
-        "./widgets/webwriter-code-java": {},
-        "./widgets/webwriter-code-typescript": {},
-        "./widgets/webwriter-code-python": {},
-        "./widgets/webwriter-code-webassembly": {}
     }
 }

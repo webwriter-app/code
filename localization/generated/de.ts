@@ -9,10 +9,10 @@
     /* eslint-disable @typescript-eslint/no-explicit-any */
 
     export const templates = {
-      's3c96a20baa10fa75': `Ausführung`,
+      's3c96a20baa10fa75': `Codeausführung`,
 's47f7722202e53f2f': `Ausgabe löschen`,
 's780d4c126df3ab65': `Ausführungszähler anzeigen`,
-'s83f26d02dd7aa681': `Sichtbar`,
+'s83f26d02dd7aa681': `Anzeigen`,
 's9c355ae1ea6d408f': `Ausführungszeit anzeigen`,
 's9fbbc819fe7e66aa': `Ausführen`,
 'sa75b95980cd80e78': `Editor`,

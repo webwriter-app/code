@@ -1,12 +1,9 @@
-import { msg } from "@lit/localize";
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { LitElementWw } from "@webwriter/lit";
 import { LitElement, PropertyValueMap, html } from "lit";
 import { property, query } from "lit/decorators.js";
 
 import { style } from "./ww-code-css-single";
-
-// import readOnlyRangesExtension from 'codemirror-readonly-ranges';
 
 // CodeMirror
 import { autocompletion } from "@codemirror/autocomplete";
@@ -24,6 +21,9 @@ import SlInput from "@shoelace-style/shoelace/dist/components/input/input.js";
 import SlSwitch from "@shoelace-style/shoelace/dist/components/switch/switch.js";
 import "./shoelace-icons";
 
+import { msg } from "@lit/localize";
+import LOCALIZE from "../../localization/generated";
+
 export type LanguageModule = {
     name: string;
     executionFunction: ((code: string, context: Code) => any) | undefined;
@@ -39,6 +39,8 @@ export type Diagnostic = {
 
 export default abstract class Code extends LitElementWw {
     static styles = style;
+
+    localize = LOCALIZE;
 
     codeMirror: EditorView = new EditorView();
 
