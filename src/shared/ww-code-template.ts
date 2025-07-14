@@ -256,7 +256,9 @@ export default abstract class Code extends LitElementWw {
                 ?checked=${!this.hideExecutionCount}
                 >${msg("Show execution count")}</sl-switch
             >
-            <sl-button @click=${() => (this.executionCount = 0)}>${msg("Reset execution count")}</sl-button>
+            <sl-button @click=${() => (this.executionCount = 0)}
+                ><span class="button-label-linebreak">${msg("Reset execution count")}</span></sl-button
+            >
         </aside>`;
     }
 
