@@ -14,12 +14,15 @@ import type {
 export default abstract class CodeJsTemplate extends Code {
     private worker: Worker | null = null;
 
+    private workerAlive = false;
+
     constructor(name: string, languageExtension: LanguageSupport) {
         super();
         this.languageModule = {
             name,
             executionFunction: (code: string) => {
                 this.worker?.terminate();
+                this.workerAlive = false;
                 this.objectRealizationRequests.clear();
 
                 try {
@@ -32,12 +35,22 @@ export default abstract class CodeJsTemplate extends Code {
                     URL.createObjectURL(new Blob([JavaScriptWorker], { type: "application/javascript" })),
                     { type: "module" },
                 );
-                this.worker.onmessage = this.handleMessage.bind(this);
-                this.worker.postMessage({
-                    type: "execute",
-                    executionId: "main", // Currently, no simultaneous executions are supported
-                    code: code,
-                } as ExecuteCodeMessage);
+                this.workerAlive = true;
+
+                return new Promise<void>((resolve) => {
+                    this.worker!.onmessage = (event: MessageEvent) => {
+                        if (event.data.type === "executionStatus" && event.data.status === "terminated") {
+                            resolve();
+                        } else {
+                            this.handleMessage(event);
+                        }
+                    };
+                    this.worker!.postMessage({
+                        type: "execute",
+                        executionId: "main", // Currently, no simultaneous executions are supported
+                        code: code,
+                    } as ExecuteCodeMessage);
+                });
             },
             languageExtension,
         };
@@ -114,7 +127,6 @@ export default abstract class CodeJsTemplate extends Code {
                 return html`<div class="log-value log-function">${name}</div>`;
             case "array":
                 if (value.value.realized) {
-                    // TypeScript type guard
                     return this.ArrayValue(
                         {
                             ...value,
@@ -134,7 +146,9 @@ export default abstract class CodeJsTemplate extends Code {
     }
 
     private ObjectValue(object: SerializedObject, _topLevel: boolean, inline: boolean): TemplateResult<1> {
-        if (inline || !object.value.realized) return html`{…}`;
+        if (inline) return html`{…}`;
+        if (!object.value.realized) return html`<span class="log-unrealizable">{…}</span>`;
+        if (object.value.properties.length === 0) return html`{}`;
 
         return html`<div class="log-value log-object">
             <div
@@ -142,9 +156,11 @@ export default abstract class CodeJsTemplate extends Code {
                 @click=${() => {
                     if (object.value.realized) {
                         object.value.expanded = !object.value.expanded;
-                        for (const { value } of object.value.properties) {
-                            if (value.type === "array" || value.type == "object") {
-                                this.requestObjectRealization(value);
+                        if (this.workerAlive) {
+                            for (const { value } of object.value.properties) {
+                                if (value.type === "array" || value.type == "object") {
+                                    this.requestObjectRealization(value);
+                                }
                             }
                         }
                     }
@@ -171,16 +187,21 @@ export default abstract class CodeJsTemplate extends Code {
     }
 
     private ArrayValue(array: SerializedArray, _topLevel: boolean, inline: boolean): TemplateResult<1> {
-        if (inline || !array.value.realized) return html`[…]`;
+        if (inline) return html`[…]`;
+        if (!array.value.realized) return html`<span class="log-unrealizable">[…]</span>`;
+        if (array.value.values.length === 0) return html`[]`;
+
         return html`<div class="log-value log-array">
             <div
                 class="log-clickable"
                 @click=${() => {
                     if (array.value.realized) {
                         array.value.expanded = !array.value.expanded;
-                        for (const value of array.value.values) {
-                            if (value.type === "array" || value.type == "object") {
-                                this.requestObjectRealization(value);
+                        if (this.workerAlive) {
+                            for (const value of array.value.values) {
+                                if (value.type === "array" || value.type == "object") {
+                                    this.requestObjectRealization(value);
+                                }
                             }
                         }
                     }

@@ -29,6 +29,7 @@ export type SerializedArray = {
 };
 export type SerializedObject = {
     type: "object";
+    empty: boolean;
     value:
         | { realized: true; properties: { key: string; value: SerializedValue }[]; expanded: boolean }
         | { realized: false; objectId: number };
@@ -115,6 +116,7 @@ function serializeValue(value: any, resolveNested: boolean = false): SerializedV
 
     return {
         type: "object",
+        empty: Object.keys(value).length === 0,
         value: resolveNested
             ? {
                   realized: true,

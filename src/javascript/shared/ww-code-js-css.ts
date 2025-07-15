@@ -89,6 +89,12 @@ export const jsTemplateStyle = css`
         cursor: pointer;
     }
 
+    .log-unrealizable {
+        cursor: not-allowed;
+        font-style: italic;
+        color: var(--sl-color-neutral-500);
+    }
+
     .log-expand-icon {
         transform: translateY(2px);
     }

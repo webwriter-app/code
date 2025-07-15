@@ -84,7 +84,7 @@ export const style = css`
         display: block;
         width: 100%;
         box-sizing: border-box;
-        min-height: 2.75rem;
+        min-height: 1.5em;
         border-top: solid 1px var(--sl-color-neutral-300);
     }
 
