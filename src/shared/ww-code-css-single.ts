@@ -52,6 +52,32 @@ export const style = css`
         color: rgb(198, 120, 221);
     }
 
+    .cm-lock-gutter {
+        user-select: none;
+        font-size: var(--sl-font-size-x-small);
+    }
+
+    .cm-lock-gutter .cm-gutterElement {
+        padding-left: 0.5em;
+    }
+
+    .cm-locked-line {
+        color: #808080;
+    }
+
+    .cm-locked-line * {
+        opacity: 0.5;
+    }
+
+    .cm-locked-line-tooltip {
+        font-size: var(--sl-font-size-small);
+        background: var(--sl-color-danger-100);
+        color: var(--sl-color-danger-600);
+        padding: 4px 8px;
+        border-radius: var(--sl-border-radius-small);
+        font-family: var(--sl-font-sans);
+    }
+
     /* --- Controls --- */
     .controls {
         display: flex;

@@ -8,10 +8,10 @@ import { style } from "./ww-code-css-single";
 // CodeMirror
 import { autocompletion } from "@codemirror/autocomplete";
 import { LanguageSupport, syntaxHighlighting } from "@codemirror/language";
-import { Compartment, EditorState } from "@codemirror/state";
+import { Compartment, StateEffect } from "@codemirror/state";
 import { oneDarkHighlightStyle } from "@codemirror/theme-one-dark";
 import { EditorView } from "@codemirror/view";
-import { basicSetup } from "./codemirror-setup";
+import { lineLockEffect, lineLockField, setupCodeMirror } from "./codemirror-setup";
 
 // Shoelace Components
 import SlButton from "@shoelace-style/shoelace/dist/components/button/button.js";
@@ -42,7 +42,7 @@ export default abstract class Code extends LitElementWw {
 
     localize = LOCALIZE;
 
-    codeMirror: EditorView = new EditorView();
+    private codeMirror: EditorView = new EditorView();
 
     @property({ type: Array, attribute: true, reflect: true })
     accessor lockedLines: number[] = [];
@@ -137,7 +137,37 @@ export default abstract class Code extends LitElementWw {
     accessor pre!: HTMLPreElement;
 
     firstUpdated() {
-        this.codeMirror = this.createCodeMirror(this.pre);
+        this.codeMirror = setupCodeMirror(this.code, this.pre, this.isEditable(), [
+            this.language.of(this.languageModule.languageExtension),
+            this.autocompletion.of(autocompletion()),
+            this.theme.of([]),
+            this.highlightStyle.of(syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })),
+            EditorView.updateListener.of((update) => {
+                if (update.docChanged) {
+                    this.code = update.state.doc.toString();
+                }
+            }),
+        ]);
+
+        if (this.lockedLines.length > 0) {
+            this.codeMirror.dispatch({
+                effects: this.lockedLines
+                    .map((lineNumber) => {
+                        try {
+                            const line = this.codeMirror.state.doc.line(lineNumber);
+                            return lineLockEffect.of({ pos: line.from, on: true });
+                        } catch (error) {
+                            console.warn(`Line number ${lineNumber} is out of bounds for the document.`);
+                            return null;
+                        }
+                    })
+                    .filter((effect) => effect !== null),
+            });
+        }
+        this.codeMirror.state.field(lineLockField).onLockedLinesChange = (lockedLines: number[]) => {
+            this.lockedLines = lockedLines;
+        };
+
         if (this.autoRun) {
             this.runCode();
         }
@@ -154,6 +184,31 @@ export default abstract class Code extends LitElementWw {
                     changes: { from: 0, to: this.codeMirror.state.doc.length, insert: this.code },
                 });
             }
+        }
+
+        if (_changedProperties.has("lockedLines")) {
+            let remainingLinesToLock = this.lockedLines;
+
+            let effects: StateEffect<any>[] = [];
+            this.codeMirror.state.field(lineLockField).markers.between(0, this.codeMirror.state.doc.length, (from) => {
+                const line = this.codeMirror.state.doc.lineAt(from);
+                if (!remainingLinesToLock.includes(line.number)) {
+                    effects.push(lineLockEffect.of({ pos: from, on: false }));
+                } else {
+                    remainingLinesToLock = remainingLinesToLock.filter((l) => l !== line.number);
+                }
+            });
+
+            remainingLinesToLock.forEach((lineNumber) => {
+                if (lineNumber < 1 || lineNumber > this.codeMirror.state.doc.lines) {
+                    console.warn(`Line number ${lineNumber} is out of bounds for the document.`);
+                    return;
+                }
+                const line = this.codeMirror.state.doc.line(lineNumber);
+                effects.push(lineLockEffect.of({ pos: line.from, on: true }));
+            });
+
+            if (effects.length > 0) this.codeMirror.dispatch({ effects });
         }
     }
 
@@ -338,27 +393,5 @@ export default abstract class Code extends LitElementWw {
         this.codeMirror.dispatch({
             effects: this.autocompletion.reconfigure(value ? autocompletion() : []),
         });
-    }
-
-    createCodeMirror(parentObject: any) {
-        const editorView = new EditorView({
-            state: EditorState.create({
-                doc: this.code,
-                extensions: [
-                    basicSetup,
-                    this.language.of(this.languageModule.languageExtension),
-                    this.autocompletion.of(autocompletion()),
-                    this.theme.of([]),
-                    this.highlightStyle.of(syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })),
-                    EditorView.updateListener.of((update) => {
-                        if (update.docChanged) {
-                            this.code = update.state.doc.toString();
-                        }
-                    }),
-                ],
-            }),
-            parent: parentObject,
-        });
-        return editorView;
     }
 }
