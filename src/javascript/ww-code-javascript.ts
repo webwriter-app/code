@@ -1,31 +1,21 @@
-import '@shoelace-style/shoelace/dist/themes/light.css';
-import { customElement } from 'lit/decorators.js';
+import { javascript } from "@codemirror/lang-javascript";
+import { localized } from "@lit/localize";
+import { customElement } from "lit/decorators.js";
+import { style } from "../shared/ww-code-css-single";
+import { jsTemplateStyle } from "./shared/ww-code-js-css";
+import CodeJsTemplate from "./shared/ww-code-js-template";
 
-import Code from '../shared/ww-code-template'
+/** Code widget for JavaScript with execution capabilities. */
+@customElement("webwriter-code-javascript")
+@localized()
+export default class CodeJavaScript extends CodeJsTemplate {
+    static styles = [style, jsTemplateStyle] as any;
 
-import { style } from '../shared/ww-code-css-single';
-
-// CodeMirror
-import { LanguageSupport } from '@codemirror/language';
-
-
-// Language Modules
-import { javascriptModule } from './languageModules/javascriptModule';
-
-export type LanguageModule = {
-    name: string;
-    executionFunction: ((code: string, context: CodeJS) => any) | undefined;
-    languageExtension: LanguageSupport;
-};
-
-@customElement('webwriter-code-javascript')
-export default class CodeJS extends Code {
-    static styles = style;
-
-    constructor(){
-        super()
-        this.languages= [javascriptModule];
-        this.languageModule = this.languages[0]
+    constructor() {
+        super("JavaScript", javascript());
     }
 
+    build(code: string): string {
+        return code;
+    }
 }

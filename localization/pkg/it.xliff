@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.1" srcLang="en" trgLang="it">
+<file id="." original=".">
+<unit id="description"><segment><source>Write and run code as a code cell. Supports several languages (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).</source><target></target></segment></unit>
+<unit id="label"><segment><source>Code</source><target>Code</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-javascript" original="./widgets/webwriter-code-javascript">
+<unit id="label"><segment><source>JavaScript</source><target>JavaScript</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-java" original="./widgets/webwriter-code-java">
+<unit id="label"><segment><source>Java</source><target>Java</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-typescript" original="./widgets/webwriter-code-typescript">
+<unit id="label"><segment><source>TypeScript</source><target>TypeScript</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-python" original="./widgets/webwriter-code-python">
+<unit id="label"><segment><source>Python</source><target>Python</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-webassembly" original="./widgets/webwriter-code-webassembly">
+<unit id="label"><segment><source>WebAssembly</source><target>WebAssembly</target></segment></unit>
+</file>
+</xliff>

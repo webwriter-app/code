@@ -1,36 +1,13 @@
-import '@shoelace-style/shoelace/dist/themes/light.css';
-import { customElement } from 'lit/decorators.js';
+import { localized } from "@lit/localize";
+import { customElement } from "lit/decorators.js";
+import Code from "../shared/ww-code-template";
+import { htmlModule } from "./languageModules/htmlModule";
 
-import Code from '../shared/ww-code-template'
-
-import { style } from '../shared/ww-code-css-single';
-
-// CodeMirror
-import { LanguageSupport } from '@codemirror/language';
-
-
-// Language Modules
-import { htmlModule } from './languageModules/htmlModule';
-
-export type LanguageModule = {
-    name: string;
-    executionFunction: ((code: string, context: CodeHTML) => any) | undefined;
-    languageExtension: LanguageSupport;
-};
-
-@customElement('webwriter-code-html')
+/** Code widget for HTML with live preview functionality. */
+@customElement("webwriter-code-html")
+@localized()
 export default class CodeHTML extends Code {
-    static styles = style;
-
-    constructor(){
-        super()
-        this.languages= [htmlModule];
-        this.languageModule = this.languages[0]
+    constructor() {
+        super(htmlModule);
     }
-
-    firstUpdated(): void {
-        super.firstUpdated()
-        this.shadowRoot.getElementById("iframePreview").contentDocument.body.style.fontFamily = "Arial";
-    }
-
 }

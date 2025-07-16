@@ -1,35 +1,27 @@
 # Code Widget
 
-The code widget allows for coding exercises to be embedded into the worksheet. The code widget is a wrapper around the [CodeMirror](https://codemirror.net/) editor. The code widget supports the following languages:
+The Code Widget enables interactive code exercises directly in the browser. Users can effortlessly write, execute, and explore code in multiple programming languages, including:
 
--   JavaScript
--   Python
--   HTML
+- JavaScript or TypeScript
+- HTML
+- Python (powered by [Pyodide](https://pyodide.org/en/stable/))
+- Java (powered by [TeaVM](https://teavm.org/))
+- WebAssembly Text Format (WAT)
 
-## Usage
+## Features
 
-    The code widget comes with some example excersises. To select an example, just choose one out of the list, be aware that the code will be replaced with the example code.
+- **Intuitive Editor:** Based on CodeMirror, offering syntax highlighting and optional autocompletion for a smoother coding experience.
+- **Line Locking:** Allows instructors to lock specific lines, creating read-only templates to guide students effectively.
+- **Rich Output Display:** Outputs appear neatly below each code cell, with JavaScript execution featuring a fully interactive console inspector.
+- **100% Client-Side Execution:** Everything executes locally within the browser, ensuring complete offline capability and no reliance on servers.
 
-    To change the language of the code widget, just select the language from the list in the top right of the editor. The code widget will automatically highlight the code based on the selected language.
+## Development
 
-The editor can be customized, by changing the settings in the action panel.
+To set up the development environment, clone the repository and execute the following commands:
 
-### Alow code execution
+```bash
+npm install
+npm run dev # runs @webwriter/build dev
+```
 
-    Toggels, if the code can be executed or not. If the code can be executed, the code will be executed when the user clicks the run button, if not, the run button will be disabled.
-
-### Autocompletion
-
-    Toggels, if the editor should show autocompletion suggestions or not.
-
-### Toggle Theme
-
-    Switches between the light and dark theme. The light theme is the default theme.
-
-### Show execution time
-
-    Toggels, if the execution time should be shown or not. The execution time will be shown in the bottom right of the editor.
-
-### Disable lines
-
-    By clicking on the gutter left of the code, the line will be disabled. Disabled lines cannot be edited. To enable a line, just click on the gutter again.
+Finally, import the `code` directory into WebWriter to begin.
