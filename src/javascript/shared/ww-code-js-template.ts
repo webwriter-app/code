@@ -17,8 +17,7 @@ export default abstract class CodeJsTemplate extends Code {
     private workerAlive = false;
 
     constructor(name: string, languageExtension: LanguageSupport) {
-        super();
-        this.languageModule = {
+        super({
             name,
             executionFunction: (code: string) => {
                 this.worker?.terminate();
@@ -53,8 +52,7 @@ export default abstract class CodeJsTemplate extends Code {
                 });
             },
             languageExtension,
-        };
-        this.languages = [this.languageModule];
+        });
     }
 
     abstract build(code: string): string;

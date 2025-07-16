@@ -5,6 +5,7 @@ import { style } from "../shared/ww-code-css-single";
 import { jsTemplateStyle } from "./shared/ww-code-js-css";
 import CodeJsTemplate from "./shared/ww-code-js-template";
 
+/** Code widget for JavaScript with execution capabilities. */
 @customElement("webwriter-code-javascript")
 @localized()
 export default class CodeJavaScript extends CodeJsTemplate {

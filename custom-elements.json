@@ -1,0 +1,255 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "src/html/ww-code-html.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Code widget for HTML with live preview functionality.",
+          "name": "CodeHTML",
+          "superclass": {
+            "name": "Code",
+            "module": "/src/shared/ww-code-template"
+          },
+          "tagName": "webwriter-code-html",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CodeHTML",
+            "module": "src/html/ww-code-html.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "webwriter-code-html",
+          "declaration": {
+            "name": "CodeHTML",
+            "module": "src/html/ww-code-html.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/javascript/ww-code-javascript.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Code widget for JavaScript with execution capabilities.",
+          "name": "CodeJavaScript",
+          "members": [
+            {
+              "kind": "method",
+              "name": "build",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "code",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            }
+          ],
+          "superclass": {
+            "name": "CodeJsTemplate",
+            "module": "/src/javascript/shared/ww-code-js-template"
+          },
+          "tagName": "webwriter-code-javascript",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CodeJavaScript",
+            "module": "src/javascript/ww-code-javascript.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "webwriter-code-javascript",
+          "declaration": {
+            "name": "CodeJavaScript",
+            "module": "src/javascript/ww-code-javascript.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/java/ww-code-java.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Code widget for Java with compilation and execution capabilities using TeaVM (Java 21).",
+          "name": "CodeJava",
+          "members": [],
+          "superclass": {
+            "name": "Code",
+            "module": "/src/shared/ww-code-template"
+          },
+          "tagName": "webwriter-code-java",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "CodeJava",
+          "declaration": {
+            "name": "CodeJava",
+            "module": "src/java/ww-code-java.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "webwriter-code-java",
+          "declaration": {
+            "name": "CodeJava",
+            "module": "src/java/ww-code-java.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/javascript/ww-code-typescript.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Code widget for TypeScript with compilation and execution capabilities.",
+          "name": "CodeTypeScript",
+          "members": [
+            {
+              "kind": "method",
+              "name": "build",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "code",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            }
+          ],
+          "superclass": {
+            "name": "CodeJsTemplate",
+            "module": "/src/javascript/shared/ww-code-js-template"
+          },
+          "tagName": "webwriter-code-typescript",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CodeTypeScript",
+            "module": "src/javascript/ww-code-typescript.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "webwriter-code-typescript",
+          "declaration": {
+            "name": "CodeTypeScript",
+            "module": "src/javascript/ww-code-typescript.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/python/ww-code-python.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Code widget for Python with execution capabilities using Pyodide.",
+          "name": "CodePython",
+          "superclass": {
+            "name": "Code",
+            "module": "/src/shared/ww-code-template"
+          },
+          "tagName": "webwriter-code-python",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CodePython",
+            "module": "src/python/ww-code-python.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "webwriter-code-python",
+          "declaration": {
+            "name": "CodePython",
+            "module": "src/python/ww-code-python.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/webassembly/ww-code-webassembly.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Code widget for WebAssembly with compilation and execution capabilities.",
+          "name": "CodeHTML",
+          "superclass": {
+            "name": "Code",
+            "module": "/src/shared/ww-code-template"
+          },
+          "tagName": "webwriter-code-html",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CodeHTML",
+            "module": "src/webassembly/ww-code-webassembly.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "webwriter-code-webassembly",
+          "declaration": {
+            "name": "CodeHTML",
+            "module": "src/webassembly/ww-code-webassembly.ts"
+          }
+        }
+      ]
+    }
+  ]
+}

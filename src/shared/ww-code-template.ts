@@ -40,107 +40,99 @@ export type Diagnostic = {
 export default abstract class Code extends LitElementWw {
     static styles = style;
 
-    localize = LOCALIZE;
-
-    private codeMirror: EditorView = new EditorView();
-
-    @property({ type: Array, attribute: true, reflect: true })
-    accessor lockedLines: number[] = [];
-
-    @property({ type: Boolean })
-    accessor didRunOnce: boolean = false;
-
-    @property({ type: Boolean, attribute: true, reflect: true })
-    accessor visible = true;
-
-    @property({ type: Boolean, attribute: true, reflect: true })
-    accessor autoRun = false;
-
-    @property({ type: Boolean, attribute: true, reflect: true })
-    accessor runnable = true;
-
-    @property({ type: Boolean, attribute: true, reflect: true })
-    accessor autocomplete = false;
-
-    @property({ type: Boolean, attribute: true, reflect: true })
-    accessor hideExecutionTime = true;
-
-    @property({ type: Boolean, attribute: true, reflect: true })
-    accessor hideExecutionCount = true;
-
-    @property({ attribute: true, reflect: true })
-    accessor code = this.codeMirror.state.doc.toString();
-
-    @property({ type: Number, attribute: true, reflect: true })
-    accessor executionCount = 0;
-
-    static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
-
-    @property({ attribute: false })
-    accessor languageModule!: LanguageModule;
-
-    @property({ attribute: false })
-    accessor languages: any;
-
-    get codeRunner() {
-        return this.languageModule.executionFunction;
-    }
-
-    @property({
-        type: Array,
-        attribute: true,
-        reflect: true,
-        converter: {
-            fromAttribute: (value: string) => {
-                return JSON.parse(value);
-            },
-            toAttribute: (value: Array<number>) => {
-                return JSON.stringify(value);
-            },
-        },
-    })
-    accessor results: any = [];
-
-    @property({ type: Array, attribute: true, reflect: true })
-    accessor diagnostics: Diagnostic[] = [];
-
-    @property({ attribute: false })
-    accessor executionTime: number = 0;
-
-    // @ts-expect-error
-    @query("#iframePreview")
-    accessor iframePreview: HTMLIFrameElement | undefined;
-
-    language = new Compartment();
-    autocompletion = new Compartment();
-    // readOnlyRanges = new Compartment();
-    theme = new Compartment();
-    highlightStyle = new Compartment();
-
     static get scopedElements() {
-        let componentList = {
+        return {
             "sl-button": SlButton,
             "sl-input": SlInput,
             "sl-switch": SlSwitch,
             "sl-details": SlDetails,
             "sl-icon": SlIcon,
-        } as any;
+        };
+    }
 
-        return componentList;
+    static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
+
+    localize = LOCALIZE;
+
+    private codeMirror: EditorView = new EditorView();
+    private languageModule!: LanguageModule;
+
+    /** The source code content displayed in the editor. */
+    @property({ attribute: true, reflect: true })
+    accessor code = this.codeMirror.state.doc.toString();
+
+    /** Whether the code editor is visible to the user. */
+    @property({ type: Boolean, attribute: true, reflect: true })
+    accessor visible = true;
+
+    /** Whether to automatically run the code when the component is first loaded. */
+    @property({ type: Boolean, attribute: true, reflect: true })
+    accessor autoRun = false;
+
+    /** Whether the code execution is allowed and the run button is enabled. */
+    @property({ type: Boolean, attribute: true, reflect: true })
+    accessor runnable = true;
+
+    /** Whether autocompletion is enabled in the code editor. */
+    @property({ type: Boolean, attribute: true, reflect: true })
+    accessor autocomplete = false;
+
+    /** Array of line numbers that should be locked from editing. */
+    @property({ type: Array, attribute: true, reflect: true })
+    accessor lockedLines: number[] = [];
+
+    /** Whether to display the execution time in the controls. */
+    @property({ type: Boolean, attribute: true, reflect: true })
+    accessor showExecutionTime = false;
+
+    /** The execution time in milliseconds of the last code run. */
+    @property({ type: Number, attribute: true, reflect: true })
+    accessor executionTime: number = 0;
+
+    /** Whether to display the execution count in the run button. */
+    @property({ type: Boolean, attribute: true, reflect: true })
+    accessor showExecutionCount = false;
+
+    /** The number of times the code has been executed. */
+    @property({ type: Number, attribute: true, reflect: true })
+    accessor executionCount = 0;
+
+    /** The results from the last code execution. */
+    @property({ type: Array, attribute: true, reflect: true })
+    accessor results: any = [];
+
+    /** Compilation or runtime errors from the last code execution. */
+    @property({ type: Array, attribute: true, reflect: true })
+    accessor diagnostics: Diagnostic[] = [];
+
+    // @ts-expect-error
+    @query("#iframePreview")
+    accessor iframePreview: HTMLIFrameElement | undefined;
+
+    @query("pre")
+    accessor pre!: HTMLPreElement;
+
+    get codeRunner() {
+        return this.languageModule.executionFunction;
+    }
+
+    language = new Compartment();
+    autocompletion = new Compartment();
+    highlightStyle = new Compartment();
+
+    constructor(languageModule: LanguageModule) {
+        super();
+        this.languageModule = languageModule;
     }
 
     isEditable() {
         return this.contentEditable === "true" || this.contentEditable === "";
     }
 
-    @query("pre")
-    accessor pre!: HTMLPreElement;
-
     firstUpdated() {
         this.codeMirror = setupCodeMirror(this.code, this.pre, this.isEditable(), [
             this.language.of(this.languageModule.languageExtension),
             this.autocompletion.of(autocompletion()),
-            this.theme.of([]),
             this.highlightStyle.of(syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })),
             EditorView.updateListener.of((update) => {
                 if (update.docChanged) {
@@ -240,9 +232,9 @@ export default abstract class Code extends LitElementWw {
                 style=${this.runnable && this.codeRunner !== undefined ? "" : "display: none"}
             >
                 <sl-icon name="${this.autoRun ? "play-circle" : "play-fill"}" slot="prefix"></sl-icon>
-                ${msg("Run")} ${this.hideExecutionCount ? "" : `(${this.executionCount})`}
+                ${msg("Run")} ${this.showExecutionCount ? `(${this.executionCount})` : ""}
             </sl-button>
-            ${!this.hideExecutionTime ? html`<div class="executionTime">${this.executionTime.toFixed(1)}ms</div>` : ""}
+            ${this.showExecutionTime ? html`<div class="executionTime">${this.executionTime.toFixed(1)}ms</div>` : ""}
             <div class="language-label">${this.languageModule.name}</div>
             <sl-button
                 size="small"
@@ -302,13 +294,13 @@ export default abstract class Code extends LitElementWw {
 
             <h2>${msg("Results")}</h2>
             <sl-switch
-                @sl-change=${(e: any) => (this.hideExecutionTime = !e.target.checked)}
-                ?checked=${!this.hideExecutionTime}
+                @sl-change=${(e: any) => (this.showExecutionTime = e.target.checked)}
+                ?checked=${this.showExecutionTime}
                 >${msg("Show execution time")}</sl-switch
             >
             <sl-switch
-                @sl-change=${(e: any) => (this.hideExecutionCount = !e.target.checked)}
-                ?checked=${!this.hideExecutionCount}
+                @sl-change=${(e: any) => (this.showExecutionCount = e.target.checked)}
+                ?checked=${this.showExecutionCount}
                 >${msg("Show execution count")}</sl-switch
             >
             <sl-button @click=${() => (this.executionCount = 0)}
@@ -384,8 +376,6 @@ export default abstract class Code extends LitElementWw {
         await this.codeRunner(code, this);
         const endTime = performance.now();
         this.executionTime = endTime - startTime;
-
-        this.didRunOnce = true;
     }
 
     setAutocompletion(value: boolean) {

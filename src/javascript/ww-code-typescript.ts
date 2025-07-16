@@ -6,6 +6,7 @@ import { style } from "../shared/ww-code-css-single";
 import { jsTemplateStyle } from "./shared/ww-code-js-css";
 import CodeJsTemplate from "./shared/ww-code-js-template";
 
+/** Code widget for TypeScript with compilation and execution capabilities. */
 @customElement("webwriter-code-typescript")
 @localized()
 export default class CodeTypeScript extends CodeJsTemplate {
