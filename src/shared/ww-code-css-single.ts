@@ -48,10 +48,6 @@ export const style = css`
         outline: none !important;
     }
 
-    .ͼ55 {
-        color: rgb(198, 120, 221);
-    }
-
     .cm-lock-gutter {
         user-select: none;
         font-size: var(--sl-font-size-x-small);

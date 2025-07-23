@@ -1,7 +1,8 @@
 import { closeBrackets, closeBracketsKeymap, completionKeymap } from "@codemirror/autocomplete";
 import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
-import { bracketMatching, foldGutter, indentOnInput } from "@codemirror/language";
+import { bracketMatching, foldGutter, HighlightStyle, indentOnInput, syntaxHighlighting } from "@codemirror/language";
 import { EditorState, RangeSet, StateEffect, StateField, Transaction } from "@codemirror/state";
+import { color, oneDarkHighlightStyle } from "@codemirror/theme-one-dark";
 import {
     crosshairCursor,
     Decoration,
@@ -19,6 +20,7 @@ import {
     showTooltip,
     Tooltip,
 } from "@codemirror/view";
+import { tags } from "@lezer/highlight";
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 import LockFillIcon from "../../assets/icons/lock-fill.svg";
 export { EditorView } from "@codemirror/view";
@@ -298,6 +300,23 @@ const lockedLineTooltipField = StateField.define<Tooltip | null>({
     provide: (f) => showTooltip.from(f),
 });
 
+// Replace the default 'chalky' color to be 'violet' instead
+const customHighlightStyle = HighlightStyle.define([
+    {
+        tag: [
+            tags.typeName,
+            tags.className,
+            tags.number,
+            tags.changed,
+            tags.annotation,
+            tags.modifier,
+            tags.self,
+            tags.namespace,
+        ],
+        color: color.violet,
+    },
+]);
+
 export function setupCodeMirror(
     code: string,
     parent: Element,
@@ -310,7 +329,8 @@ export function setupCodeMirror(
             extensions: [
                 lineLockField,
                 createLockedLineProtection(inEditView),
-
+                syntaxHighlighting(customHighlightStyle),
+                syntaxHighlighting(oneDarkHighlightStyle),
                 indentationMarkers(),
                 lineNumbers(),
                 highlightActiveLineGutter(),
