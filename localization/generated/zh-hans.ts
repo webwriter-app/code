@@ -9,7 +9,8 @@
     /* eslint-disable @typescript-eslint/no-explicit-any */
 
     export const templates = {
-      's9fbbc819fe7e66aa': `Run`,
+      'sa94ff8354d06f430': `This section of code is locked and cannot be edited`,
+'s9fbbc819fe7e66aa': `Run`,
 's47f7722202e53f2f': `Clear Output`,
 's3c96a20baa10fa75': `Execution`,
 'sac95ed73c22266b9': `Allow Code execution`,

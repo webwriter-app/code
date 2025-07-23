@@ -49,6 +49,10 @@
         <source>Reset execution count</source>
         <target>Скинути лічильник виконання</target>
       </trans-unit>
+      <trans-unit id="sa94ff8354d06f430">
+        <source>This section of code is locked and cannot be edited</source>
+        <target>Ця частина коду заблокована і не може бути відредагована</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

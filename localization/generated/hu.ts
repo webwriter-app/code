@@ -16,6 +16,7 @@
 's9c355ae1ea6d408f': `Kivitelezési idő megjelenítése`,
 's9fbbc819fe7e66aa': `Fuss`,
 'sa75b95980cd80e78': `Szerkesztő`,
+'sa94ff8354d06f430': `Ez a kódrészlet le van zárva, és nem szerkeszthető.`,
 'sac95ed73c22266b9': `Engedélyezze a kód végrehajtását`,
 'sb1db8c15648f4579': `Futtatás terheléskor`,
 'sca1a826088564455': `Eredmények`,

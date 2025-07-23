@@ -16,6 +16,7 @@
 's9c355ae1ea6d408f': `Näytä suoritusaika`,
 's9fbbc819fe7e66aa': `Suorita`,
 'sa75b95980cd80e78': `Toimittaja`,
+'sa94ff8354d06f430': `Tämä koodin osa on lukittu, eikä sitä voi muokata.`,
 'sac95ed73c22266b9': `Salli koodin suoritus`,
 'sb1db8c15648f4579': `Suorita kuormitettuna`,
 'sca1a826088564455': `Tulokset`,

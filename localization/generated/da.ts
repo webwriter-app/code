@@ -16,6 +16,7 @@
 's9c355ae1ea6d408f': `Vis udførelsestid`,
 's9fbbc819fe7e66aa': `Løb`,
 'sa75b95980cd80e78': `Redaktør`,
+'sa94ff8354d06f430': `Denne del af koden er låst og kan ikke redigeres`,
 'sac95ed73c22266b9': `Tillad udførelse af kode`,
 'sb1db8c15648f4579': `Kør på belastning`,
 'sca1a826088564455': `Resultater`,

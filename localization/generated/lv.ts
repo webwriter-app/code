@@ -16,6 +16,7 @@
 's9c355ae1ea6d408f': `Rādīt izpildes laiku`,
 's9fbbc819fe7e66aa': `Palaist`,
 'sa75b95980cd80e78': `Redaktors`,
+'sa94ff8354d06f430': `Šī koda sadaļa ir bloķēta un nav rediģējama.`,
 'sac95ed73c22266b9': `Atļaut koda izpildi`,
 'sb1db8c15648f4579': `Palaist pēc slodzes`,
 'sca1a826088564455': `Rezultāti`,

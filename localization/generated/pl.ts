@@ -16,6 +16,7 @@
 's9c355ae1ea6d408f': `Pokaż czas wykonania`,
 's9fbbc819fe7e66aa': `Bieg`,
 'sa75b95980cd80e78': `Edytor`,
+'sa94ff8354d06f430': `Ta sekcja kodu jest zablokowana i nie można jej edytować`,
 'sac95ed73c22266b9': `Zezwalaj na wykonanie kodu`,
 'sb1db8c15648f4579': `Działa pod obciążeniem`,
 'sca1a826088564455': `Wyniki`,

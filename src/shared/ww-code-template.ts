@@ -129,15 +129,21 @@ export default abstract class Code extends LitElementWw {
     }
 
     firstUpdated() {
-        this.codeMirror = setupCodeMirror(this.code, this.pre, this.isEditable(), [
-            this.language.of(this.languageModule.languageExtension),
-            this.autocompletion.of(autocompletion()),
-            EditorView.updateListener.of((update) => {
-                if (update.docChanged) {
-                    this.code = update.state.doc.toString();
-                }
-            }),
-        ]);
+        this.codeMirror = setupCodeMirror(
+            this.code,
+            this.pre,
+            this.isEditable(),
+            [
+                this.language.of(this.languageModule.languageExtension),
+                this.autocompletion.of(autocompletion()),
+                EditorView.updateListener.of((update) => {
+                    if (update.docChanged) {
+                        this.code = update.state.doc.toString();
+                    }
+                }),
+            ],
+            () => msg("This section of code is locked and cannot be edited"),
+        );
 
         if (this.lockedLines.length > 0) {
             this.codeMirror.dispatch({

@@ -49,6 +49,10 @@
         <source>Reset execution count</source>
         <target>Uitvoertelling resetten</target>
       </trans-unit>
+      <trans-unit id="sa94ff8354d06f430">
+        <source>This section of code is locked and cannot be edited</source>
+        <target>Dit deel van de code is vergrendeld en kan niet worden bewerkt</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

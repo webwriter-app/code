@@ -16,6 +16,7 @@
 's9c355ae1ea6d408f': `Tampilkan waktu eksekusi`,
 's9fbbc819fe7e66aa': `Jalankan`,
 'sa75b95980cd80e78': `Editor`,
+'sa94ff8354d06f430': `Bagian kode ini terkunci dan tidak dapat diedit`,
 'sac95ed73c22266b9': `Izinkan eksekusi kode`,
 'sb1db8c15648f4579': `Jalankan saat memuat`,
 'sca1a826088564455': `Hasil`,

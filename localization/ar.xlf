@@ -49,6 +49,10 @@
         <source>Reset execution count</source>
         <target>إعادة تعيين عدد التنفيذ</target>
       </trans-unit>
+      <trans-unit id="sa94ff8354d06f430">
+        <source>This section of code is locked and cannot be edited</source>
+        <target>هذا القسم من التعليمات البرمجية مغلق ولا يمكن تحريره</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

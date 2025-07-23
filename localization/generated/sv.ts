@@ -16,6 +16,7 @@
 's9c355ae1ea6d408f': `Visa exekveringstid`,
 's9fbbc819fe7e66aa': `Kör`,
 'sa75b95980cd80e78': `Redaktör`,
+'sa94ff8354d06f430': `Detta avsnitt av koden är låst och kan inte redigeras`,
 'sac95ed73c22266b9': `Tillåt exekvering av kod`,
 'sb1db8c15648f4579': `Kör på belastning`,
 'sca1a826088564455': `Resultat`,

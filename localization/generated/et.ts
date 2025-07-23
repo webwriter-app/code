@@ -16,6 +16,7 @@
 's9c355ae1ea6d408f': `Näita täitmise aega`,
 's9fbbc819fe7e66aa': `Käivita`,
 'sa75b95980cd80e78': `Toimetaja`,
+'sa94ff8354d06f430': `See koodilõik on lukustatud ja seda ei saa muuta.`,
 'sac95ed73c22266b9': `Lubage koodi täitmine`,
 'sb1db8c15648f4579': `Käivita koormuse korral`,
 'sca1a826088564455': `Tulemused`,

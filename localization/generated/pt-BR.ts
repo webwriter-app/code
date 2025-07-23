@@ -16,6 +16,7 @@
 's9c355ae1ea6d408f': `Mostrar tempo de execução`,
 's9fbbc819fe7e66aa': `Executar`,
 'sa75b95980cd80e78': `Editor`,
+'sa94ff8354d06f430': `Esta seção do código está bloqueada e não pode ser editada`,
 'sac95ed73c22266b9': `Permitir a execução do código`,
 'sb1db8c15648f4579': `Executar com carga`,
 'sca1a826088564455': `Resultados`,
