@@ -49,6 +49,10 @@
         <source>Reset execution count</source>
         <target>Remise à zéro du nombre d'exécutions</target>
       </trans-unit>
+      <trans-unit id="sa94ff8354d06f430">
+        <source>This section of code is locked and cannot be edited</source>
+        <target>Cette section du code est verrouillée et ne peut être modifiée.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

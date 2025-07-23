@@ -49,6 +49,10 @@
         <source>Reset execution count</source>
         <target>Iš naujo nustatyti vykdymo skaičių</target>
       </trans-unit>
+      <trans-unit id="sa94ff8354d06f430">
+        <source>This section of code is locked and cannot be edited</source>
+        <target>Ši kodo dalis yra užrakinta ir jos redaguoti negalima</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

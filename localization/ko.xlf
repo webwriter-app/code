@@ -49,6 +49,10 @@
         <source>Reset execution count</source>
         <target>실행 횟수 재설정</target>
       </trans-unit>
+      <trans-unit id="sa94ff8354d06f430">
+        <source>This section of code is locked and cannot be edited</source>
+        <target>이 코드 섹션은 잠겨 있으며 편집할 수 없습니다.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

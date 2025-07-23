@@ -1,7 +1,8 @@
 import { closeBrackets, closeBracketsKeymap, completionKeymap } from "@codemirror/autocomplete";
 import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
-import { bracketMatching, foldGutter, indentOnInput } from "@codemirror/language";
+import { bracketMatching, foldGutter, HighlightStyle, indentOnInput, syntaxHighlighting } from "@codemirror/language";
 import { EditorState, RangeSet, StateEffect, StateField, Transaction } from "@codemirror/state";
+import { color, oneDarkHighlightStyle } from "@codemirror/theme-one-dark";
 import {
     crosshairCursor,
     Decoration,
@@ -19,6 +20,7 @@ import {
     showTooltip,
     Tooltip,
 } from "@codemirror/view";
+import { tags } from "@lezer/highlight";
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 import LockFillIcon from "../../assets/icons/lock-fill.svg";
 export { EditorView } from "@codemirror/view";
@@ -184,7 +186,7 @@ function toggleLockKeyCommand(view: EditorView): boolean {
     return true;
 }
 
-function createLockedLineProtection(inEditView: boolean) {
+function createLockedLineProtection(inEditView: boolean, getLocalizedMessage: () => string) {
     if (inEditView) {
         return [];
     }
@@ -192,8 +194,11 @@ function createLockedLineProtection(inEditView: boolean) {
     let tooltipTimeout: number | null = null;
     let currentView: EditorView | null = null;
 
+    // Create the tooltip field with localization
+    const tooltipField = createLockedLineTooltipField(getLocalizedMessage);
+
     return [
-        lockedLineTooltipField,
+        tooltipField,
         EditorView.updateListener.of((update) => {
             // Store view reference
             currentView = update.view;
@@ -204,7 +209,7 @@ function createLockedLineProtection(inEditView: boolean) {
                     clearTimeout(tooltipTimeout);
                     tooltipTimeout = null;
                 }
-                if (update.state.field(lockedLineTooltipField, false)) {
+                if (update.state.field(tooltipField, false)) {
                     update.view.dispatch({
                         effects: [hideLockedTooltipEffect.of({})],
                     });
@@ -267,50 +272,71 @@ function createLockedLineProtection(inEditView: boolean) {
     ];
 }
 
-// State field for locked line tooltip
-const lockedLineTooltipField = StateField.define<Tooltip | null>({
-    create: () => null,
+function createLockedLineTooltipField(getLocalizedMessage: () => string) {
+    return StateField.define<Tooltip | null>({
+        create: () => null,
 
-    update(tooltip, tr) {
-        let newTooltip = tooltip;
+        update(tooltip, tr) {
+            let newTooltip = tooltip;
 
-        for (let effect of tr.effects) {
-            if (effect.is(showLockedTooltipEffect)) {
-                const pos = effect.value.pos;
-                newTooltip = {
-                    pos,
-                    above: true,
-                    create: () => {
-                        const dom = document.createElement("div");
-                        dom.className = "cm-locked-line-tooltip";
-                        dom.textContent = "This line is locked and cannot be edited";
-                        return { dom };
-                    },
-                };
-            } else if (effect.is(hideLockedTooltipEffect)) {
-                newTooltip = null;
+            for (let effect of tr.effects) {
+                if (effect.is(showLockedTooltipEffect)) {
+                    const pos = effect.value.pos;
+                    newTooltip = {
+                        pos,
+                        above: true,
+                        create: () => {
+                            const dom = document.createElement("div");
+                            dom.className = "cm-locked-line-tooltip";
+                            dom.textContent = getLocalizedMessage();
+                            return { dom };
+                        },
+                    };
+                } else if (effect.is(hideLockedTooltipEffect)) {
+                    newTooltip = null;
+                }
             }
-        }
 
-        return newTooltip;
+            return newTooltip;
+        },
+
+        provide: (f) => showTooltip.from(f),
+    });
+}
+
+// State field for locked line tooltip
+// Replace the default 'chalky' color to be 'violet' instead
+const customHighlightStyle = HighlightStyle.define([
+    {
+        tag: [
+            tags.typeName,
+            tags.className,
+            tags.number,
+            tags.changed,
+            tags.annotation,
+            tags.modifier,
+            tags.self,
+            tags.namespace,
+        ],
+        color: color.violet,
     },
-
-    provide: (f) => showTooltip.from(f),
-});
+]);
 
 export function setupCodeMirror(
     code: string,
     parent: Element,
     inEditView: boolean,
     extensions: any[] = [],
+    getLocalizedMessage: () => string,
 ): EditorView {
     return new EditorView({
         state: EditorState.create({
             doc: code,
             extensions: [
                 lineLockField,
-                createLockedLineProtection(inEditView),
-
+                createLockedLineProtection(inEditView, getLocalizedMessage),
+                syntaxHighlighting(customHighlightStyle),
+                syntaxHighlighting(oneDarkHighlightStyle),
                 indentationMarkers(),
                 lineNumbers(),
                 highlightActiveLineGutter(),

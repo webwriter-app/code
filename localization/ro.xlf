@@ -49,6 +49,10 @@
         <source>Reset execution count</source>
         <target>Resetarea numărului de execuții</target>
       </trans-unit>
+      <trans-unit id="sa94ff8354d06f430">
+        <source>This section of code is locked and cannot be edited</source>
+        <target>Această secțiune de cod este blocată și nu poate fi editată</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

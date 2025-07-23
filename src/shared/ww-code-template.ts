@@ -7,9 +7,8 @@ import { style } from "./ww-code-css-single";
 
 // CodeMirror
 import { autocompletion } from "@codemirror/autocomplete";
-import { LanguageSupport, syntaxHighlighting } from "@codemirror/language";
+import { LanguageSupport } from "@codemirror/language";
 import { Compartment, StateEffect } from "@codemirror/state";
-import { oneDarkHighlightStyle } from "@codemirror/theme-one-dark";
 import { EditorView } from "@codemirror/view";
 import { lineLockEffect, lineLockField, setupCodeMirror } from "./codemirror-setup";
 
@@ -130,16 +129,21 @@ export default abstract class Code extends LitElementWw {
     }
 
     firstUpdated() {
-        this.codeMirror = setupCodeMirror(this.code, this.pre, this.isEditable(), [
-            this.language.of(this.languageModule.languageExtension),
-            this.autocompletion.of(autocompletion()),
-            this.highlightStyle.of(syntaxHighlighting(oneDarkHighlightStyle, { fallback: true })),
-            EditorView.updateListener.of((update) => {
-                if (update.docChanged) {
-                    this.code = update.state.doc.toString();
-                }
-            }),
-        ]);
+        this.codeMirror = setupCodeMirror(
+            this.code,
+            this.pre,
+            this.isEditable(),
+            [
+                this.language.of(this.languageModule.languageExtension),
+                this.autocompletion.of(autocompletion()),
+                EditorView.updateListener.of((update) => {
+                    if (update.docChanged) {
+                        this.code = update.state.doc.toString();
+                    }
+                }),
+            ],
+            () => msg("This section of code is locked and cannot be edited"),
+        );
 
         if (this.lockedLines.length > 0) {
             this.codeMirror.dispatch({

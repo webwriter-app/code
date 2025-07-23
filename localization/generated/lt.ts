@@ -16,6 +16,7 @@
 's9c355ae1ea6d408f': `Rodyti vykdymo laiką`,
 's9fbbc819fe7e66aa': `Paleisti`,
 'sa75b95980cd80e78': `Redaktorius`,
+'sa94ff8354d06f430': `Ši kodo dalis yra užrakinta ir jos redaguoti negalima`,
 'sac95ed73c22266b9': `Leisti vykdyti kodą`,
 'sb1db8c15648f4579': `Vykdyti įkrovos metu`,
 'sca1a826088564455': `Rezultatai`,

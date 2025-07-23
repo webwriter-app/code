@@ -16,6 +16,7 @@
 's9c355ae1ea6d408f': `Afficher le temps d'exécution`,
 's9fbbc819fe7e66aa': `Exécuter`,
 'sa75b95980cd80e78': `Éditeur`,
+'sa94ff8354d06f430': `Cette section du code est verrouillée et ne peut être modifiée.`,
 'sac95ed73c22266b9': `Autoriser l'exécution du code`,
 'sb1db8c15648f4579': `Fonctionnement en charge`,
 'sca1a826088564455': `Résultats`,

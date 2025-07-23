@@ -16,6 +16,7 @@
 's9c355ae1ea6d408f': `Prikaži čas izvedbe`,
 's9fbbc819fe7e66aa': `Spustite`,
 'sa75b95980cd80e78': `Urednik`,
+'sa94ff8354d06f430': `Ta del kode je zaklenjen in ga ni mogoče urejati`,
 'sac95ed73c22266b9': `Dovolite izvajanje kode`,
 'sb1db8c15648f4579': `Zagon ob obremenitvi`,
 'sca1a826088564455': `Rezultati`,

@@ -49,6 +49,10 @@
         <source>Reset execution count</source>
         <target>重設執行計數</target>
       </trans-unit>
+      <trans-unit id="sa94ff8354d06f430">
+        <source>This section of code is locked and cannot be edited</source>
+        <target>本節程式碼已鎖定，無法編輯</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

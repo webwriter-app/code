@@ -49,6 +49,10 @@
         <source>Reset execution count</source>
         <target>Återställ antal körningar</target>
       </trans-unit>
+      <trans-unit id="sa94ff8354d06f430">
+        <source>This section of code is locked and cannot be edited</source>
+        <target>Detta avsnitt av koden är låst och kan inte redigeras</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

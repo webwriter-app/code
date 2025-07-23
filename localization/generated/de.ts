@@ -16,6 +16,7 @@
 's9c355ae1ea6d408f': `Ausführungszeit anzeigen`,
 's9fbbc819fe7e66aa': `Ausführen`,
 'sa75b95980cd80e78': `Editor`,
+'sa94ff8354d06f430': `Dieser Abschnitt des Codes ist gesperrt und kann nicht bearbeitet werden`,
 'sac95ed73c22266b9': `Codeausführung zulassen`,
 'sb1db8c15648f4579': `Beim Laden ausführen`,
 'sca1a826088564455': `Ausgabe`,
