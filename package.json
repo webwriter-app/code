@@ -84,6 +84,7 @@
     "wabt": "^1.0.37"
   },
   "devDependencies": {
+    "@lit/localize-tools": "^0.8.0",
     "patch-package": "^8.0.0",
     "prettier": "^3.6.2"
   },
