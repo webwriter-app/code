@@ -15,7 +15,7 @@ export default class CodeJavaScript extends CodeJsTemplate {
         super("JavaScript", javascript());
     }
 
-    build(code: string): string {
+    protected build(code: string): string {
         return code;
     }
 }

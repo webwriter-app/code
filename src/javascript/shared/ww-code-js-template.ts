@@ -55,7 +55,7 @@ export default abstract class CodeJsTemplate extends Code {
         });
     }
 
-    abstract build(code: string): string;
+    protected abstract build(code: string): string;
 
     private objectRealizationRequests = new Map<number, SerializedObject | SerializedArray>();
 

@@ -1,6 +1,6 @@
 {
   "name": "@webwriter/code",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Write and run code as a code cell. Supports several languages (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
   "keywords": [
     "webwriter-widget",

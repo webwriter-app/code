@@ -39,6 +39,7 @@ export type Diagnostic = {
 export default abstract class Code extends LitElementWw {
     static styles = style;
 
+    /** @internal */
     static get scopedElements() {
         return {
             "sl-button": SlButton,
@@ -49,16 +50,17 @@ export default abstract class Code extends LitElementWw {
         };
     }
 
+    /** @internal */
     static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
 
-    localize = LOCALIZE;
+    protected localize = LOCALIZE;
 
     private codeMirror: EditorView = new EditorView();
     private languageModule!: LanguageModule;
 
     /** The source code content displayed in the editor. */
-    @property({ attribute: true, reflect: true })
-    accessor code = this.codeMirror.state.doc.toString();
+    @property({ type: String, attribute: true, reflect: true })
+    accessor code: String = this.codeMirror.state.doc.toString();
 
     /** Whether the code editor is visible to the user. */
     @property({ type: Boolean, attribute: true, reflect: true })
@@ -104,31 +106,26 @@ export default abstract class Code extends LitElementWw {
     @property({ type: Array, attribute: true, reflect: true })
     accessor diagnostics: Diagnostic[] = [];
 
-    // @ts-expect-error
-    @query("#iframePreview")
-    accessor iframePreview: HTMLIFrameElement | undefined;
-
     @query("pre")
-    accessor pre!: HTMLPreElement;
+    private accessor pre!: HTMLPreElement;
 
-    get codeRunner() {
+    private get codeRunner() {
         return this.languageModule.executionFunction;
     }
 
-    language = new Compartment();
-    autocompletion = new Compartment();
-    highlightStyle = new Compartment();
+    private language = new Compartment();
+    private autocompletion = new Compartment();
 
     constructor(languageModule: LanguageModule) {
         super();
         this.languageModule = languageModule;
     }
 
-    isEditable() {
+    private isEditable() {
         return this.contentEditable === "true" || this.contentEditable === "";
     }
 
-    firstUpdated() {
+    protected firstUpdated() {
         this.codeMirror = setupCodeMirror(
             this.code,
             this.pre,
@@ -208,25 +205,25 @@ export default abstract class Code extends LitElementWw {
         }
     }
 
-    getVisibleStyle() {
+    private getVisibleStyle() {
         if (this.isEditable()) {
             return this.visible ? "" : "opacity: 0.5";
         }
         return this.visible ? "" : "display: none";
     }
 
-    render() {
+    protected render() {
         return html`
             ${this.Code()} ${this.Controls()} ${this.codeRunner !== undefined ? this.Output() : null}
             ${this.isEditable() ? this.Options() : ""}
         `;
     }
 
-    Code() {
+    private Code() {
         return html`<pre style=${this.getVisibleStyle()}></pre>`;
     }
 
-    Controls() {
+    private Controls() {
         return html`<div class="controls" style=${this.getVisibleStyle()}>
             <sl-button
                 variant="primary"
@@ -254,13 +251,13 @@ export default abstract class Code extends LitElementWw {
         </div>`;
     }
 
-    Output() {
+    private Output() {
         return html`<output style=${this.getVisibleStyle()}>
             ${this.diagnostics?.length > 0 ? this.Diagnostics() : this.Result()}
         </output>`;
     }
 
-    Options() {
+    private Options() {
         return html`<aside part="options" style="z-index: 1000">
             <h2>${msg("Execution")}</h2>
             <sl-switch
@@ -313,7 +310,7 @@ export default abstract class Code extends LitElementWw {
         </aside>`;
     }
 
-    Result() {
+    protected Result() {
         switch (this.languageModule.name) {
             case "Python":
             case "WebAssembly":
@@ -334,7 +331,7 @@ export default abstract class Code extends LitElementWw {
         }
     }
 
-    Diagnostics() {
+    private Diagnostics() {
         return html`
             <div class="diagnostics-container">
                 ${this.languageModule.name} compilation failed with ${this.diagnostics.length}
@@ -367,7 +364,7 @@ export default abstract class Code extends LitElementWw {
         `;
     }
 
-    async runCode() {
+    private async runCode() {
         if (!this.codeRunner) {
             return;
         }
@@ -382,7 +379,7 @@ export default abstract class Code extends LitElementWw {
         this.executionTime = endTime - startTime;
     }
 
-    setAutocompletion(value: boolean) {
+    private setAutocompletion(value: boolean) {
         this.autocomplete = value;
         this.codeMirror.dispatch({
             effects: this.autocompletion.reconfigure(value ? autocompletion() : []),
