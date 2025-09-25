@@ -11,7 +11,7 @@ export class CodeJava extends Code {
         super(javaModule);
     }
 
-    firstUpdated(): void {
+    protected firstUpdated(): void {
         super.firstUpdated();
         initializeJavacWorker();
     }

@@ -16,7 +16,7 @@ export default class CodeTypeScript extends CodeJsTemplate {
         super("TypeScript", javascript());
     }
 
-    build(code: string): string {
+    protected build(code: string): string {
         this.diagnostics = [];
 
         const out = transpileModule(code, {
