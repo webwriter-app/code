@@ -1,5 +1,5 @@
-# Code (`@webwriter/code@3.0.2`)
-[License: MIT](LICENSE) | Version: 3.0.2
+# Code (`@webwriter/code@3.0.3`)
+[License: MIT](LICENSE) | Version: 3.0.3
 
 The Code Widget enables interactive code exercises directly in the browser. Users can effortlessly write, execute, and explore code in multiple programming languages, including:
 
