@@ -7,6 +7,9 @@ import { JavaDiagnostic } from "../teavm/types";
 const runnerWorkerUrl = URL.createObjectURL(new Blob([JavaRunnerWorker], { type: "application/javascript" }));
 let javacWorker: Worker;
 
+let currentId = 0;
+const callbacks: { [key: number]: (value: any) => void } = {};
+
 export function initializeJavacWorker() {
     if (!javacWorker) {
         javacWorker = new Worker(URL.createObjectURL(new Blob([JavacWorker], { type: "application/javascript" })), {
@@ -22,22 +25,39 @@ export function initializeJavacWorker() {
     }
 }
 
-let currentId = 0;
-const callbacks: { [key: number]: (value: any) => void } = {};
+function extractClassName(code: string): string | null {
+    const classMatch = code.match(/public\s+class\s+([A-Za-z_$][A-Za-z0-9_$]*)/);
+    return classMatch ? classMatch[1] : null;
+}
+
+function compileCode(code: string, mainClass: string): Promise<any> {
+    return new Promise((onSuccess) => {
+        callbacks[currentId] = onSuccess;
+        javacWorker.postMessage({
+            mainClass: mainClass,
+            code,
+            id: currentId++,
+        });
+    });
+}
 
 export const javaModule: LanguageModule = {
     name: "Java",
     executionFunction: async (code, context) => {
         if (!javacWorker) initializeJavacWorker();
 
-        const id = currentId++;
-        const res: any = await new Promise((onSuccess) => {
-            callbacks[id] = onSuccess;
-            javacWorker.postMessage({
-                code,
-                id,
-            });
-        });
+        const mainClass = extractClassName(code);
+        if (!mainClass) {
+            context.diagnostics = [
+                {
+                    message:
+                        "Public class not found, please define a public class like this:\n  public class <ClassName> { ... }",
+                },
+            ];
+            return;
+        }
+
+        const res = await compileCode(code, mainClass);
 
         if (res.diagnostics) {
             context.diagnostics = res.diagnostics
@@ -72,6 +92,7 @@ export const javaModule: LanguageModule = {
 
             runnerWorker.postMessage({
                 wasm: res.wasm,
+                mainClass,
             });
         });
     },

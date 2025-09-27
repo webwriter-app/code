@@ -103,6 +103,9 @@
         }
     },
     "./widgets/webwriter-code-java": {
+        "uninsertable": true
+    },
+    "./snippets/java": {
         "label": {
             "_": "Java",
             "ar": "Java",

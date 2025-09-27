@@ -116,6 +116,10 @@ export const style = css`
         flex-direction: column;
     }
 
+    output .outputs pre {
+        white-space: pre-wrap;
+    }
+
     .htmlPreview {
         border: none;
         background-color: white;
@@ -151,5 +155,9 @@ export const style = css`
     .diagnostic-line-number {
         color: var(--sl-color-primary-700);
         text-decoration: underline;
+    }
+
+    .diagnostic-message {
+        white-space: pre-wrap;
     }
 `;

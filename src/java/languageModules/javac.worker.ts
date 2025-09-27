@@ -42,7 +42,7 @@ let diagnostics: any[] = [];
 self.onmessage = async (event) => {
     await compilerInitializationPromise;
 
-    const { code, id } = event.data;
+    const { code, id, mainClass } = event.data;
 
     diagnostics = [];
     compiler.clearInputClassFiles();
@@ -50,12 +50,12 @@ self.onmessage = async (event) => {
     compiler.clearOutputFiles();
 
     try {
-        compiler.addSourceFile("Main.java", code);
+        compiler.addSourceFile(`${mainClass}.java`, code);
         if (!compiler.compile()) throw "Compilation failed!";
         if (
             !compiler.generateWebAssembly({
                 outputName: "app",
-                mainClass: "Main",
+                mainClass,
             })
         )
             throw "WebAssembly generation failed!";

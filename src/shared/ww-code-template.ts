@@ -60,7 +60,7 @@ export default abstract class Code extends LitElementWw {
 
     /** The source code content displayed in the editor. */
     @property({ type: String, attribute: true, reflect: true })
-    accessor code: String = this.codeMirror.state.doc.toString();
+    accessor code: string = this.codeMirror.state.doc.toString();
 
     /** Whether the code editor is visible to the user. */
     @property({ type: Boolean, attribute: true, reflect: true })
@@ -341,7 +341,7 @@ export default abstract class Code extends LitElementWw {
                         (d) => html`
                             <sl-icon name="exclamation-triangle-fill" class="diagnostic-icon"></sl-icon>
                             ${d.start
-                                ? html` <a
+                                ? html`<a
                                       class="diagnostic-line-number"
                                       href="#"
                                       @click=${(event: Event) => {
@@ -355,8 +355,8 @@ export default abstract class Code extends LitElementWw {
                                       }}
                                       >${d.line}:${d.character}</a
                                   >`
-                                : ""}
-                            <div class="diagnostic-message">${d.message}</div>
+                                : html`<a class="diagnostic-line-number"></a>`}
+                            <pre class="diagnostic-message">${d.message}</pre>
                         `,
                     )}
                 </div>
