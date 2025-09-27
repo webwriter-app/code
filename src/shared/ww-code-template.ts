@@ -356,7 +356,7 @@ export default abstract class Code extends LitElementWw {
                                       >${d.line}:${d.character}</a
                                   >`
                                 : html`<a class="diagnostic-line-number"></a>`}
-                            <div class="diagnostic-message">${d.message}</div>
+                            <pre class="diagnostic-message">${d.message}</pre>
                         `,
                     )}
                 </div>

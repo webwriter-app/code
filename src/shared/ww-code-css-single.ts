@@ -152,4 +152,8 @@ export const style = css`
         color: var(--sl-color-primary-700);
         text-decoration: underline;
     }
+
+    .diagnostic-message {
+        white-space: pre-wrap;
+    }
 `;
