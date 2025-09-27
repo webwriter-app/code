@@ -95,6 +95,7 @@
       "default": "./dist/widgets/ww-code-html.*"
     },
     "./snippets/HTML.html": "./snippets/html.html",
+    "./snippets/java.html": "./snippets/java.html",
     "./widgets/webwriter-code-javascript.*": {
       "source": "./src/javascript/ww-code-javascript.ts",
       "default": "./dist/widgets/ww-code-javascript.*"
