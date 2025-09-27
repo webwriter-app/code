@@ -92,6 +92,7 @@ export const javaModule: LanguageModule = {
 
             runnerWorker.postMessage({
                 wasm: res.wasm,
+                mainClass,
             });
         });
     },

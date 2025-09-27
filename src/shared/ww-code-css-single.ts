@@ -116,6 +116,10 @@ export const style = css`
         flex-direction: column;
     }
 
+    output .outputs pre {
+        white-space: pre-wrap;
+    }
+
     .htmlPreview {
         border: none;
         background-color: white;

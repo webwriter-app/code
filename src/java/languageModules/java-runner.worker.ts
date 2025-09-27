@@ -3,7 +3,7 @@ import { load } from "../teavm/compiler.wasm-runtime.js";
 self.onmessage = async (event) => {
     const caches: Record<"stdout" | "stderr", string> = { stdout: "", stderr: "" };
 
-    const wasm = event.data.wasm;
+    const { wasm, mainClass } = event.data;
     const outputTeaVM = await load(wasm, {
         installImports(o: any) {
             const makePutchar = (type: "stdout" | "stderr") => (c: number) => {
@@ -23,8 +23,19 @@ self.onmessage = async (event) => {
         },
     });
 
+    const mainMethod = (outputTeaVM.exports as any).main as ((args: string[]) => void) | undefined;
+
+    if (!mainMethod) {
+        self.postMessage({
+            type: "terminated",
+            success: false,
+            error: `Error: Main method not found in class ${mainClass}, please define the main method as:\n  public static void main(String[] args)`,
+        });
+        return;
+    }
+
     try {
-        (outputTeaVM.exports as any).main([]);
+        mainMethod([]);
         self.postMessage({
             type: "terminated",
             success: true,
