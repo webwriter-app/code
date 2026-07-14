@@ -1,7 +1,7 @@
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { LitElementWw } from "@webwriter/lit";
 import { LitElement, PropertyValueMap, html } from "lit";
-import { property, query } from "lit/decorators.js";
+import { property, query, state } from "lit/decorators.js";
 
 import { style } from "./ww-code-css-single";
 
@@ -97,6 +97,9 @@ export default abstract class Code extends LitElementWw {
     /** The number of times the code has been executed. */
     @property({ type: Number, attribute: true, reflect: true })
     accessor executionCount = 0;
+
+    @state()
+    private accessor running = false;
 
     /** The results from the last code execution. */
     @property({ type: Array, attribute: true, reflect: true })
@@ -228,7 +231,7 @@ export default abstract class Code extends LitElementWw {
             <sl-button
                 variant="primary"
                 size="small"
-                ?disabled=${this.codeRunner === undefined}
+                ?disabled=${this.codeRunner === undefined || this.running}
                 @click="${this.runCode}"
                 style=${this.runnable && this.codeRunner !== undefined ? "" : "display: none"}
             >
@@ -365,18 +368,25 @@ export default abstract class Code extends LitElementWw {
     }
 
     private async runCode() {
-        if (!this.codeRunner) {
+        if (!this.codeRunner || this.running) {
             return;
         }
-        this.results = [];
-        this.diagnostics = [];
 
-        this.executionCount++;
-        const code = this.codeMirror.state.doc.toString();
-        const startTime = performance.now();
-        await this.codeRunner(code, this);
-        const endTime = performance.now();
-        this.executionTime = endTime - startTime;
+        this.running = true;
+
+        try {
+            this.results = [];
+            this.diagnostics = [];
+
+            this.executionCount++;
+            const code = this.codeMirror.state.doc.toString();
+            const startTime = performance.now();
+            await this.codeRunner(code, this);
+            const endTime = performance.now();
+            this.executionTime = endTime - startTime;
+        } finally {
+            this.running = false;
+        }
     }
 
     private setAutocompletion(value: boolean) {
