@@ -31,7 +31,18 @@
             "ko": "Code",
             "ja": "Code",
             "id": "Code",
-            "zh-hans": "Code"
+            "zh-hans": "Code",
+            "en": "Code",
+            "en-US": "Code",
+            "en-GB": "Code",
+            "en-CA": "Code",
+            "en-AU": "Code",
+            "en-IN": "Code",
+            "zh": "Code",
+            "zh-Hans": "Code",
+            "zh-Hant": "程式碼",
+            "pt": "Code",
+            "no": "Code"
         },
         "description": {
             "ar": "كتابة التعليمات البرمجية وتشغيلها كخلية برمجية. يدعم عدة لغات (HTML، جافا سكريبت/جافا سكريبت، بايثون، جافا، ويب أسبيلي).",
@@ -64,7 +75,19 @@
             "ja": "コードセルとしてコードを書いて実行。複数の言語をサポート（HTML、JavaScript/TypeScript、Python、Java、WebAssembly）。",
             "id": "Menulis dan menjalankan kode sebagai sel kode. Mendukung beberapa bahasa (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
             "zh-hans": "以代码单元的形式编写和运行代码。支持多种语言（HTML、JavaScript/TypeScript、Python、Java、WebAssembly）。",
-            "zh-hant": "以編碼單元的方式寫入並執行程式碼。支援多種語言 (HTML、JavaScript/TypeScript、Python、Java、WebAssembly)。"
+            "zh-hant": "以編碼單元的方式寫入並執行程式碼。支援多種語言 (HTML、JavaScript/TypeScript、Python、Java、WebAssembly)。",
+            "_": "Write and run code as a code cell. Supports several languages (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+            "en": "Write and run code as a code cell. Supports several languages (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+            "en-US": "Write and run code as a code cell. Supports several languages (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+            "en-GB": "Write and run code as a code cell. Supports several languages (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+            "en-CA": "Write and run code as a code cell. Supports several languages (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+            "en-AU": "Write and run code as a code cell. Supports several languages (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+            "en-IN": "Write and run code as a code cell. Supports several languages (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+            "zh": "以代码单元的形式编写和运行代码。支持多种语言（HTML、JavaScript/TypeScript、Python、Java、WebAssembly）。",
+            "zh-Hans": "以代码单元的形式编写和运行代码。支持多种语言（HTML、JavaScript/TypeScript、Python、Java、WebAssembly）。",
+            "zh-Hant": "以編碼單元的方式寫入並執行程式碼。支援多種語言 (HTML、JavaScript/TypeScript、Python、Java、WebAssembly)。",
+            "pt": "Escreva e execute código como uma célula de código. Suporta várias linguagens (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+            "no": "Skriv og kjør kode som en kodecelle. Støtter flere språk (HTML, JavaScript/TypeScript, Python, Java, WebAssembly)."
         }
     },
     "./widgets/webwriter-code-javascript": {
@@ -99,11 +122,43 @@
             "ko": "JavaScript",
             "ja": "JavaScript",
             "id": "JavaScript",
-            "zh-hans": "JavaScript"
+            "zh-hans": "JavaScript",
+            "en": "Code Javascript",
+            "en-US": "Code Javascript",
+            "en-GB": "Code Javascript",
+            "en-CA": "Code Javascript",
+            "en-AU": "Code Javascript",
+            "en-IN": "Code Javascript",
+            "zh": "JavaScript",
+            "zh-Hans": "JavaScript",
+            "pt": "JavaScript",
+            "no": "JavaScript",
+            "zh-Hant": "JavaScript 程式碼"
         }
     },
     "./widgets/webwriter-code-java": {
-        "uninsertable": true
+        "uninsertable": true,
+        "label": {
+            "_": "Code Java",
+            "en": "Code Java",
+            "en-US": "Code Java",
+            "en-GB": "Code Java",
+            "en-CA": "Code Java",
+            "en-AU": "Code Java",
+            "en-IN": "Code Java",
+            "fr": "Code Java",
+            "de": "Java-Code",
+            "es": "Código Java",
+            "ar": "شيفرة Java",
+            "zh": "Java 代码",
+            "zh-Hans": "Java 代码",
+            "zh-Hant": "Java 程式碼",
+            "nl": "Java-code",
+            "it": "Codice Java",
+            "pl": "Kod Java",
+            "pt-BR": "Código Java",
+            "ja": "Java コード"
+        }
     },
     "./snippets/java": {
         "label": {
@@ -137,7 +192,18 @@
             "ko": "Java",
             "ja": "Java",
             "id": "Java",
-            "zh-hans": "Java"
+            "zh-hans": "Java",
+            "en": "Java",
+            "en-US": "Java",
+            "en-GB": "Java",
+            "en-CA": "Java",
+            "en-AU": "Java",
+            "en-IN": "Java",
+            "zh": "Java",
+            "zh-Hans": "Java",
+            "pt": "Java",
+            "no": "Java",
+            "zh-Hant": "Java"
         }
     },
     "./widgets/webwriter-code-typescript": {
@@ -172,7 +238,18 @@
             "ko": "TypeScript",
             "ja": "TypeScript",
             "id": "TypeScript",
-            "zh-hans": "TypeScript"
+            "zh-hans": "TypeScript",
+            "en": "Code Typescript",
+            "en-US": "Code Typescript",
+            "en-GB": "Code Typescript",
+            "en-CA": "Code Typescript",
+            "en-AU": "Code Typescript",
+            "en-IN": "Code Typescript",
+            "zh": "TypeScript",
+            "zh-Hans": "TypeScript",
+            "pt": "TypeScript",
+            "no": "TypeScript",
+            "zh-Hant": "TypeScript 程式碼"
         }
     },
     "./widgets/webwriter-code-python": {
@@ -207,7 +284,18 @@
             "ko": "Python",
             "ja": "Python",
             "id": "Python",
-            "zh-hans": "Python"
+            "zh-hans": "Python",
+            "en": "Code Python",
+            "en-US": "Code Python",
+            "en-GB": "Code Python",
+            "en-CA": "Code Python",
+            "en-AU": "Code Python",
+            "en-IN": "Code Python",
+            "zh": "Python",
+            "zh-Hans": "Python",
+            "pt": "Python",
+            "no": "Python",
+            "zh-Hant": "Python 程式碼"
         }
     },
     "./widgets/webwriter-code-webassembly": {
@@ -242,7 +330,64 @@
             "ko": "WebAssembly",
             "ja": "WebAssembly",
             "id": "WebAssembly",
-            "zh-hans": "WebAssembly"
+            "zh-hans": "WebAssembly",
+            "en": "Code Webassembly",
+            "en-US": "Code Webassembly",
+            "en-GB": "Code Webassembly",
+            "en-CA": "Code Webassembly",
+            "en-AU": "Code Webassembly",
+            "en-IN": "Code Webassembly",
+            "zh": "WebAssembly",
+            "zh-Hans": "WebAssembly",
+            "pt": "WebAssembly",
+            "no": "WebAssembly",
+            "zh-Hant": "WebAssembly 程式碼"
+        }
+    },
+    "./widgets/webwriter-code-html": {
+        "label": {
+            "_": "Code Html",
+            "en": "Code Html",
+            "en-US": "Code Html",
+            "en-GB": "Code Html",
+            "en-CA": "Code Html",
+            "en-AU": "Code Html",
+            "en-IN": "Code Html",
+            "fr": "Code HTML",
+            "de": "HTML-Code",
+            "es": "Código HTML",
+            "ar": "شيفرة HTML",
+            "zh": "HTML 代码",
+            "zh-Hans": "HTML 代码",
+            "zh-Hant": "HTML 程式碼",
+            "nl": "HTML-code",
+            "it": "Codice HTML",
+            "pl": "Kod HTML",
+            "pt-BR": "Código HTML",
+            "ja": "HTML コード"
+        }
+    },
+    "./snippets/HTML": {
+        "label": {
+            "_": "HTML",
+            "en": "HTML",
+            "en-US": "HTML",
+            "en-GB": "HTML",
+            "en-CA": "HTML",
+            "en-AU": "HTML",
+            "en-IN": "HTML",
+            "fr": "HTML",
+            "de": "HTML",
+            "es": "HTML",
+            "ar": "HTML",
+            "zh": "HTML",
+            "zh-Hans": "HTML",
+            "zh-Hant": "HTML",
+            "nl": "HTML",
+            "it": "HTML",
+            "pl": "HTML",
+            "pt-BR": "HTML",
+            "ja": "HTML"
         }
     }
 }

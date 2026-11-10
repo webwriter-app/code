@@ -19,8 +19,8 @@ import SlIcon from "@shoelace-style/shoelace/dist/components/icon/icon.js";
 import SlInput from "@shoelace-style/shoelace/dist/components/input/input.js";
 import "./shoelace-icons";
 
-import { msg } from "@lit/localize";
-import LOCALIZE from "../../localization/generated";
+import type { MsgFn } from "@lit/localize";
+import { createLocalizer, effectiveLanguage, drawerLabel, sourceMsg } from "../../localization/localizer";
 import { readData, writeData } from "./data-block";
 
 export type LanguageModule = {
@@ -37,6 +37,11 @@ export type Diagnostic = {
 };
 
 export default abstract class Code extends LitElementWw {
+    // Inherited language must not be reflected as an authored attribute.
+    static override properties = { lang: { attribute: false, noAccessor: true } };
+    override get lang(): string { return effectiveLanguage(this); }
+    override set lang(value: string) { this.setAttribute("lang", value); }
+
     static styles = style;
 
     /** @internal */
@@ -52,36 +57,50 @@ export default abstract class Code extends LitElementWw {
     /** @internal */
     static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
 
-    protected localize = LOCALIZE;
+    protected localize = createLocalizer(this, () => {
+        Object.assign(this.optionGroups, Code.makeOptionGroups(this.msg, this.localize.getLocale()));
+        Object.assign(this.actions, Code.makeActions(this.msg, this.localize.getLocale()));
+        Object.assign(this.options, this.getDrawerOptions());
+    });
+    readonly msg = this.localize.msg;
 
     private codeMirror: EditorView = new EditorView();
     private languageModule!: LanguageModule;
 
-    static optionGroups = {
-        execution: { label: { _: "Execution", de: "Ausführung" } },
-        editor: { label: { _: "Editor" } },
-        results: { label: { _: "Results", de: "Ergebnisse" } },
-    };
+    private static makeOptionGroups(msg: MsgFn, locale = "en") {
+        return {
+            execution: { label: drawerLabel(msg("Execution"), { en: "Execution", de: "Ausführung" }, locale) },
+            editor: { label: { _: msg("Editor") } },
+            results: { label: drawerLabel(msg("Results"), { en: "Results", de: "Ergebnisse" }, locale) },
+        };
+    }
+    static optionGroups = Code.makeOptionGroups(sourceMsg);
+    readonly optionGroups = Code.makeOptionGroups(sourceMsg);
 
     readonly options = {};
 
     private getDrawerOptions() {
+        const { msg } = this;
+        const locale = this.localize.getLocale();
         const unavailable = !this.codeRunner;
         return {
-            disableExecution: { type: Boolean, group: "execution", disabled: unavailable, label: { _: "Disable code execution", de: "Codeausführung deaktivieren" } },
-            autoRun: { type: Boolean, group: "execution", disabled: unavailable, label: { _: "Run on load", de: "Beim Laden ausführen" } },
-            autocomplete: { type: Boolean, group: "editor", label: { _: "Autocompletion", de: "Autovervollständigung" } },
-            hideCode: { type: Boolean, group: "editor", label: { _: "Hide code", de: "Code ausblenden" } },
-            showExecutionTime: { type: Boolean, group: "results", label: { _: "Show execution time", de: "Ausführungszeit anzeigen" } },
-            showExecutionCount: { type: Boolean, group: "results", label: { _: "Show execution count", de: "Anzahl der Ausführungen anzeigen" } },
+            disableExecution: { type: Boolean, group: "execution", disabled: unavailable, label: drawerLabel(msg("Disable code execution"), { en: "Disable code execution", de: "Codeausführung deaktivieren" }, locale) },
+            autoRun: { type: Boolean, group: "execution", disabled: unavailable, label: drawerLabel(msg("Run on load"), { en: "Run on load", de: "Beim Laden ausführen" }, locale) },
+            autocomplete: { type: Boolean, group: "editor", label: drawerLabel(msg("Autocompletion"), { en: "Autocompletion", de: "Autovervollständigung" }, locale) },
+            hideCode: { type: Boolean, group: "editor", label: drawerLabel(msg("Hide code"), { en: "Hide code", de: "Code ausblenden" }, locale) },
+            showExecutionTime: { type: Boolean, group: "results", label: drawerLabel(msg("Show execution time"), { en: "Show execution time", de: "Ausführungszeit anzeigen" }, locale) },
+            showExecutionCount: { type: Boolean, group: "results", label: drawerLabel(msg("Show execution count"), { en: "Show execution count", de: "Anzahl der Ausführungen anzeigen" }, locale) },
         };
     }
 
-    static actions = {
-        resetExecutionCount: { group: "results", label: { _: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" } },
-    };
+    private static makeActions(msg: MsgFn, locale = "en") {
+        return {
+            resetExecutionCount: { group: "results", label: drawerLabel(msg("Reset execution count"), { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, locale) },
+        };
+    }
+    static actions = Code.makeActions(sourceMsg);
 
-    readonly actions = Code.actions;
+    readonly actions = Code.makeActions(sourceMsg);
 
     resetExecutionCount() {
         this.executionCount = 0;
@@ -205,7 +224,7 @@ export default abstract class Code extends LitElementWw {
                     }
                 }),
             ],
-            () => msg("This section of code is locked and cannot be edited"),
+            () => this.msg("This section of code is locked and cannot be edited"),
         );
 
         if (this.lockedLines.length > 0) {
@@ -298,7 +317,7 @@ export default abstract class Code extends LitElementWw {
                 style=${!this.disableExecution && this.codeRunner !== undefined ? "" : "display: none"}
             >
                 <sl-icon name="${this.autoRun ? "play-circle" : "play-fill"}" slot="prefix"></sl-icon>
-                ${msg("Run")} ${this.showExecutionCount ? `(${this.executionCount})` : ""}
+                ${this.msg("Run")} ${this.showExecutionCount ? `(${this.executionCount})` : ""}
             </sl-button>
             ${this.showExecutionTime ? html`<div class="executionTime">${this.executionTime.toFixed(1)}ms</div>` : ""}
             <div class="language-label">${this.languageModule.name}</div>
@@ -311,7 +330,7 @@ export default abstract class Code extends LitElementWw {
                 }}
                 style=${!this.disableExecution && this.codeRunner !== undefined ? "" : "display: none"}
             >
-                ${msg("Clear Output")}
+                ${this.msg("Clear Output")}
             </sl-button>
         </div>`;
     }

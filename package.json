@@ -45,8 +45,14 @@
     "widget-lang-ko",
     "widget-lang-ja",
     "widget-lang-id",
-    "widget-lang-zh-hans",
-    "widget-lang-zh-hant"
+    "widget-lang-zh-Hans",
+    "widget-lang-zh-Hant",
+    "widget-lang-en-US",
+    "widget-lang-en-GB",
+    "widget-lang-en-CA",
+    "widget-lang-en-AU",
+    "widget-lang-en-IN",
+    "widget-lang-zh"
   ],
   "license": "MIT",
   "author": "",
