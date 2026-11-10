@@ -17,11 +17,11 @@ import SlButton from "@shoelace-style/shoelace/dist/components/button/button.js"
 import SlDetails from "@shoelace-style/shoelace/dist/components/details/details.js";
 import SlIcon from "@shoelace-style/shoelace/dist/components/icon/icon.js";
 import SlInput from "@shoelace-style/shoelace/dist/components/input/input.js";
-import SlSwitch from "@shoelace-style/shoelace/dist/components/switch/switch.js";
 import "./shoelace-icons";
 
 import { msg } from "@lit/localize";
 import LOCALIZE from "../../localization/generated";
+import { readData, writeData } from "./data-block";
 
 export type LanguageModule = {
     name: string;
@@ -44,7 +44,6 @@ export default abstract class Code extends LitElementWw {
         return {
             "sl-button": SlButton,
             "sl-input": SlInput,
-            "sl-switch": SlSwitch,
             "sl-details": SlDetails,
             "sl-icon": SlIcon,
         };
@@ -58,36 +57,99 @@ export default abstract class Code extends LitElementWw {
     private codeMirror: EditorView = new EditorView();
     private languageModule!: LanguageModule;
 
-    /** The source code content displayed in the editor. */
-    @property({ type: String, attribute: true, reflect: true })
-    accessor code: string = this.codeMirror.state.doc.toString();
+    static optionGroups = {
+        execution: { label: { _: "Execution", de: "Ausführung" } },
+        editor: { label: { _: "Editor" } },
+        results: { label: { _: "Results", de: "Ergebnisse" } },
+    };
 
-    /** Whether the code editor is visible to the user. */
-    @property({ type: Boolean, attribute: true, reflect: true })
-    accessor visible = true;
+    readonly options = {};
+
+    private getDrawerOptions() {
+        const unavailable = !this.codeRunner;
+        return {
+            disableExecution: { type: Boolean, group: "execution", disabled: unavailable, label: { _: "Disable code execution", de: "Codeausführung deaktivieren" } },
+            autoRun: { type: Boolean, group: "execution", disabled: unavailable, label: { _: "Run on load", de: "Beim Laden ausführen" } },
+            autocomplete: { type: Boolean, group: "editor", label: { _: "Autocompletion", de: "Autovervollständigung" } },
+            hideCode: { type: Boolean, group: "editor", label: { _: "Hide code", de: "Code ausblenden" } },
+            showExecutionTime: { type: Boolean, group: "results", label: { _: "Show execution time", de: "Ausführungszeit anzeigen" } },
+            showExecutionCount: { type: Boolean, group: "results", label: { _: "Show execution count", de: "Anzahl der Ausführungen anzeigen" } },
+        };
+    }
+
+    static actions = {
+        resetExecutionCount: { group: "results", label: { _: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" } },
+    };
+
+    readonly actions = Code.actions;
+
+    resetExecutionCount() {
+        this.executionCount = 0;
+    }
+
+    @property({ type: Boolean, reflect: true, attribute: "hide-code" })
+    accessor hideCode = false;
+
+    @property({ type: Boolean, reflect: true, attribute: "disable-execution" })
+    accessor disableExecution = false;
+
+    private readProgram() {
+        return readData<{ code: string; lockedLines: number[] }>(this);
+    }
+
+    get code() {
+        const { code } = this.readProgram();
+        return typeof code === "string" ? code : "";
+    }
+
+    set code(code: string) {
+        if (code !== this.code) writeData(this, { ...this.readProgram(), code });
+    }
+
+    get lockedLines() {
+        const { lockedLines } = this.readProgram();
+        return Array.isArray(lockedLines) ? lockedLines : [];
+    }
+
+    set lockedLines(lockedLines: number[]) {
+        if (JSON.stringify(lockedLines) !== JSON.stringify(this.lockedLines)) {
+            writeData(this, { ...this.readProgram(), lockedLines });
+        }
+    }
+
+    private programObserver = new MutationObserver(() => {
+        this.requestUpdate("code", this.codeMirror.state.doc.toString());
+        this.requestUpdate("lockedLines", undefined);
+    });
+
+    connectedCallback() {
+        super.connectedCallback();
+        this.programObserver.observe(this, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["slot", "type", "src"] });
+        if (this.hasUpdated) {
+            this.requestUpdate("code", this.codeMirror.state.doc.toString());
+            this.requestUpdate("lockedLines", undefined);
+        }
+    }
+
+    disconnectedCallback() {
+        this.programObserver.disconnect();
+        super.disconnectedCallback();
+    }
 
     /** Whether to automatically run the code when the component is first loaded. */
     @property({ type: Boolean, attribute: true, reflect: true })
     accessor autoRun = false;
 
-    /** Whether the code execution is allowed and the run button is enabled. */
-    @property({ type: Boolean, attribute: true, reflect: true })
-    accessor runnable = true;
-
     /** Whether autocompletion is enabled in the code editor. */
     @property({ type: Boolean, attribute: true, reflect: true })
     accessor autocomplete = false;
-
-    /** Array of line numbers that should be locked from editing. */
-    @property({ type: Array, attribute: true, reflect: true })
-    accessor lockedLines: number[] = [];
 
     /** Whether to display the execution time in the controls. */
     @property({ type: Boolean, attribute: true, reflect: true })
     accessor showExecutionTime = false;
 
     /** The execution time in milliseconds of the last code run. */
-    @property({ type: Number, attribute: true, reflect: true })
+    @state()
     accessor executionTime: number = 0;
 
     /** Whether to display the execution count in the run button. */
@@ -95,18 +157,18 @@ export default abstract class Code extends LitElementWw {
     accessor showExecutionCount = false;
 
     /** The number of times the code has been executed. */
-    @property({ type: Number, attribute: true, reflect: true })
+    @state()
     accessor executionCount = 0;
 
     @state()
     private accessor running = false;
 
     /** The results from the last code execution. */
-    @property({ type: Array, attribute: true, reflect: true })
+    @state()
     accessor results: any = [];
 
     /** Compilation or runtime errors from the last code execution. */
-    @property({ type: Array, attribute: true, reflect: true })
+    @state()
     accessor diagnostics: Diagnostic[] = [];
 
     @query("pre")
@@ -122,6 +184,7 @@ export default abstract class Code extends LitElementWw {
     constructor(languageModule: LanguageModule) {
         super();
         this.languageModule = languageModule;
+        Object.assign(this.options, this.getDrawerOptions());
     }
 
     private isEditable() {
@@ -164,7 +227,7 @@ export default abstract class Code extends LitElementWw {
             this.lockedLines = lockedLines;
         };
 
-        if (this.autoRun) {
+        if (this.autoRun && !this.disableExecution) {
             this.runCode();
         }
     }
@@ -210,15 +273,14 @@ export default abstract class Code extends LitElementWw {
 
     private getVisibleStyle() {
         if (this.isEditable()) {
-            return this.visible ? "" : "opacity: 0.5";
+            return !this.hideCode ? "" : "opacity: 0.5";
         }
-        return this.visible ? "" : "display: none";
+        return !this.hideCode ? "" : "display: none";
     }
 
     protected render() {
         return html`
             ${this.Code()} ${this.Controls()} ${this.codeRunner !== undefined ? this.Output() : null}
-            ${this.isEditable() ? this.Options() : ""}
         `;
     }
 
@@ -233,7 +295,7 @@ export default abstract class Code extends LitElementWw {
                 size="small"
                 ?disabled=${this.codeRunner === undefined || this.running}
                 @click="${this.runCode}"
-                style=${this.runnable && this.codeRunner !== undefined ? "" : "display: none"}
+                style=${!this.disableExecution && this.codeRunner !== undefined ? "" : "display: none"}
             >
                 <sl-icon name="${this.autoRun ? "play-circle" : "play-fill"}" slot="prefix"></sl-icon>
                 ${msg("Run")} ${this.showExecutionCount ? `(${this.executionCount})` : ""}
@@ -247,7 +309,7 @@ export default abstract class Code extends LitElementWw {
                     this.diagnostics = [];
                     this.executionTime = 0;
                 }}
-                style=${this.runnable && this.codeRunner !== undefined ? "" : "display: none"}
+                style=${!this.disableExecution && this.codeRunner !== undefined ? "" : "display: none"}
             >
                 ${msg("Clear Output")}
             </sl-button>
@@ -258,59 +320,6 @@ export default abstract class Code extends LitElementWw {
         return html`<output style=${this.getVisibleStyle()}>
             ${this.diagnostics?.length > 0 ? this.Diagnostics() : this.Result()}
         </output>`;
-    }
-
-    private Options() {
-        return html`<aside part="options" style="z-index: 1000">
-            <h2>${msg("Execution")}</h2>
-            <sl-switch
-                @sl-change=${(event: any) => {
-                    if (event.target) {
-                        let target = event.target as SlSwitch;
-                        this.runnable = target.checked;
-                    }
-                }}
-                ?checked=${this.runnable}
-                ?disabled=${this.codeRunner === undefined}
-                >${msg("Allow Code execution")}</sl-switch
-            >
-            <sl-switch
-                @sl-change=${(e: any) => (this.autoRun = e.target.checked)}
-                ?checked=${this.autoRun}
-                ?disabled=${this.codeRunner === undefined}
-                >${msg("Run on load")}</sl-switch
-            >
-            <h2>${msg("Editor")}</h2>
-            <sl-switch
-                @sl-change=${(event: any) => {
-                    if (event.target) {
-                        let target = event.target as SlSwitch;
-                        this.setAutocompletion(target.checked);
-                    }
-                }}
-                ?checked=${this.autocomplete}
-                >${msg("Autocompletion")}</sl-switch
-            >
-
-            <sl-switch @sl-change=${(e: any) => (this.visible = e.target.checked)} ?checked=${this.visible}
-                >${msg("Visible")}</sl-switch
-            >
-
-            <h2>${msg("Results")}</h2>
-            <sl-switch
-                @sl-change=${(e: any) => (this.showExecutionTime = e.target.checked)}
-                ?checked=${this.showExecutionTime}
-                >${msg("Show execution time")}</sl-switch
-            >
-            <sl-switch
-                @sl-change=${(e: any) => (this.showExecutionCount = e.target.checked)}
-                ?checked=${this.showExecutionCount}
-                >${msg("Show execution count")}</sl-switch
-            >
-            <sl-button @click=${() => (this.executionCount = 0)}
-                ><span class="button-label-linebreak">${msg("Reset execution count")}</span></sl-button
-            >
-        </aside>`;
     }
 
     protected Result() {
