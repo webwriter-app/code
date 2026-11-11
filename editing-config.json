@@ -104,7 +104,16 @@
             "so": "Kood",
             "ti": "ኮድ",
             "sw": "Msimbo",
-            "ha": "Lambar"
+            "ha": "Lambar",
+            "yue-Hans": "程式码",
+            "yue-Hant": "程式碼",
+            "kmr": "Kod",
+            "kmr-Latn": "Kod",
+            "kmr-Arab": "کۆد",
+            "ckb": "کۆد",
+            "ckb-Arab": "کۆد",
+            "af-ZA": "Kode",
+            "af-NA": "Kode"
         },
         "description": {
             "ar": "كتابة التعليمات البرمجية وتشغيلها كخلية برمجية. يدعم عدة لغات (HTML، جافا سكريبت/جافا سكريبت، بايثون، جافا، ويب أسبيلي).",
@@ -211,7 +220,16 @@
             "so": "Qor kood oo u socodsii sidii unug kood ah. Wuxuu taageeraa luqado badan (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
             "ti": "ኮድ ከም ናይ ኮድ ሴል ጽሓፉን ኣካይዱን። ብዙሓት ቋንቋታት ይድግፍ (HTML, JavaScript/TypeScript, Python, Java, WebAssembly)።",
             "sw": "Andika na endesha msimbo kama kisanduku cha msimbo. Inasaidia lugha kadhaa (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
-            "ha": "Rubuta kuma gudanar da lamba a matsayin tantanin lamba. Yana tallafa wa harsuna da dama (HTML, JavaScript/TypeScript, Python, Java, WebAssembly)."
+            "ha": "Rubuta kuma gudanar da lamba a matsayin tantanin lamba. Yana tallafa wa harsuna da dama (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+            "yue-Hans": "以程式码区块编写并执行程式码。支援多种语言（HTML、JavaScript/TypeScript、Python、Java、WebAssembly）。",
+            "yue-Hant": "以程式碼區塊編寫並執行程式碼。支援多種語言（HTML、JavaScript/TypeScript、Python、Java、WebAssembly）。",
+            "kmr": "Kodê wekî hucreya kodê binivîse û bixebitîne. Gelek zimanên bernamêkirinê piştgirî dike (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+            "kmr-Latn": "Kodê wekî hucreya kodê binivîse û bixebitîne. Gelek zimanên bernamêkirinê piştgirî dike (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+            "kmr-Arab": "کۆدێ وەکی هوجرەیا کۆدێ بنڤیسە ئوو بخەبتینە. گەلەک زمانێن بەرنامێکرنێ پشتگری dike (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+            "ckb": "کۆد بنووسە و وەک خانەیەکی کۆد جێبەجێی بکە. چەندین زمان پشتیوانی دەکات (HTML، JavaScript/TypeScript، Python، Java، WebAssembly).",
+            "ckb-Arab": "کۆد بنووسە و وەک خانەیەکی کۆد جێبەجێی بکە. چەندین زمان پشتیوانی دەکات (HTML، JavaScript/TypeScript، Python، Java، WebAssembly).",
+            "af-ZA": "Skryf en voer kode in ’n kodesel uit. Ondersteun verskeie tale (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+            "af-NA": "Skryf en voer kode in ’n kodesel uit. Ondersteun verskeie tale (HTML, JavaScript/TypeScript, Python, Java, WebAssembly)."
         }
     },
     "./widgets/webwriter-code-javascript": {
@@ -319,7 +337,16 @@
             "so": "Kood JavaScript",
             "ti": "JavaScript ኮድ",
             "sw": "Msimbo wa JavaScript",
-            "ha": "Lambar JavaScript"
+            "ha": "Lambar JavaScript",
+            "yue-Hans": "程式码 JavaScript",
+            "yue-Hant": "程式碼 JavaScript",
+            "kmr": "Koda JavaScript",
+            "kmr-Latn": "Koda JavaScript",
+            "kmr-Arab": "کۆدا JavaScript",
+            "ckb": "کۆدی JavaScript",
+            "ckb-Arab": "کۆدی JavaScript",
+            "af-ZA": "JavaScript-kode",
+            "af-NA": "JavaScript-kode"
         }
     },
     "./widgets/webwriter-code-java": {
@@ -427,7 +454,16 @@
             "so": "Kood Java",
             "ti": "Java ኮድ",
             "sw": "Msimbo wa Java",
-            "ha": "Lambar Java"
+            "ha": "Lambar Java",
+            "yue-Hans": "程式码 Java",
+            "yue-Hant": "程式碼 Java",
+            "kmr": "Koda Java",
+            "kmr-Latn": "Koda Java",
+            "kmr-Arab": "کۆدا Java",
+            "ckb": "کۆدی Java",
+            "ckb-Arab": "کۆدی Java",
+            "af-ZA": "Java-kode",
+            "af-NA": "Java-kode"
         }
     },
     "./snippets/java": {
@@ -535,7 +571,16 @@
             "so": "Java",
             "ti": "Java",
             "sw": "Java",
-            "ha": "Java"
+            "ha": "Java",
+            "yue-Hans": "Java",
+            "yue-Hant": "Java",
+            "kmr": "Java",
+            "kmr-Latn": "Java",
+            "kmr-Arab": "Java",
+            "ckb": "Java",
+            "ckb-Arab": "Java",
+            "af-ZA": "Java",
+            "af-NA": "Java"
         }
     },
     "./widgets/webwriter-code-typescript": {
@@ -643,7 +688,16 @@
             "so": "Kood TypeScript",
             "ti": "TypeScript ኮድ",
             "sw": "Msimbo wa TypeScript",
-            "ha": "Lambar TypeScript"
+            "ha": "Lambar TypeScript",
+            "yue-Hans": "程式码 TypeScript",
+            "yue-Hant": "程式碼 TypeScript",
+            "kmr": "Koda TypeScript",
+            "kmr-Latn": "Koda TypeScript",
+            "kmr-Arab": "کۆدا TypeScript",
+            "ckb": "کۆدی TypeScript",
+            "ckb-Arab": "کۆدی TypeScript",
+            "af-ZA": "TypeScript-kode",
+            "af-NA": "TypeScript-kode"
         }
     },
     "./widgets/webwriter-code-python": {
@@ -751,7 +805,16 @@
             "so": "Kood Python",
             "ti": "Python ኮድ",
             "sw": "Msimbo wa Python",
-            "ha": "Lambar Python"
+            "ha": "Lambar Python",
+            "yue-Hans": "程式码 Python",
+            "yue-Hant": "程式碼 Python",
+            "kmr": "Koda Python",
+            "kmr-Latn": "Koda Python",
+            "kmr-Arab": "کۆدا Python",
+            "ckb": "کۆدی Python",
+            "ckb-Arab": "کۆدی Python",
+            "af-ZA": "Python-kode",
+            "af-NA": "Python-kode"
         }
     },
     "./widgets/webwriter-code-webassembly": {
@@ -859,7 +922,16 @@
             "so": "Kood WebAssembly",
             "ti": "WebAssembly ኮድ",
             "sw": "Msimbo wa WebAssembly",
-            "ha": "Lambar WebAssembly"
+            "ha": "Lambar WebAssembly",
+            "yue-Hans": "程式码 WebAssembly",
+            "yue-Hant": "程式碼 WebAssembly",
+            "kmr": "Koda WebAssembly",
+            "kmr-Latn": "Koda WebAssembly",
+            "kmr-Arab": "کۆدا WebAssembly",
+            "ckb": "کۆدی WebAssembly",
+            "ckb-Arab": "کۆدی WebAssembly",
+            "af-ZA": "WebAssembly-kode",
+            "af-NA": "WebAssembly-kode"
         }
     },
     "./widgets/webwriter-code-html": {
@@ -966,7 +1038,16 @@
             "so": "Kood HTML",
             "ti": "HTML ኮድ",
             "sw": "Msimbo wa HTML",
-            "ha": "Lambar HTML"
+            "ha": "Lambar HTML",
+            "yue-Hans": "程式码 HTML",
+            "yue-Hant": "程式碼 HTML",
+            "kmr": "Koda HTML",
+            "kmr-Latn": "Koda HTML",
+            "kmr-Arab": "کۆدا HTML",
+            "ckb": "کۆدی HTML",
+            "ckb-Arab": "کۆدی HTML",
+            "af-ZA": "HTML-kode",
+            "af-NA": "HTML-kode"
         }
     },
     "./snippets/HTML": {
@@ -1073,7 +1154,16 @@
             "so": "HTML",
             "ti": "HTML",
             "sw": "HTML",
-            "ha": "HTML"
+            "ha": "HTML",
+            "yue-Hans": "HTML",
+            "yue-Hant": "HTML",
+            "kmr": "HTML",
+            "kmr-Latn": "HTML",
+            "kmr-Arab": "HTML",
+            "ckb": "HTML",
+            "ckb-Arab": "HTML",
+            "af-ZA": "HTML",
+            "af-NA": "HTML"
         }
     }
 }

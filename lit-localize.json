@@ -97,7 +97,16 @@
         "so",
         "ti",
         "sw",
-        "ha"
+        "ha",
+        "yue-Hans",
+        "yue-Hant",
+        "kmr",
+        "kmr-Latn",
+        "kmr-Arab",
+        "ckb",
+        "ckb-Arab",
+        "af-ZA",
+        "af-NA"
     ],
     "tsConfig": "./tsconfig.json",
     "output": {
