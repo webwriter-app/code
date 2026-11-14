@@ -5,14 +5,13 @@ import RuntimeClasslibBin from "../teavm/runtime-classlib-teavm.bin.tiff";
 import { Compiler, CompilerLibrary } from "../teavm/types.js";
 
 let compiler: Compiler;
-let compilerInitializationPromise = initializeCompiler();
 
 async function initializeCompiler() {
     if (compiler) return;
 
     const compilerWasmResponse = await fetch(CompilerWasm);
     const compilerWasmUrl = URL.createObjectURL(await compilerWasmResponse.blob());
-    const teavm = await load(compilerWasmUrl);
+    const teavm = await load(compilerWasmUrl).finally(() => URL.revokeObjectURL(compilerWasmUrl));
     let compilerLib = teavm.exports as CompilerLibrary;
     compiler = compilerLib.createCompiler();
 
@@ -40,9 +39,13 @@ async function initializeCompiler() {
 let diagnostics: any[] = [];
 
 self.onmessage = async (event) => {
-    await compilerInitializationPromise;
-
-    const { code, id, mainClass } = event.data;
+    const { code, mainClass } = event.data;
+    try {
+        await initializeCompiler();
+    } catch (error) {
+        self.postMessage({ error: error instanceof Error ? error.message : String(error) });
+        return;
+    }
 
     diagnostics = [];
     compiler.clearInputClassFiles();
@@ -62,10 +65,9 @@ self.onmessage = async (event) => {
 
         const wasm = compiler.getWebAssemblyOutputFile("app.wasm");
         self.postMessage({
-            id: id,
             wasm: wasm,
         });
     } catch (e) {
-        self.postMessage({ id, diagnostics });
+        self.postMessage(diagnostics.length ? { diagnostics } : { error: e instanceof Error ? e.message : String(e) });
     }
 };

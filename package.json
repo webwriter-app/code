@@ -7,6 +7,14 @@
     "webwriter-widget",
     "widget-simulational",
     "widget-practical",
+    "widget-editable",
+    "widget-configurable",
+    "widget-has-content",
+    "widget-stateful",
+    "widget-allows-keyboard-input",
+    "widget-allows-pointer-input",
+    "widget-supports-dynamic-loading",
+    "widget-standalone",
     "iscedf2013-06",
     "isced2011-2",
     "isced2011-3",
@@ -134,11 +142,12 @@
     "Jorik van Genuchten"
   ],
   "scripts": {
-    "prepublishOnly": "npx @webwriter/build",
-    "dev": "npx @webwriter/build dev",
+    "prepublishOnly": "build --shared-dependencies",
+    "dev": "build dev --shared-dependencies",
     "localize": "lit-localize extract && npx @webwriter/build localize && lit-localize build",
     "format": "prettier --write .",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "test": "npm run prepublishOnly && node --test tests/*.test.mjs"
   },
   "dependencies": {
     "@codemirror/autocomplete": ">=6.10.2 <7.0.0-0",
@@ -158,14 +167,16 @@
     "@lit/localize": "^0.12.2",
     "@replit/codemirror-indentation-markers": ">=6.5.0 <7.0.0-0",
     "@shoelace-style/shoelace": ">=2.9.0 <3.0.0-0",
-    "@webwriter/lit": "^2.0.0",
+    "@webwriter/lit": "^3.0.0",
     "lit": ">=3.0.0 <4.0.0-0",
     "typescript": ">=4.9.5 <5.0.0-0",
     "wabt": "^1.0.37"
   },
   "devDependencies": {
     "@lit/localize-tools": "^0.8.0",
+    "@webwriter/build": "^1.13.1",
     "patch-package": "^8.0.0",
+    "playwright": "^1.65.1",
     "prettier": "^3.6.2"
   },
   "type": "module",
@@ -201,5 +212,28 @@
     "./editing-config.json": "./editing-config.json",
     "./custom-elements.json": "./custom-elements.json"
   },
-  "customElements": "custom-elements.json"
+  "customElements": "custom-elements.json",
+  "prebuiltDependencies": [
+    "@codemirror/autocomplete",
+    "@codemirror/commands",
+    "@codemirror/lang-css",
+    "@codemirror/lang-html",
+    "@codemirror/lang-java",
+    "@codemirror/lang-javascript",
+    "@codemirror/lang-python",
+    "@codemirror/lang-wast",
+    "@codemirror/language",
+    "@codemirror/search",
+    "@codemirror/state",
+    "@codemirror/theme-one-dark",
+    "@codemirror/view",
+    "@lezer/highlight",
+    "@lit/localize",
+    "@replit/codemirror-indentation-markers",
+    "@shoelace-style/shoelace",
+    "@webwriter/lit",
+    "lit",
+    "typescript",
+    "wabt"
+  ]
 }

@@ -14,11 +14,15 @@ export const style = css`
         flex-direction: row;
         align-items: center;
         justify-content: center;
+    }
+
+    .cm-author-mode .cm-lock-gutter .cm-gutterElement {
         cursor: pointer;
     }
 
     .cm-editor.cm-focused {
-        outline: none !important;
+        outline: 2px solid var(--sl-color-primary-600);
+        outline-offset: -2px;
     }
 
     .cm-lock-gutter {
@@ -51,6 +55,7 @@ export const style = css`
     .controls {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
 
         padding: var(--sl-spacing-x-small);
         gap: var(--sl-spacing-x-small);
@@ -91,6 +96,7 @@ export const style = css`
 
     output .outputs pre {
         white-space: pre-wrap;
+        overflow-wrap: anywhere;
     }
 
     .htmlPreview {
@@ -132,5 +138,6 @@ export const style = css`
 
     .diagnostic-message {
         white-space: pre-wrap;
+        overflow-wrap: anywhere;
     }
 `;

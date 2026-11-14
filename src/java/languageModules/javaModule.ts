@@ -1,68 +1,34 @@
-import { java } from "@codemirror/lang-java";
 import JavaRunnerWorker from "worker:./java-runner.worker";
 import JavacWorker from "worker:./javac.worker";
-import { LanguageModule } from "../../shared/ww-code-template";
-import { JavaDiagnostic } from "../teavm/types";
+import { createCodeWorker, requestWorker } from "../../shared/code-worker";
+import type { CodeRunner } from "../../shared/ww-code-template";
+import type { JavaDiagnostic } from "../teavm/types";
 
-const runnerWorkerUrl = URL.createObjectURL(new Blob([JavaRunnerWorker], { type: "application/javascript" }));
-let javacWorker: Worker;
-
-let currentId = 0;
-const callbacks: { [key: number]: (value: any) => void } = {};
-
-export function initializeJavacWorker() {
-    if (!javacWorker) {
-        javacWorker = new Worker(URL.createObjectURL(new Blob([JavacWorker], { type: "application/javascript" })), {
-            type: "module",
-        });
-
-        javacWorker.onmessage = (event) => {
-            const { id, ...data } = event.data;
-            const onSuccess = callbacks[id];
-            delete callbacks[id];
-            onSuccess(data);
-        };
+export const execute: CodeRunner = async (code, context, signal) => {
+    const mainClass = code.match(/public\s+class\s+([A-Za-z_$][A-Za-z0-9_$]*)/)?.[1];
+    if (!mainClass) {
+        context.diagnostics = [
+            {
+                message:
+                    "Public class not found, please define a public class like this:\n  public class <ClassName> { ... }",
+            },
+        ];
+        return;
     }
-}
 
-function extractClassName(code: string): string | null {
-    const classMatch = code.match(/public\s+class\s+([A-Za-z_$][A-Za-z0-9_$]*)/);
-    return classMatch ? classMatch[1] : null;
-}
-
-function compileCode(code: string, mainClass: string): Promise<any> {
-    return new Promise((onSuccess) => {
-        callbacks[currentId] = onSuccess;
-        javacWorker.postMessage({
-            mainClass: mainClass,
-            code,
-            id: currentId++,
-        });
-    });
-}
-
-export const javaModule: LanguageModule = {
-    name: "Java",
-    executionFunction: async (code, context) => {
-        if (!javacWorker) initializeJavacWorker();
-
-        const mainClass = extractClassName(code);
-        if (!mainClass) {
-            context.diagnostics = [
-                {
-                    message:
-                        "Public class not found, please define a public class like this:\n  public class <ClassName> { ... }",
-                },
-            ];
-            return;
-        }
-
-        const res = await compileCode(code, mainClass);
-
-        if (res.diagnostics) {
-            context.diagnostics = res.diagnostics
-                .filter((d: JavaDiagnostic) => d.severity === "error")
-                .map((diagnostic: JavaDiagnostic) => ({
+    const compiler = createCodeWorker(JavacWorker);
+    let wasm: Uint8Array;
+    try {
+        const response = await requestWorker<{ wasm: Uint8Array; diagnostics?: JavaDiagnostic[]; error?: string }>(
+            compiler,
+            { code, mainClass },
+            signal,
+        );
+        if (response.error) throw new Error(response.error);
+        if (response.diagnostics) {
+            context.diagnostics = response.diagnostics
+                .filter((diagnostic) => diagnostic.severity === "error")
+                .map((diagnostic) => ({
                     message: diagnostic.message,
                     start: diagnostic.startPosition,
                     line: diagnostic.lineNumber,
@@ -70,31 +36,37 @@ export const javaModule: LanguageModule = {
                 }));
             return;
         }
+        wasm = response.wasm;
+    } finally {
+        compiler.terminate();
+    }
 
-        const runnerWorker = new Worker(runnerWorkerUrl, { type: "module" });
-
-        return new Promise((resolve, reject) => {
-            runnerWorker.onmessage = ({ data }) => {
-                if (data.type === "stdout") {
-                    context.results = [...context.results, { text: data.data, color: "0x0000" }];
-                } else if (data.type === "stderr") {
-                    context.results = [...context.results, { text: data.data, color: "red" }];
+    signal.throwIfAborted();
+    const worker = createCodeWorker(JavaRunnerWorker);
+    const listeners = new AbortController();
+    try {
+        await new Promise<void>((resolve, reject) => {
+            worker.onmessage = ({ data }) => {
+                if (data.type === "stdout" || data.type === "stderr") {
+                    context.results = [
+                        ...context.results,
+                        { text: data.data, color: data.type === "stderr" ? "red" : undefined },
+                    ];
                 } else if (data.type === "terminated") {
-                    if (data.error) context.results = [...context.results, { text: `${data.error}`, color: "red" }];
-
-                    resolve({});
+                    if (data.error) context.results = [...context.results, { text: data.error, color: "red" }];
+                    resolve();
                 }
             };
-
-            runnerWorker.onerror = (error) => {
-                reject(error);
+            worker.onerror = (event) => {
+                event.preventDefault();
+                reject(new Error(event.message || "Could not start the Java runtime"));
             };
-
-            runnerWorker.postMessage({
-                wasm: res.wasm,
-                mainClass,
-            });
+            worker.onmessageerror = () => reject(new Error("Could not read the Java runtime response"));
+            signal.addEventListener("abort", () => reject(signal.reason), { signal: listeners.signal });
+            worker.postMessage({ wasm, mainClass });
         });
-    },
-    languageExtension: java(),
+    } finally {
+        listeners.abort();
+        worker.terminate();
+    }
 };

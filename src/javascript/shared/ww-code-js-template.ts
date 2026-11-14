@@ -1,7 +1,7 @@
-import { LanguageSupport } from "@codemirror/language";
+import type { LanguageSupport } from "@codemirror/language";
 import { html, TemplateResult } from "lit";
-import JavaScriptWorker from "worker:./javascript.worker";
-import Code from "../../shared/ww-code-template";
+import { createCodeWorker } from "../../shared/code-worker";
+import Code, { type Diagnostic } from "../../shared/ww-code-template";
 import type {
     ExecuteCodeMessage,
     FromWorkerMessage,
@@ -16,46 +16,74 @@ export default abstract class CodeJsTemplate extends Code {
 
     private workerAlive = false;
 
-    constructor(name: string, languageExtension: LanguageSupport) {
+    constructor(
+        name: string,
+        languageExtension: LanguageSupport,
+        load: () => Promise<{ workerSource: string; build(code: string): { code: string; diagnostics: Diagnostic[] } }>,
+    ) {
         super({
             name,
-            executionFunction: (code: string) => {
-                this.worker?.terminate();
-                this.workerAlive = false;
-                this.objectRealizationRequests.clear();
+            loadRuntime: async () => {
+                const { build, workerSource } = await load();
+                return {
+                    execute: (code, _context, signal) => {
+                        this.stopWorker();
+                        const compiled = build(code);
+                        this.diagnostics = compiled.diagnostics;
+                        if (this.diagnostics.length) return;
 
-                try {
-                    code = this.build(code);
-                } catch (e) {
-                    return;
-                }
-
-                this.worker = new Worker(
-                    URL.createObjectURL(new Blob([JavaScriptWorker], { type: "application/javascript" })),
-                    { type: "module" },
-                );
-                this.workerAlive = true;
-
-                return new Promise<void>((resolve) => {
-                    this.worker!.onmessage = (event: MessageEvent) => {
-                        if (event.data.type === "executionStatus" && event.data.status === "terminated") {
-                            resolve();
-                        } else {
-                            this.handleMessage(event);
-                        }
-                    };
-                    this.worker!.postMessage({
-                        type: "execute",
-                        executionId: "main", // Currently, no simultaneous executions are supported
-                        code: code,
-                    } as ExecuteCodeMessage);
-                });
+                        const worker = (this.worker = createCodeWorker(workerSource));
+                        this.workerAlive = true;
+                        const listeners = new AbortController();
+                        return new Promise<void>((resolve, reject) => {
+                            const abort = () => reject(signal.reason);
+                            const fail = (event: Event) => {
+                                event.preventDefault();
+                                this.stopWorker();
+                                reject(
+                                    new Error(
+                                        (event as ErrorEvent).message || "Could not start the JavaScript runtime",
+                                    ),
+                                );
+                            };
+                            signal.addEventListener("abort", abort, { signal: listeners.signal });
+                            worker.onmessage = (event: MessageEvent<FromWorkerMessage>) => {
+                                if (event.data.type === "executionStatus" && event.data.status === "terminated") {
+                                    resolve();
+                                } else {
+                                    this.handleMessage(event);
+                                }
+                            };
+                            worker.onerror = worker.onmessageerror = fail;
+                            worker.postMessage({
+                                type: "execute",
+                                executionId: "main",
+                                code: compiled.code,
+                            } satisfies ExecuteCodeMessage);
+                        }).finally(() => {
+                            listeners.abort();
+                            if (this.worker === worker) {
+                                worker.onerror = worker.onmessageerror = null;
+                            }
+                        });
+                    },
+                };
             },
             languageExtension,
         });
     }
 
-    protected abstract build(code: string): string;
+    disconnectedCallback() {
+        this.stopWorker();
+        super.disconnectedCallback();
+    }
+
+    private stopWorker() {
+        this.worker?.terminate();
+        this.worker = null;
+        this.workerAlive = false;
+        this.objectRealizationRequests.clear();
+    }
 
     private objectRealizationRequests = new Map<number, SerializedObject | SerializedArray>();
 
@@ -102,27 +130,27 @@ export default abstract class CodeJsTemplate extends Code {
     private LogValue(value: SerializedValue, topLevel: boolean = false, inline: boolean = false) {
         switch (value.type) {
             case "null":
-                return html`<div class="log-value log-null">null</div>`;
+                return html`<span class="log-value log-null">null</span>`;
             case "undefined":
-                return html`<div class="log-value log-undefined">undefined</div>`;
+                return html`<span class="log-value log-undefined">undefined</span>`;
             case "string":
                 if (topLevel) {
-                    return html`<div class="log-value">${value.value}</div>`;
+                    return html`<span class="log-value">${value.value}</span>`;
                 } else {
-                    return html`<div class="log-value log-string">"${value.value}"</div>`;
+                    return html`<span class="log-value log-string">"${value.value}"</span>`;
                 }
             case "number":
-                return html`<div class="log-value log-number">${value.value}</div>`;
+                return html`<span class="log-value log-number">${value.value}</span>`;
             case "boolean":
-                return html`<div class="log-value log-boolean">${value.value}</div>`;
+                return html`<span class="log-value log-boolean">${value.value}</span>`;
             case "bigint":
-                return html`<div class="log-value log-bigint">${value.value}n</div>`;
+                return html`<span class="log-value log-bigint">${value.value}n</span>`;
             case "symbol":
-                return html`<div class="log-value log-symbol">Symbol(${value.description})</div>`;
+                return html`<span class="log-value log-symbol">Symbol(${value.description})</span>`;
             case "function":
                 const lines = value.value.trim().split("\n");
                 let name = lines[0] + (lines.length > 1 ? " … }" : "");
-                return html`<div class="log-value log-function">${name}</div>`;
+                return html`<span class="log-value log-function">${name}</span>`;
             case "array":
                 if (value.value.realized) {
                     return this.ArrayValue(
@@ -149,7 +177,9 @@ export default abstract class CodeJsTemplate extends Code {
         if (object.value.properties.length === 0) return html`{}`;
 
         return html`<div class="log-value log-object">
-            <div
+            <button
+                type="button"
+                aria-expanded=${object.value.expanded}
                 class="log-clickable"
                 @click=${() => {
                     if (object.value.realized) {
@@ -166,6 +196,8 @@ export default abstract class CodeJsTemplate extends Code {
                 }}
             >
                 <sl-icon
+                    library="code"
+                    aria-hidden="true"
                     name="${object.value.expanded ? "caret-down-fill" : "caret-right-fill"}"
                     class="log-expand-icon"
                 ></sl-icon
@@ -173,7 +205,7 @@ export default abstract class CodeJsTemplate extends Code {
                     if (index == 2) return ", …";
                     return html`${index === 1 ? ", " : ""}${key}: ${this.LogValue(value, false, true)}`;
                 })}}
-            </div>
+            </button>
             ${!object.value.expanded
                 ? undefined
                 : html`<div class="log-properties">
@@ -190,7 +222,9 @@ export default abstract class CodeJsTemplate extends Code {
         if (array.value.values.length === 0) return html`[]`;
 
         return html`<div class="log-value log-array">
-            <div
+            <button
+                type="button"
+                aria-expanded=${array.value.expanded}
                 class="log-clickable"
                 @click=${() => {
                     if (array.value.realized) {
@@ -207,6 +241,8 @@ export default abstract class CodeJsTemplate extends Code {
                 }}
             >
                 <sl-icon
+                    library="code"
+                    aria-hidden="true"
                     name="${array.value.expanded ? "caret-down-fill" : "caret-right-fill"}"
                     class="log-expand-icon"
                 ></sl-icon
@@ -216,7 +252,7 @@ export default abstract class CodeJsTemplate extends Code {
                     return html`${index > 0 ? ", " : ""}${this.LogValue(value, false, true)}`;
                 })}
                 ]
-            </div>
+            </button>
             ${!array.value.expanded
                 ? undefined
                 : html`<div class="log-properties">
@@ -230,9 +266,19 @@ export default abstract class CodeJsTemplate extends Code {
     private LogIcon(label: string) {
         switch (label) {
             case "warning":
-                return html`<sl-icon class="log-icon" name="exclamation-triangle-fill"></sl-icon>`;
+                return html`<sl-icon
+                    library="code"
+                    aria-hidden="true"
+                    class="log-icon"
+                    name="exclamation-triangle-fill"
+                ></sl-icon>`;
             case "error":
-                return html`<sl-icon class="log-icon" name="exclamation-circle-fill"></sl-icon>`;
+                return html`<sl-icon
+                    library="code"
+                    aria-hidden="true"
+                    class="log-icon"
+                    name="exclamation-circle-fill"
+                ></sl-icon>`;
             default:
                 return html`<div class="log-icon-placeholder"></div>`;
         }

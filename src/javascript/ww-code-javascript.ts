@@ -6,15 +6,14 @@ import CodeJsTemplate from "./shared/ww-code-js-template";
 
 /** Code widget for JavaScript with execution capabilities. */
 @customElement("webwriter-code-javascript")
-
 export default class CodeJavaScript extends CodeJsTemplate {
     static styles = [style, jsTemplateStyle] as any;
 
-    constructor() {
-        super("JavaScript", javascript());
+    static offlineImports(element: Element) {
+        return CodeJsTemplate.runtimeImports(element, "./ww-code-javascript.js");
     }
 
-    protected build(code: string): string {
-        return code;
+    constructor() {
+        super("JavaScript", javascript(), () => import("./shared/javascript-runtime"));
     }
 }

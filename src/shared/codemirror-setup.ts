@@ -1,7 +1,7 @@
 import { closeBrackets, closeBracketsKeymap, completionKeymap } from "@codemirror/autocomplete";
 import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
 import { bracketMatching, foldGutter, HighlightStyle, indentOnInput, syntaxHighlighting } from "@codemirror/language";
-import { EditorState, RangeSet, StateEffect, StateField, Transaction } from "@codemirror/state";
+import { Annotation, EditorState, Facet, RangeSet, StateEffect, StateField } from "@codemirror/state";
 import { color, oneDarkHighlightStyle } from "@codemirror/theme-one-dark";
 import {
     crosshairCursor,
@@ -19,11 +19,16 @@ import {
     rectangularSelection,
     showTooltip,
     Tooltip,
+    ViewPlugin,
 } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import { indentationMarkers } from "@replit/codemirror-indentation-markers";
 import LockFillIcon from "../../assets/icons/lock-fill.svg";
 export { EditorView } from "@codemirror/view";
+
+const canLockLines = Facet.define<() => boolean, () => boolean>({ combine: (values) => values[0] ?? (() => false) });
+
+export const hostUpdate = Annotation.define<boolean>();
 
 export const lineLockEffect = StateEffect.define<{ pos: number; on: boolean }>({
     map: (val, mapping) => ({ pos: mapping.mapPos(val.pos), on: val.on }),
@@ -38,6 +43,7 @@ const lineLockMarker = new (class extends GutterMarker {
     toDOM() {
         const icon = document.createElement("img");
         icon.src = LockFillIcon;
+        icon.alt = "";
         return icon;
     }
 })();
@@ -49,26 +55,15 @@ const lockedLineDecoration = Decoration.line({
 export const lineLockField = StateField.define<{
     markers: RangeSet<GutterMarker>;
     decorators: RangeSet<Decoration>;
-    onLockedLinesChange?: (lockedLines: number[]) => void;
 }>({
-    create: () => {
-        const field = {
-            markers: RangeSet.empty,
-            decorators: RangeSet.empty,
-            onLockedLinesChange: undefined as ((lockedLines: number[]) => void) | undefined,
-        };
-        return field;
-    },
+    create: () => ({ markers: RangeSet.empty, decorators: RangeSet.empty }),
 
     update(state, tr) {
         let markers = state.markers.map(tr.changes);
         let decorators = state.decorators.map(tr.changes);
-        let hasChanges = false;
-
-        for (let e of tr.effects) {
-            if (!e.is(lineLockEffect)) continue;
-            hasChanges = true;
-            const { pos, on } = e.value;
+        for (const effect of tr.effects) {
+            if (!effect.is(lineLockEffect)) continue;
+            const { pos, on } = effect.value;
             if (on) {
                 markers = markers.update({ add: [lineLockMarker.range(pos)] });
                 decorators = decorators.update({ add: [lockedLineDecoration.range(pos)] });
@@ -77,21 +72,7 @@ export const lineLockField = StateField.define<{
                 decorators = decorators.update({ filter: (from) => from !== pos });
             }
         }
-
-        const newState = { ...state, markers, decorators };
-
-        // Call callback if there were changes and callback exists
-        if (hasChanges && state.onLockedLinesChange) {
-            const lockedLines: number[] = [];
-            markers.between(0, tr.state.doc.length, (from) => {
-                const line = tr.state.doc.lineAt(from);
-                lockedLines.push(line.number);
-            });
-            // Use setTimeout to avoid calling during state update
-            setTimeout(() => state.onLockedLinesChange?.(lockedLines), 0);
-        }
-
-        return newState;
+        return { markers, decorators };
     },
 
     provide: (f) => [
@@ -101,6 +82,7 @@ export const lineLockField = StateField.define<{
             initialSpacer: () => lineLockMarker,
             domEventHandlers: {
                 click(view, line) {
+                    if (!view.state.facet(canLockLines)()) return false;
                     let locked = false;
                     view.state.field(f).markers.between(line.from, line.from, () => {
                         locked = true;
@@ -186,88 +168,69 @@ function toggleLockKeyCommand(view: EditorView): boolean {
     return true;
 }
 
-function createLockedLineProtection(inEditView: boolean, getLocalizedMessage: () => string) {
-    if (inEditView) {
-        return [];
-    }
+export function lockedLineNumbers(state: EditorState) {
+    const lines = new Set<number>();
+    state.field(lineLockField).markers.between(0, state.doc.length, (from) => {
+        lines.add(state.doc.lineAt(from).number);
+    });
+    return [...lines];
+}
 
-    let tooltipTimeout: number | null = null;
-    let currentView: EditorView | null = null;
+export function editingMode(inEditView: boolean) {
+    return inEditView ? [EditorView.editorAttributes.of({ class: "cm-author-mode" })] : [];
+}
 
-    // Create the tooltip field with localization
+function createLockedLineProtection(inEditView: () => boolean, getLocalizedMessage: () => string) {
+    let currentView: EditorView | undefined;
+    let showTimeout: ReturnType<typeof setTimeout> | undefined;
+    let hideTimeout: ReturnType<typeof setTimeout> | undefined;
+
     const tooltipField = createLockedLineTooltipField(getLocalizedMessage);
 
     return [
         tooltipField,
-        EditorView.updateListener.of((update) => {
-            // Store view reference
-            currentView = update.view;
-
-            // Clear tooltip on any cursor movement or document change that isn't blocked
-            if (update.selectionSet || update.docChanged) {
-                if (tooltipTimeout) {
-                    clearTimeout(tooltipTimeout);
-                    tooltipTimeout = null;
-                }
-                if (update.state.field(tooltipField, false)) {
-                    update.view.dispatch({
-                        effects: [hideLockedTooltipEffect.of({})],
-                    });
-                }
-            }
+        ViewPlugin.define((view) => {
+            currentView = view;
+            return {
+                destroy() {
+                    clearTimeout(showTimeout);
+                    clearTimeout(hideTimeout);
+                    currentView = undefined;
+                },
+            };
         }),
-        EditorState.transactionFilter.of((tr: Transaction) => {
-            if (!tr.docChanged) {
-                return tr;
-            }
+        EditorState.transactionFilter.of((tr) => {
+            const clear = () => {
+                clearTimeout(showTimeout);
+                clearTimeout(hideTimeout);
+            };
+            if (inEditView() || !tr.docChanged) return tr;
 
-            const field = tr.startState.field(lineLockField);
-            let hasLockedLineEdit = false;
-            let firstLockedPos = -1;
-
-            tr.changes.iterChanges((fromA, toA) => {
-                // Check if the change affects any locked lines
-                const fromLine = tr.startState.doc.lineAt(fromA);
-                const toLine = tr.startState.doc.lineAt(toA);
-
-                for (let lineNum = fromLine.number; lineNum <= toLine.number; lineNum++) {
-                    const line = tr.startState.doc.line(lineNum);
-                    field.markers.between(line.from, line.from, () => {
-                        if (!hasLockedLineEdit) {
-                            hasLockedLineEdit = true;
-                            firstLockedPos = fromA;
-                        }
-                    });
-                    if (hasLockedLineEdit) break;
-                }
+            const { markers } = tr.startState.field(lineLockField);
+            let firstLockedPos: number | undefined;
+            tr.changes.iterChangedRanges((from, to) => {
+                if (firstLockedPos !== undefined) return;
+                const first = tr.startState.doc.lineAt(from);
+                const last = tr.startState.doc.lineAt(to);
+                markers.between(first.from, last.to, () => {
+                    firstLockedPos = from;
+                });
             });
 
-            // If trying to edit a locked line, block the transaction and show tooltip
-            if (hasLockedLineEdit) {
-                setTimeout(() => {
-                    if (currentView) {
-                        currentView.dispatch({
-                            effects: [showLockedTooltipEffect.of({ pos: firstLockedPos })],
-                        });
-
-                        // Clear any existing timeout
-                        if (tooltipTimeout) clearTimeout(tooltipTimeout);
-
-                        tooltipTimeout = window.setTimeout(() => {
-                            if (currentView) {
-                                currentView.dispatch({
-                                    effects: [hideLockedTooltipEffect.of({})],
-                                });
-                            }
-                            tooltipTimeout = null;
-                        }, 2000);
-                    }
-                }, 0);
-
-                return [];
-            }
-
-            return tr;
+            if (firstLockedPos === undefined) return tr;
+            const pos = firstLockedPos;
+            clear();
+            showTimeout = setTimeout(() => {
+                if (!currentView || inEditView()) return;
+                currentView.dispatch({
+                    effects: showLockedTooltipEffect.of({ pos: Math.min(pos, currentView.state.doc.length) }),
+                });
+                hideTimeout = setTimeout(
+                    () => currentView?.dispatch({ effects: hideLockedTooltipEffect.of({}) }),
+                    2000,
+                );
+            }, 0);
+            return [];
         }),
     ];
 }
@@ -277,7 +240,7 @@ function createLockedLineTooltipField(getLocalizedMessage: () => string) {
         create: () => null,
 
         update(tooltip, tr) {
-            let newTooltip = tooltip;
+            let newTooltip = tr.docChanged || tr.selection ? null : tooltip;
 
             for (let effect of tr.effects) {
                 if (effect.is(showLockedTooltipEffect)) {
@@ -325,7 +288,7 @@ const customHighlightStyle = HighlightStyle.define([
 export function setupCodeMirror(
     code: string,
     parent: Element,
-    inEditView: boolean,
+    inEditView: () => boolean,
     extensions: any[] = [],
     getLocalizedMessage: () => string,
 ): EditorView {
@@ -334,6 +297,7 @@ export function setupCodeMirror(
             doc: code,
             extensions: [
                 lineLockField,
+                canLockLines.of(inEditView),
                 createLockedLineProtection(inEditView, getLocalizedMessage),
                 syntaxHighlighting(customHighlightStyle),
                 syntaxHighlighting(oneDarkHighlightStyle),
@@ -353,7 +317,7 @@ export function setupCodeMirror(
                 crosshairCursor(),
                 highlightActiveLine(),
                 keymap.of([
-                    ...(inEditView ? [{ key: "Mod-l", run: toggleLockKeyCommand }] : []),
+                    { key: "Mod-l", run: (view) => inEditView() && toggleLockKeyCommand(view) },
                     ...closeBracketsKeymap,
                     ...defaultKeymap,
                     ...historyKeymap,
