@@ -2,10 +2,43 @@ import { css } from "lit";
 export const style = css`
     /* --- Widget --- */
     :host {
+        --code-border-width: 1px;
         display: block;
-        border: solid 1px var(--sl-color-neutral-300);
+        box-sizing: border-box;
+        min-width: 300px;
+        min-height: min-content;
+        border: solid var(--code-border-width) var(--sl-color-neutral-300);
         border-radius: var(--sl-border-radius-medium);
-        overflow: hidden;
+    }
+
+    .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: minmax(4rem, 1fr) max-content max-content;
+        block-size: var(--resize-height, 100%);
+        max-block-size: 100%;
+        min-block-size: min-content;
+    }
+
+    .layout[hidden] {
+        display: none;
+    }
+
+    .editor,
+    .editor .cm-editor {
+        display: flex;
+        flex-direction: column;
+        min-block-size: 0;
+    }
+
+    .editor .cm-editor,
+    .editor .cm-scroller {
+        flex: 1 1 auto;
+        min-block-size: 0;
+    }
+
+    .editor .cm-scroller {
+        overflow: auto;
     }
 
     /* --- Editor --- */
@@ -100,6 +133,7 @@ export const style = css`
     }
 
     .htmlPreview {
+        display: block;
         border: none;
         background-color: white;
         width: 100%;

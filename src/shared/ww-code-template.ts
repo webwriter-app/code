@@ -3,6 +3,7 @@ import { LitElementWw } from "@webwriter/lit";
 import { LitElement, html } from "lit";
 import type { PropertyValues } from "lit";
 import { property, query, state } from "lit/decorators.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 import { style } from "./ww-code-css-single";
 
@@ -242,7 +243,7 @@ export default abstract class Code extends LitElementWw {
             subtree: true,
             characterData: true,
             attributes: true,
-            attributeFilter: ["slot", "type", "src", "code", "lockedlines", "contenteditable"],
+            attributeFilter: ["slot", "type", "src", "code", "lockedlines", "contenteditable", "style"],
         });
         this.requestUpdate();
     }
@@ -294,8 +295,8 @@ export default abstract class Code extends LitElementWw {
     @state()
     accessor diagnostics: Diagnostic[] = [];
 
-    @query("pre")
-    private accessor pre!: HTMLPreElement;
+    @query(".editor")
+    private accessor editorPane!: HTMLDivElement;
 
     private autocompletion = new Compartment();
     private editMode = new Compartment();
@@ -317,7 +318,7 @@ export default abstract class Code extends LitElementWw {
             this.editableMode = this.inEditMode;
             this.codeMirror = setupCodeMirror(
                 this.editorSource(),
-                this.pre,
+                this.editorPane,
                 () => this.inEditMode,
                 [
                     this.languageModule.languageExtension,
@@ -401,23 +402,28 @@ export default abstract class Code extends LitElementWw {
         if (effects.length) view.dispatch({ effects, annotations: hostUpdate.of(true) });
     }
 
-    private getVisibleStyle() {
-        if (this.inEditMode) {
-            return !this.hideCode ? "" : "opacity: 0.5";
-        }
-        return !this.hideCode ? "" : "display: none";
-    }
-
     protected render() {
-        return html` ${this.Code()} ${this.Controls()} ${this.Output()} `;
-    }
-
-    private Code() {
-        return html`<pre style=${this.getVisibleStyle()}></pre>`;
+        // WebWriter resizes widgets in document flow by setting max-height.
+        // Give the layout that target size so it can also grow past its natural height.
+        const { height, maxHeight } = this.style;
+        return html`<div
+            class="layout"
+            ?hidden=${this.hideCode && !this.inEditMode}
+            style=${styleMap({
+                "--resize-height":
+                    (!height || height === "auto") && maxHeight.endsWith("px")
+                        ? `calc(${maxHeight} - 2 * var(--code-border-width))`
+                        : undefined,
+                opacity: this.hideCode ? "0.5" : undefined,
+            })}
+        >
+            <div class="editor"></div>
+            ${this.Controls()} ${this.Output()}
+        </div>`;
     }
 
     private Controls() {
-        return html`<div class="controls" style=${this.getVisibleStyle()}>
+        return html`<div class="controls">
             <sl-button
                 variant="primary"
                 size="small"
@@ -452,7 +458,7 @@ export default abstract class Code extends LitElementWw {
     }
 
     private Output() {
-        return html`<output aria-live="polite" style=${this.getVisibleStyle()}>
+        return html`<output aria-live="polite">
             ${this.runtimeError
                 ? html`<div class="diagnostics-container">
                       <pre class="diagnostic-message">${this.runtimeError}</pre>

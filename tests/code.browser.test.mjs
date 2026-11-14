@@ -90,6 +90,59 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
         await js.getByText("value: 42", { exact: true }).waitFor();
     });
 
+    await t.test("vertical resizing preserves the toolbar and output and scrolls the editor", async () => {
+        for (const language of ["html", "javascript"]) {
+            const measure = (maxHeight) =>
+                widget(language).evaluate(async (element, maxHeight) => {
+                    element.style.maxWidth = "100px";
+                    element.style.maxHeight = maxHeight;
+                    // Wait for the widget to consume WebWriter's inline resize styles.
+                    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+                    const pane = (selector) => element.shadowRoot.querySelector(selector);
+                    const host = element.getBoundingClientRect();
+                    const scroller = pane(".cm-scroller");
+                    const toolbar = pane(".controls").getBoundingClientRect();
+                    const output = pane("output").getBoundingClientRect();
+                    return {
+                        width: host.width,
+                        height: host.height,
+                        editor: scroller.getBoundingClientRect().height,
+                        toolbar: toolbar.height,
+                        output: output.height,
+                        bottomGap: host.bottom - output.bottom,
+                        scrollHeight: scroller.scrollHeight,
+                    };
+                }, maxHeight);
+
+            const natural = await measure("");
+            const enlarged = await measure("450px");
+            const minimum = await measure("10px");
+            assert.equal(minimum.width, 300, language);
+            assert.ok(minimum.editor >= 64, language);
+            assert.equal(enlarged.height, 450, language);
+            assert.equal(enlarged.editor - natural.editor, enlarged.height - natural.height, language);
+            for (const layout of [enlarged, minimum]) {
+                assert.equal(layout.toolbar, natural.toolbar, language);
+                assert.equal(layout.output, natural.output, language);
+                assert.equal(layout.bottomGap, natural.bottomGap, language);
+            }
+
+            const original = await widget(language).evaluate((element) => {
+                const original = element.code;
+                element.code = Array.from({ length: 100 }, (_, index) => `Line ${index + 1}`).join("\n");
+                return original;
+            });
+            const longCode = await measure("10px");
+            assert.equal(longCode.height, minimum.height, language);
+            assert.ok(longCode.scrollHeight > longCode.editor, language);
+            await widget(language).evaluate((element, original) => {
+                element.style.removeProperty("max-width");
+                element.style.removeProperty("max-height");
+                element.code = original;
+            }, original);
+        }
+    });
+
     await t.test("host edits bypass reader locks and preserve other authored data", async () => {
         const js = widget("javascript");
         const source = "first\nsecond\nthird";
