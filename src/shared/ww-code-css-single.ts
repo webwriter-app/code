@@ -53,9 +53,22 @@ export const style = css`
         cursor: pointer;
     }
 
-    .cm-editor.cm-focused {
-        outline: 2px solid var(--sl-color-primary-600);
-        outline-offset: -2px;
+    .editor .cm-editor.cm-focused {
+        outline: none;
+    }
+
+    .cm-lineNumbers .cm-gutterElement {
+        border-inline-start: 3px solid transparent;
+    }
+
+    .cm-focused .cm-lineNumbers .cm-activeLineGutter {
+        border-inline-start-color: var(--sl-color-neutral-900, currentColor);
+    }
+
+    @media (forced-colors: active) {
+        .cm-focused .cm-lineNumbers .cm-activeLineGutter {
+            border-inline-start-color: CanvasText;
+        }
     }
 
     .cm-lock-gutter {
