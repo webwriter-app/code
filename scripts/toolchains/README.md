@@ -1,4 +1,4 @@
-# Go and C# runtime assets
+# Go, C#, and Haskell runtime assets
 
 Run the following commands from the Code widget repository root. Runtime
 archives are published as static resources, so WebWriter requests them only for
@@ -33,3 +33,18 @@ The packer adapts two loader paths to support blob modules inside an Offline HTM
 worker. It combines the Roslyn bridge, .NET framework, and Roslyn's reference
 assemblies into `assets/runtime/csharp/framework.gz`. Update the notices beside
 the archive when changing the SDK.
+
+
+## Haskell
+
+The compiler in `assets/runtime/haskell/` uses the MicroHs 0.16.6.0 revision
+pinned by Browser Haskell. It disables garbage-collection reductions so the
+compiler can start within Chromium's worker stack limit. It also reserves room
+for suspending deep compiler calls. The checked-in compiler keeps normal builds
+independent of a local Emscripten installation.
+
+Activate Emscripten 4.0.23 and run `sh scripts/toolchains/build-haskell.sh` to
+rebuild the assets. The JavaScript REPL adapter and optional packages come from
+the pinned `@live-codes/browser-haskell` npm dependency. When updating it,
+compare `src/haskell/package-files.json` with the new package index and verify
+that the rebuilt compiler still reads the published package format.

@@ -3754,5 +3754,12 @@
             "af-ZA": "Kode (Bash)",
             "af-NA": "Kode (Bash)"
         }
+    },
+    "./widgets/webwriter-code-haskell": {
+        "label": { "_": "Code (Haskell)" },
+        "uninsertable": true
+    },
+    "./snippets/haskell": {
+        "label": { "_": "Code (Haskell)" }
     }
 }

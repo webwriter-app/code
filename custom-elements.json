@@ -5643,6 +5643,358 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/haskell/ww-code-haskell.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Code widget for Haskell, powered by MicroHs.",
+          "name": "CodeHaskell",
+          "members": [
+            {
+              "kind": "method",
+              "name": "offlineAssets",
+              "static": true,
+              "parameters": [
+                {
+                  "name": "element",
+                  "type": {
+                    "text": "Element"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "msg",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "optionGroups",
+              "readonly": true,
+              "static": true,
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "options",
+              "type": {
+                "text": "object"
+              },
+              "readonly": true,
+              "default": "{}",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "actions",
+              "readonly": true,
+              "static": true,
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "resetExecutionCount",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hideCode",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "hide-code",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "disableExecution",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "disable-execution",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "code",
+              "description": "The authored source in the JSON data block, or in a legacy code attribute.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "lockedLines",
+              "type": {
+                "text": "number[]"
+              },
+              "description": "The authored, one-based line numbers locked for readers.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "autoRun",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether to automatically run the code when the component is first loaded.",
+              "attribute": "autorun",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "autocomplete",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether autocompletion is enabled in the code editor.",
+              "attribute": "autocomplete",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "showExecutionTime",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether to display the execution time in the controls.",
+              "attribute": "showexecutiontime",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "executionTime",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "description": "The execution time in milliseconds of the last code run.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hideExecutionCount",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether to hide the execution count in the run button.",
+              "attribute": "hide-execution-count",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "showExecutionCount",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true",
+              "description": "Whether the run button displays the execution count.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "executionCount",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "description": "The number of times the code has been executed.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "results",
+              "type": {
+                "text": "any"
+              },
+              "default": "[]",
+              "description": "The results from the last code execution.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "diagnostics",
+              "type": {
+                "text": "Diagnostic[]"
+              },
+              "default": "[]",
+              "description": "Compilation or runtime errors from the last code execution.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            }
+          ],
+          "superclass": {
+            "name": "TextRuntimeCode",
+            "module": "/src/shared/text-runtime"
+          },
+          "tagName": "webwriter-code-haskell",
+          "customElement": true,
+          "attributes": [
+            {
+              "name": "hide-code",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "hideCode",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "name": "disable-execution",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "disableExecution",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "name": "autorun",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether to automatically run the code when the component is first loaded.",
+              "fieldName": "autoRun",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "name": "autocomplete",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether autocompletion is enabled in the code editor.",
+              "fieldName": "autocomplete",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "name": "showexecutiontime",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether to display the execution time in the controls.",
+              "fieldName": "showExecutionTime",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            },
+            {
+              "name": "hide-execution-count",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether to hide the execution count in the run button.",
+              "fieldName": "hideExecutionCount",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/shared/ww-code-template.ts"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CodeHaskell",
+            "module": "src/haskell/ww-code-haskell.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "webwriter-code-haskell",
+          "declaration": {
+            "name": "CodeHaskell",
+            "module": "src/haskell/ww-code-haskell.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/shell/ww-code-shell.ts",
       "declarations": [
         {

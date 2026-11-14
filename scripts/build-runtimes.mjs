@@ -24,6 +24,7 @@ const targets = {
     go: "src/go/go.worker.ts",
     rust: "src/rust/rust.worker.ts",
     shell: "src/shell/shell.worker.ts",
+    haskell: "src/haskell/haskell.worker.ts",
 };
 
 const watch = process.argv.includes("--watch");
@@ -33,6 +34,13 @@ if (!watch) {
         ["runtime", "widgets", "chunks"].map((directory) => rm("dist/" + directory, { recursive: true, force: true })),
     );
 }
+const haskellRoot = "node_modules/@live-codes/browser-haskell/dist";
+const haskellPackages = JSON.parse(await readFile("src/haskell/package-files.json", "utf8"));
+const haskellIndex = JSON.parse(await readFile(haskellRoot + "/pkgs/index.json", "utf8"));
+if (JSON.stringify(haskellPackages) !== JSON.stringify(Object.keys(haskellIndex.packages).sort())) {
+    throw new Error("Update src/haskell/package-files.json to match MicroHs's package index.");
+}
+
 const assets = {
     "java/compiler.wasm": "src/java/teavm/compiler.wasm",
     "java/compile-classlib-teavm.bin": "src/java/teavm/compile-classlib-teavm.bin",
@@ -45,6 +53,7 @@ const assets = {
     "python/pyodide-lock.json": "node_modules/pyodide/pyodide-lock.json",
     "sql/sql-wasm-browser.wasm": "node_modules/sql.js/dist/sql-wasm-browser.wasm",
     "lua/glue.wasm": "node_modules/wasmoon/dist/glue.wasm",
+    "haskell/index.json": haskellRoot + "/pkgs/index.json",
 };
 await cp("assets/runtime", "dist/runtime", { recursive: true });
 async function compressAsset(path, input) {
@@ -55,6 +64,8 @@ const staticAssets = Promise.all([
     ...Object.entries(assets).map(([path, input]) =>
         compressAsset("dist/runtime/" + path + ".gz", createReadStream(input)),
     ),
+    // MicroHs .pkg files already use compression.
+    cp(haskellRoot + "/pkgs/packages", "dist/runtime/haskell", { recursive: true }),
     mkdir("dist/runtime/python", { recursive: true }).then(() =>
         copyFile("node_modules/pyodide/python_stdlib.zip", "dist/runtime/python/python_stdlib.zip"),
     ),

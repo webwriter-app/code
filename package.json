@@ -1,7 +1,7 @@
 {
   "name": "@webwriter/code",
   "version": "4.0.0",
-  "description": "Write and run code in HTML, JavaScript, TypeScript, Python, Java, WebAssembly, SQL, Lua, Prolog, Scheme, C#, C, C++, PHP, Go, Rust, and Bash.",
+  "description": "Write and run code in HTML, JavaScript, TypeScript, Python, Java, WebAssembly, SQL, Lua, Prolog, Scheme, C#, C, C++, PHP, Go, Rust, Bash, and Haskell.",
   "repository": "github:@webwriter-app/code",
   "keywords": [
     "webwriter-widget",
@@ -186,6 +186,7 @@
   "devDependencies": {
     "@bjorn3/browser_wasi_shim": "0.4.2",
     "@lit/localize-tools": "^0.8.0",
+    "@live-codes/browser-haskell": "0.1.2",
     "@live-codes/rust-wasm": "0.3.0",
     "@php-wasm/universal": "3.1.64",
     "@php-wasm/web-8-4": "3.1.64",
@@ -283,6 +284,11 @@
       "default": "./dist/widgets/ww-code-shell.*"
     },
     "./snippets/shell.html": "./snippets/shell.html",
+    "./widgets/webwriter-code-haskell.*": {
+      "source": "./src/haskell/ww-code-haskell.ts",
+      "default": "./dist/widgets/ww-code-haskell.*"
+    },
+    "./snippets/haskell.html": "./snippets/haskell.html",
     "./package.json": "./package.json",
     "./icon": "./icon.svg",
     "./editing-config.json": "./editing-config.json",

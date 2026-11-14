@@ -17,9 +17,10 @@ export async function runInWorker<Result>(
     input: object,
     signal: AbortSignal,
     timeout = 10_000,
+    classic = false,
 ): Promise<Result> {
     signal.throwIfAborted();
-    const worker = createCodeWorker(source);
+    const worker = createCodeWorker(source, classic);
     try {
         const response = await requestWorker<WorkerResponse<Result>>(
             worker,

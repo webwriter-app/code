@@ -25,6 +25,7 @@ const fixtures = {
     cpp: ['#include <iostream>\nint main() { std::cout << "C++ output" << std::endl; }', "C++ output"],
     php: ['<?php echo "PHP output";', "PHP output"],
     rust: ['fn main() { println!("Rust output"); }', "Rust output"],
+    haskell: ['main :: IO ()\nmain = putStrLn "Haskell output"', "Haskell output"],
 };
 
 const runtime = /\/dist\/runtime\/|\.(?:wasm|tar|gz)(?:$|\?)/;
@@ -292,6 +293,74 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
         await js.locator("button.log-clickable[aria-expanded=true]").waitFor();
         await js.getByRole("button", { expanded: false }).press("Enter");
         await js.getByText("value: 42", { exact: true }).waitFor();
+    });
+
+    await t.test("Haskell loads optional packages on demand and can use them offline", async () => {
+        const cell = widget("haskell");
+        const declarations = await cell.evaluate((element) => element.constructor.offlineAssets(element));
+        assert.equal(declarations.filter(({ url }) => url.endsWith(".pkg")).length, 43);
+        assert.equal(requests.filter((url) => url.endsWith(".pkg")).length, 0);
+
+        const code = `import Text.Parsec
+import Test.QuickCheck
+main :: IO ()
+main = do
+  print (parse (char 'a') "" "a")
+  quickCheck ((\\x -> x + 0 == x) :: Int -> Bool)`;
+        const run = async (element, count) => {
+            await element.evaluate((widget, source) => {
+                widget.code = source;
+            }, code);
+            await element.getByRole("button", { name: `Run (${count})`, exact: true }).press("Enter");
+            await element
+                .locator("output")
+                .getByText(/Right 'a'/)
+                .waitFor();
+            await element
+                .locator("output")
+                .getByText(/passed 100 tests/)
+                .waitFor();
+        };
+
+        await run(cell, 1);
+        const packages = requests.filter((url) => url.endsWith(".pkg"));
+        for (const name of ["QuickCheck", "parsec", "mtl"]) {
+            assert.ok(
+                packages.some((url) => url.includes("/" + name + "-")),
+                name,
+            );
+        }
+        assert.ok(packages.length < 43);
+
+        const context = await browser.newContext();
+        try {
+            const reader = await context.newPage();
+            await reader.goto(`http://127.0.0.1:${server.address().port}`);
+            const embedded = Object.fromEntries(
+                await Promise.all(
+                    declarations.map(async ({ url, mimeType }) => {
+                        const bytes = await readFile(new URL(".." + new URL(url).pathname, import.meta.url));
+                        return [url, `data:${mimeType};base64,${bytes.toString("base64")}`];
+                    }),
+                ),
+            );
+            await reader.evaluate((assets) => {
+                const manifest = document.createElement("script");
+                manifest.id = "webwriter-offline-assets";
+                manifest.type = "application/json";
+                manifest.textContent = JSON.stringify(assets);
+                document.head.append(manifest);
+            }, embedded);
+            await context.setOffline(true);
+            const outbound = [];
+            context.on("request", (request) => {
+                if (/^https?:/.test(request.url())) outbound.push(request.url());
+            });
+            await run(reader.locator("webwriter-code-haskell"), 0);
+            assert.deepEqual(outbound, []);
+        } finally {
+            await context.close();
+        }
     });
 
     await t.test("SQL renders multiple result sets, including empty tables and exact integers", async () => {

@@ -1,6 +1,6 @@
 # Code
 
-Write and run interactive code exercises in WebWriter. The package has 17 cell types:
+Write and run interactive code exercises in WebWriter. The package has 18 cell types:
 
 | Cell | Element | Runtime |
 | --- | --- | --- |
@@ -21,6 +21,7 @@ Write and run interactive code exercises in WebWriter. The package has 17 cell t
 | Go | `webwriter-code-go` | Go 1.27.4 compiler and linker |
 | Rust | `webwriter-code-rust` | rustc's Miri interpreter via LiveCodes |
 | Bash | `webwriter-code-shell` | Bash-compatible shell via just-bash |
+| Haskell | `webwriter-code-haskell` | MicroHs 0.16.6.0 via Browser Haskell |
 
 The editor loads syntax highlighting on activation. Workers, compilers, and libraries
 are fetched on **Run**, or on load when **Run on load** is enabled. WebWriter's
@@ -83,6 +84,15 @@ Rust uses a single source file with the bundled standard library and runs under
 Miri. C# uses the browser .NET framework and exposes console output. Bash
 supports Bash syntax and a virtual filesystem with bundled commands.
 
+Haskell runs a single `Main` module with `main :: IO ()`. The compiler includes
+MicroHs's base library and loads optional packages such as QuickCheck, Parsec,
+and mtl on demand. Offline HTML includes all 43 optional packages so readers can
+change imports after export. MicroHs supports extended Haskell 2010, with gaps
+including Template Haskell and type families. The cell captures text output.
+Canvas and audio APIs require a browser-page adapter that the cell does not
+provide. The package set and compiler are pinned through
+[Browser Haskell](https://github.com/live-codes/browser-haskell).
+
 ## Development
 
 Use Node.js 24.18+ and npm 11.16+ for the current PHP build dependencies.
@@ -94,6 +104,6 @@ Run `npm test` with Chrome installed to check the built exports, lazy runtime
 loading, saved state, author and reader behavior, and keyboard interactions.
 Set `CODE_TEST_RUNTIMES_ONLINE=1` to test Rust with its pinned CDN assets.
 
-The prebuilt Go and C# archives are checked in so ordinary widget builds only
-need Node and npm. See [toolchain build instructions](scripts/toolchains/README.md)
-for updating those archives.
+The prebuilt Go, C#, and MicroHs assets are checked in so ordinary widget builds
+only need Node and npm. See the
+[toolchain build instructions](scripts/toolchains/README.md) for updates.
