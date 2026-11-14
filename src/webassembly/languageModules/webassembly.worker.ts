@@ -1,20 +1,13 @@
 // @ts-ignore
 import WABT from "wabt";
 
-let wabtInstance!: Awaited<ReturnType<typeof WABT>>;
-let loadWabtPromise = loadWabt();
-
-async function loadWabt() {
-    wabtInstance = await WABT();
-}
-
 self.onmessage = async (event) => {
-    await loadWabtPromise;
-
     try {
+        const wabtInstance = await WABT();
         const file = wabtInstance.parseWat("file.wasm", event.data.code);
-        const binary = file.toBinary({ log: true });
-        const wasm = new WebAssembly.Module(binary.buffer);
+        const binary = file.toBinary({});
+        file.destroy();
+        const wasm = new WebAssembly.Module(new Uint8Array(binary.buffer));
         const instance = new WebAssembly.Instance(wasm, {});
 
         if (typeof instance.exports.main != "function")
@@ -23,12 +16,10 @@ self.onmessage = async (event) => {
 
         self.postMessage({
             result: result,
-            id: event.data.id,
         });
     } catch (e) {
         self.postMessage({
             error: e instanceof Error ? e.message : String(e),
-            id: event.data.id,
         });
     }
 };

@@ -2,10 +2,43 @@ import { css } from "lit";
 export const style = css`
     /* --- Widget --- */
     :host {
+        --code-border-width: 1px;
         display: block;
-        border: solid 1px var(--sl-color-neutral-300);
+        box-sizing: border-box;
+        min-width: 300px;
+        min-height: min-content;
+        border: solid var(--code-border-width) var(--sl-color-neutral-300);
         border-radius: var(--sl-border-radius-medium);
-        overflow: hidden;
+    }
+
+    .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: minmax(4rem, 1fr) max-content max-content;
+        block-size: var(--resize-height, 100%);
+        max-block-size: 100%;
+        min-block-size: min-content;
+    }
+
+    .layout[hidden] {
+        display: none;
+    }
+
+    .editor,
+    .editor .cm-editor {
+        display: flex;
+        flex-direction: column;
+        min-block-size: 0;
+    }
+
+    .editor .cm-editor,
+    .editor .cm-scroller {
+        flex: 1 1 auto;
+        min-block-size: 0;
+    }
+
+    .editor .cm-scroller {
+        overflow: auto;
     }
 
     /* --- Editor --- */
@@ -14,11 +47,28 @@ export const style = css`
         flex-direction: row;
         align-items: center;
         justify-content: center;
+    }
+
+    .cm-author-mode .cm-lock-gutter .cm-gutterElement {
         cursor: pointer;
     }
 
-    .cm-editor.cm-focused {
-        outline: none !important;
+    .editor .cm-editor.cm-focused {
+        outline: none;
+    }
+
+    .cm-lineNumbers .cm-gutterElement {
+        border-inline-start: 3px solid transparent;
+    }
+
+    .cm-focused .cm-lineNumbers .cm-activeLineGutter {
+        border-inline-start-color: var(--sl-color-neutral-900, currentColor);
+    }
+
+    @media (forced-colors: active) {
+        .cm-focused .cm-lineNumbers .cm-activeLineGutter {
+            border-inline-start-color: CanvasText;
+        }
     }
 
     .cm-lock-gutter {
@@ -51,11 +101,73 @@ export const style = css`
     .controls {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
 
         padding: var(--sl-spacing-x-small);
         gap: var(--sl-spacing-x-small);
 
         border-top: solid 1px var(--sl-color-neutral-300);
+    }
+
+    .run-control {
+        position: relative;
+    }
+
+    .run-control[hidden] {
+        display: none;
+    }
+
+    .run-button[aria-busy="true"]::part(base) {
+        cursor: progress;
+    }
+
+    .runtime-spinner {
+        inline-size: 0.75em;
+        block-size: 0.75em;
+        box-sizing: border-box;
+        border: 1px solid currentColor;
+        border-inline-end-color: transparent;
+        border-radius: 50%;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .runtime-spinner {
+            animation: runtime-spin 0.8s linear infinite;
+        }
+    }
+
+    @keyframes runtime-spin {
+        to {
+            transform: rotate(1turn);
+        }
+    }
+
+    .run-button[data-progress]::part(base) {
+        --runtime-fill-direction: to right;
+        background-image: linear-gradient(
+            var(--runtime-fill-direction),
+            var(--sl-color-primary-800) var(--runtime-progress),
+            transparent var(--runtime-progress)
+        );
+    }
+
+    .run-button[data-progress]:dir(rtl)::part(base) {
+        --runtime-fill-direction: to left;
+    }
+
+    @media (forced-colors: active) {
+        .run-button[data-progress]::part(base) {
+            background-image: none;
+        }
+    }
+
+    .visually-hidden {
+        position: absolute;
+        inline-size: 1px;
+        block-size: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
     }
 
     .language-label {
@@ -91,9 +203,11 @@ export const style = css`
 
     output .outputs pre {
         white-space: pre-wrap;
+        overflow-wrap: anywhere;
     }
 
     .htmlPreview {
+        display: block;
         border: none;
         background-color: white;
         width: 100%;
@@ -132,5 +246,6 @@ export const style = css`
 
     .diagnostic-message {
         white-space: pre-wrap;
+        overflow-wrap: anywhere;
     }
 `;

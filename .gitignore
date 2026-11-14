@@ -24,3 +24,6 @@ types
 *.sln
 *.sw?
 .eslintrc.cjs
+# .NET toolchain bridge build intermediates
+/scripts/toolchains/bin/
+/scripts/toolchains/obj/

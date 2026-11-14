@@ -1,12 +1,20 @@
 {
   "name": "@webwriter/code",
   "version": "4.0.0",
-  "description": "Write and run code as a code cell. Supports several languages (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+  "description": "Write and run code in HTML, JavaScript, TypeScript, Python, Java, WebAssembly, SQL, Lua, Prolog, Scheme, C#, C, C++, PHP, Go, Rust, Bash, and Haskell.",
   "repository": "github:@webwriter-app/code",
   "keywords": [
     "webwriter-widget",
     "widget-simulational",
     "widget-practical",
+    "widget-editable",
+    "widget-configurable",
+    "widget-has-content",
+    "widget-stateful",
+    "widget-allows-keyboard-input",
+    "widget-allows-pointer-input",
+    "widget-supports-dynamic-loading",
+    "widget-standalone",
     "iscedf2013-06",
     "isced2011-2",
     "isced2011-3",
@@ -134,22 +142,29 @@
     "Jorik van Genuchten"
   ],
   "scripts": {
-    "prepublishOnly": "npx @webwriter/build",
-    "dev": "npx @webwriter/build dev",
+    "prepublishOnly": "node scripts/build-runtimes.mjs && build --shared-dependencies",
+    "dev": "node scripts/build-runtimes.mjs --watch",
     "localize": "lit-localize extract && npx @webwriter/build localize && lit-localize build",
     "format": "prettier --write .",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "test": "npm run prepublishOnly && node --test tests/*.test.mjs"
   },
   "dependencies": {
     "@codemirror/autocomplete": ">=6.20.4 <7.0.0-0",
     "@codemirror/commands": ">=6.11.1 <7.0.0-0",
+    "@codemirror/lang-cpp": "6.0.3",
     "@codemirror/lang-css": ">=6.2.1 <7.0.0-0",
+    "@codemirror/lang-go": "6.0.1",
     "@codemirror/lang-html": ">=6.4.12 <7.0.0-0",
     "@codemirror/lang-java": "^6.0.2",
     "@codemirror/lang-javascript": ">=6.2.5 <7.0.0-0",
+    "@codemirror/lang-php": "6.0.2",
     "@codemirror/lang-python": ">=6.1.3 <7.0.0-0",
+    "@codemirror/lang-rust": "6.0.2",
+    "@codemirror/lang-sql": "^6.10.0",
     "@codemirror/lang-wast": ">=6.0.1 <7.0.0-0",
     "@codemirror/language": ">=6.13.1 <7.0.0-0",
+    "@codemirror/legacy-modes": "^6.5.5",
     "@codemirror/search": ">=6.7.2 <7.0.0-0",
     "@codemirror/state": ">=6.7.6 <7.0.0-0",
     "@codemirror/theme-one-dark": "^6.1.3",
@@ -159,28 +174,45 @@
     "@replit/codemirror-indentation-markers": ">=6.5.0 <7.0.0-0",
     "@shoelace-style/shoelace": ">=2.9.0 <3.0.0-0",
     "@webwriter/lit": "^3.0.0",
+    "biwascheme": "0.8.3",
+    "codemirror-lang-prolog": "^0.1.0",
     "lit": ">=3.3.3 <4.0.0-0",
+    "sql.js": "1.16.0",
+    "tau-prolog": "0.3.4",
     "typescript": "^6.0.3",
-    "wabt": "^1.0.39"
+    "wabt": "^1.0.39",
+    "wasmoon": "1.16.0"
   },
   "devDependencies": {
-    "@webwriter/build": "^1.13.1",
+    "@bjorn3/browser_wasi_shim": "0.4.2",
     "@lit/localize-tools": "^0.8.2",
+    "@live-codes/browser-haskell": "0.1.2",
+    "@live-codes/rust-wasm": "0.3.0",
+    "@php-wasm/universal": "3.1.64",
+    "@php-wasm/web-8-4": "3.1.64",
+    "@types/sql.js": "^1.4.11",
+    "@webwriter/build": "^1.13.1",
+    "browsercc": "0.1.1",
+    "esbuild": "0.28.2",
+    "fflate": "0.8.3",
+    "just-bash": "3.6.0",
     "patch-package": "^8.0.1",
-    "prettier": "^3.10.1"
+    "playwright": "^1.65.1",
+    "prettier": "^3.10.1",
+    "pyodide": "0.29.5"
   },
   "type": "module",
   "exports": {
+    "./widgets/webwriter-code-javascript.*": {
+      "source": "./src/javascript/ww-code-javascript.ts",
+      "default": "./dist/widgets/ww-code-javascript.*"
+    },
     "./widgets/webwriter-code-html.*": {
       "source": "./src/html/ww-code-html.ts",
       "default": "./dist/widgets/ww-code-html.*"
     },
     "./snippets/HTML.html": "./snippets/html.html",
     "./snippets/java.html": "./snippets/java.html",
-    "./widgets/webwriter-code-javascript.*": {
-      "source": "./src/javascript/ww-code-javascript.ts",
-      "default": "./dist/widgets/ww-code-javascript.*"
-    },
     "./widgets/webwriter-code-java.*": {
       "source": "./src/java/ww-code-java.ts",
       "default": "./dist/widgets/ww-code-java.*"
@@ -197,10 +229,104 @@
       "source": "./src/webassembly/ww-code-webassembly.ts",
       "default": "./dist/widgets/ww-code-webassembly.*"
     },
+    "./widgets/webwriter-code-sql.*": {
+      "source": "./src/sql/ww-code-sql.ts",
+      "default": "./dist/widgets/ww-code-sql.*"
+    },
+    "./snippets/sql.html": "./snippets/sql.html",
+    "./widgets/webwriter-code-lua.*": {
+      "source": "./src/lua/ww-code-lua.ts",
+      "default": "./dist/widgets/ww-code-lua.*"
+    },
+    "./snippets/lua.html": "./snippets/lua.html",
+    "./widgets/webwriter-code-prolog.*": {
+      "source": "./src/prolog/ww-code-prolog.ts",
+      "default": "./dist/widgets/ww-code-prolog.*"
+    },
+    "./snippets/prolog.html": "./snippets/prolog.html",
+    "./widgets/webwriter-code-scheme.*": {
+      "source": "./src/scheme/ww-code-scheme.ts",
+      "default": "./dist/widgets/ww-code-scheme.*"
+    },
+    "./snippets/scheme.html": "./snippets/scheme.html",
+    "./widgets/webwriter-code-c.*": {
+      "source": "./src/c/ww-code-c.ts",
+      "default": "./dist/widgets/ww-code-c.*"
+    },
+    "./snippets/c.html": "./snippets/c.html",
+    "./widgets/webwriter-code-cpp.*": {
+      "source": "./src/cpp/ww-code-cpp.ts",
+      "default": "./dist/widgets/ww-code-cpp.*"
+    },
+    "./snippets/cpp.html": "./snippets/cpp.html",
+    "./widgets/webwriter-code-csharp.*": {
+      "source": "./src/csharp/ww-code-csharp.ts",
+      "default": "./dist/widgets/ww-code-csharp.*"
+    },
+    "./snippets/csharp.html": "./snippets/csharp.html",
+    "./widgets/webwriter-code-php.*": {
+      "source": "./src/php/ww-code-php.ts",
+      "default": "./dist/widgets/ww-code-php.*"
+    },
+    "./snippets/php.html": "./snippets/php.html",
+    "./widgets/webwriter-code-go.*": {
+      "source": "./src/go/ww-code-go.ts",
+      "default": "./dist/widgets/ww-code-go.*"
+    },
+    "./snippets/go.html": "./snippets/go.html",
+    "./widgets/webwriter-code-rust.*": {
+      "source": "./src/rust/ww-code-rust.ts",
+      "default": "./dist/widgets/ww-code-rust.*"
+    },
+    "./snippets/rust.html": "./snippets/rust.html",
+    "./widgets/webwriter-code-shell.*": {
+      "source": "./src/shell/ww-code-shell.ts",
+      "default": "./dist/widgets/ww-code-shell.*"
+    },
+    "./snippets/shell.html": "./snippets/shell.html",
+    "./widgets/webwriter-code-haskell.*": {
+      "source": "./src/haskell/ww-code-haskell.ts",
+      "default": "./dist/widgets/ww-code-haskell.*"
+    },
+    "./snippets/haskell.html": "./snippets/haskell.html",
     "./package.json": "./package.json",
     "./icon": "./icon.svg",
     "./editing-config.json": "./editing-config.json",
     "./custom-elements.json": "./custom-elements.json"
   },
-  "customElements": "custom-elements.json"
+  "customElements": "custom-elements.json",
+  "prebuiltDependencies": [
+    "@codemirror/autocomplete",
+    "@codemirror/commands",
+    "@codemirror/lang-cpp",
+    "@codemirror/lang-css",
+    "@codemirror/lang-go",
+    "@codemirror/lang-html",
+    "@codemirror/lang-java",
+    "@codemirror/lang-javascript",
+    "@codemirror/lang-php",
+    "@codemirror/lang-python",
+    "@codemirror/lang-rust",
+    "@codemirror/lang-sql",
+    "@codemirror/lang-wast",
+    "@codemirror/language",
+    "@codemirror/legacy-modes",
+    "@codemirror/search",
+    "@codemirror/state",
+    "@codemirror/theme-one-dark",
+    "@codemirror/view",
+    "@lezer/highlight",
+    "@lit/localize",
+    "@replit/codemirror-indentation-markers",
+    "@shoelace-style/shoelace",
+    "@webwriter/lit",
+    "biwascheme",
+    "codemirror-lang-prolog",
+    "lit",
+    "sql.js",
+    "tau-prolog",
+    "typescript",
+    "wabt",
+    "wasmoon"
+  ]
 }

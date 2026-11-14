@@ -1,3 +1,5 @@
+import { javascriptWorker } from "./javascript-assets";
+import { offlineRuntimeAssets } from "../shared/runtime-assets";
 import { javascript } from "@codemirror/lang-javascript";
 import { customElement } from "lit/decorators.js";
 import { style } from "../shared/ww-code-css-single";
@@ -6,15 +8,14 @@ import CodeJsTemplate from "./shared/ww-code-js-template";
 
 /** Code widget for JavaScript with execution capabilities. */
 @customElement("webwriter-code-javascript")
-
 export default class CodeJavaScript extends CodeJsTemplate {
     static styles = [style, jsTemplateStyle] as any;
 
-    constructor() {
-        super("JavaScript", javascript());
+    static offlineAssets(element: Element) {
+        return offlineRuntimeAssets(element, [javascriptWorker]);
     }
 
-    protected build(code: string): string {
-        return code;
+    constructor() {
+        super("JavaScript", javascript());
     }
 }

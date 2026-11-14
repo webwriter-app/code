@@ -1,4 +1,4 @@
-import { registerIconLibrary } from "@shoelace-style/shoelace";
+import { registerIconLibrary } from "@shoelace-style/shoelace/dist/components/icon/library.js";
 
 import CaretDownFillIcon from "../../assets/icons/caret-down-fill.svg";
 import CaretRightFillIcon from "../../assets/icons/caret-right-fill.svg";
@@ -7,7 +7,7 @@ import ExclamationTriangleFillIcon from "../../assets/icons/exclamation-triangle
 import PlayCircleIcon from "../../assets/icons/play-circle.svg";
 import PlayFillIcon from "../../assets/icons/play-fill.svg";
 
-registerIconLibrary("default", {
+registerIconLibrary("code", {
     resolver: (name) =>
         ({
             "caret-down-fill": CaretDownFillIcon,

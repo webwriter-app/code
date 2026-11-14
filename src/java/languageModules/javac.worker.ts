@@ -1,26 +1,19 @@
-import CompileClasslibBin from "../teavm/compile-classlib-teavm.bin.tiff";
 import { load } from "../teavm/compiler.wasm-runtime.js";
-import CompilerWasm from "../teavm/compiler.wasm.tiff";
-import RuntimeClasslibBin from "../teavm/runtime-classlib-teavm.bin.tiff";
 import { Compiler, CompilerLibrary } from "../teavm/types.js";
 
 let compiler: Compiler;
-let compilerInitializationPromise = initializeCompiler();
 
-async function initializeCompiler() {
+async function initializeCompiler({ wasm, sdk, classlib }: { wasm: Blob; sdk: Blob; classlib: Blob }) {
     if (compiler) return;
 
-    const compilerWasmResponse = await fetch(CompilerWasm);
-    const compilerWasmUrl = URL.createObjectURL(await compilerWasmResponse.blob());
-    const teavm = await load(compilerWasmUrl);
+    const compilerWasmUrl = URL.createObjectURL(wasm);
+    const teavm = await load(compilerWasmUrl).finally(() => URL.revokeObjectURL(compilerWasmUrl));
     let compilerLib = teavm.exports as CompilerLibrary;
     compiler = compilerLib.createCompiler();
 
-    const compileClasslibReponse = await fetch(CompileClasslibBin);
-    compiler.setSdk(new Int8Array(await compileClasslibReponse.arrayBuffer()));
+    compiler.setSdk(new Int8Array(await sdk.arrayBuffer()));
 
-    const runtimeClasslibResponse = await fetch(RuntimeClasslibBin);
-    compiler.setTeaVMClasslib(new Int8Array(await runtimeClasslibResponse.arrayBuffer()));
+    compiler.setTeaVMClasslib(new Int8Array(await classlib.arrayBuffer()));
 
     compiler.onDiagnostic((diagnostic) => {
         diagnostics.push({
@@ -40,9 +33,13 @@ async function initializeCompiler() {
 let diagnostics: any[] = [];
 
 self.onmessage = async (event) => {
-    await compilerInitializationPromise;
-
-    const { code, id, mainClass } = event.data;
+    const { code, mainClass, assets } = event.data;
+    try {
+        await initializeCompiler(assets);
+    } catch (error) {
+        self.postMessage({ error: error instanceof Error ? error.message : String(error) });
+        return;
+    }
 
     diagnostics = [];
     compiler.clearInputClassFiles();
@@ -62,10 +59,9 @@ self.onmessage = async (event) => {
 
         const wasm = compiler.getWebAssemblyOutputFile("app.wasm");
         self.postMessage({
-            id: id,
             wasm: wasm,
         });
     } catch (e) {
-        self.postMessage({ id, diagnostics });
+        self.postMessage(diagnostics.length ? { diagnostics } : { error: e instanceof Error ? e.message : String(e) });
     }
 };
