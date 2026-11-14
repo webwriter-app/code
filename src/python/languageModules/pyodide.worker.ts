@@ -23,6 +23,7 @@ self.onmessage = async ({
             try {
                 pyodide = await (globalThis as typeof globalThis & { loadPyodide: typeof loadPyodide }).loadPyodide({
                     indexURL: pyodideRoot,
+                    packageBaseUrl: pyodideRoot,
                     stdLibURL,
                     lockFileURL,
                 });
