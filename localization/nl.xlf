@@ -1,4 +1,5 @@
-<xliff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd" version="1.2">
   <file original="lit-localize-inputs" datatype="plaintext" source-language="en" target-language="nl">
     <body>
       <trans-unit id="s9fbbc819fe7e66aa">
@@ -53,6 +54,12 @@
         <source>This section of code is locked and cannot be edited</source>
         <target>Dit deel van de code is vergrendeld en kan niet worden bewerkt</target>
       </trans-unit>
-    </body>
+    <trans-unit id="s43867f9999381946">
+  <source>Disable code execution</source>
+<target>Code-uitvoering uitschakelen</target></trans-unit>
+<trans-unit id="sddaa4748444ecc76">
+  <source>Hide code</source>
+<target>Code verbergen</target></trans-unit>
+</body>
   </file>
 </xliff>

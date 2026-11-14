@@ -8,33 +8,6 @@ export const style = css`
         overflow: hidden;
     }
 
-    /* --- Aside menu --- */
-    aside[part="options"] {
-        width: 100%;
-        box-sizing: border-box;
-        padding-left: 5px;
-    }
-
-    aside[part="options"] h2 {
-        font-size: var(--sl-font-size-large);
-        font-weight: 600;
-        margin: 0;
-        margin-top: var(--sl-spacing-medium);
-    }
-
-    aside[part="options"] sl-button {
-        margin-top: var(--sl-spacing-x-small);
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .button-label-linebreak {
-        white-space: normal;
-        line-height: 1.5em;
-        margin: 0.5em 0;
-        display: inline-block;
-    }
-
     /* --- Editor --- */
     .cm-lock-gutter .cm-gutterElement {
         display: flex;

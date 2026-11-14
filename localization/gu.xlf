@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+<file target-language="gu" source-language="en" original="lit-localize-inputs" datatype="plaintext">
+<body>
+<trans-unit id="sa94ff8354d06f430">
+  <source>This section of code is locked and cannot be edited</source>
+<target>કોડનો આ વિભાગ લૉક છે અને સંપાદિત કરી શકાતો નથી</target></trans-unit>
+<trans-unit id="s9fbbc819fe7e66aa">
+  <source>Run</source>
+<target>ચલાવો</target></trans-unit>
+<trans-unit id="s47f7722202e53f2f">
+  <source>Clear Output</source>
+<target>આઉટપુટ સાફ કરો</target></trans-unit>
+<trans-unit id="s3c96a20baa10fa75">
+  <source>Execution</source>
+<target>અમલ</target></trans-unit>
+<trans-unit id="sa75b95980cd80e78">
+  <source>Editor</source>
+<target>સંપાદક</target></trans-unit>
+<trans-unit id="sca1a826088564455">
+  <source>Results</source>
+<target>પરિણામો</target></trans-unit>
+<trans-unit id="s43867f9999381946">
+  <source>Disable code execution</source>
+<target>કોડનો અમલ બંધ કરો</target></trans-unit>
+<trans-unit id="sb1db8c15648f4579">
+  <source>Run on load</source>
+<target>લોડ થાય ત્યારે ચલાવો</target></trans-unit>
+<trans-unit id="sd8eae573769fbf94">
+  <source>Autocompletion</source>
+<target>આપમેળે પૂર્ણતા</target></trans-unit>
+<trans-unit id="sddaa4748444ecc76">
+  <source>Hide code</source>
+<target>કોડ છુપાવો</target></trans-unit>
+<trans-unit id="s9c355ae1ea6d408f">
+  <source>Show execution time</source>
+<target>અમલનો સમય બતાવો</target></trans-unit>
+<trans-unit id="s780d4c126df3ab65">
+  <source>Show execution count</source>
+<target>અમલની સંખ્યા બતાવો</target></trans-unit>
+<trans-unit id="se3a0e370891f1769">
+  <source>Reset execution count</source>
+<target>અમલની સંખ્યા ફરીથી સેટ કરો</target></trans-unit>
+</body>
+</file>
+</xliff>
