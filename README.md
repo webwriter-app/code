@@ -32,7 +32,7 @@ matching built stylesheet and module when embedding on a plain page:
 ```html
 <link rel="stylesheet" href="./dist/widgets/ww-code-javascript.css">
 <script type="module" src="./dist/widgets/ww-code-javascript.js"></script>
-<webwriter-code-javascript showexecutioncount>
+<webwriter-code-javascript>
   <script type="application/json" slot="data">
     {"code":"console.log('Hello, world!');","lockedLines":[1]}
   </script>
@@ -46,10 +46,11 @@ containing a literal `<` should use the JSON escape `\u003c` in hand-authored
 data blocks.
 
 The authored attributes are `autorun`, `autocomplete`, `hide-code`,
-`disable-execution`, `showexecutiontime`, and `showexecutioncount`. Run
-results, diagnostics, counts, and timings stay in memory. Older `code` and
-`lockedlines` attributes remain readable when their fields are absent from the
-data block.
+`disable-execution`, `showexecutiontime`, and `hide-execution-count`. The Run
+button shows the execution count by default. Use **Hide execution count** in the
+Widget drawer to hide it. Run results, diagnostics, counts, and timings stay in
+memory. Older `code` and `lockedlines` attributes remain readable when their
+fields are absent from the data block.
 
 The package also exports the HTML and Java snippets as
 `@webwriter/code/snippets/HTML.html` and `@webwriter/code/snippets/java.html`.

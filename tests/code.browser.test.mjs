@@ -72,7 +72,7 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
         for (const [language, [, output]] of Object.entries(fixtures)) {
             if (language === "python" && !process.env.CODE_TEST_PYTHON_ONLINE) continue;
             const start = requests.length;
-            await widget(language).getByRole("button", { name: "Run", exact: true }).press("Enter");
+            await widget(language).getByRole("button", { name: "Run (0)", exact: true }).press("Enter");
             if (language === "html") {
                 await widget(language).frameLocator("iframe").getByText(output).waitFor();
             } else {
@@ -211,7 +211,15 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
         await candidate.getByRole("button", { name: "Run (0)", exact: true }).press("Enter");
         await candidate.locator("output").getByText("legacy", { exact: true }).waitFor();
         assert.equal(await js.evaluate((element) => element.innerHTML), "");
+        await candidate.getByRole("button", { name: "Run (1)", exact: true }).waitFor();
         assert.equal(await js.evaluate((element) => element.getAttribute("executioncount")), null);
+
+        const hideAttribute = await js.evaluate((element) => element.options.hideExecutionCount.attribute);
+        assert.equal(hideAttribute, "hide-execution-count");
+        await js.evaluate((element, attr) => element.setAttribute(attr, ""), hideAttribute);
+        await candidate.getByRole("button", { name: "Run", exact: true }).waitFor();
+        await js.evaluate((element, attr) => element.removeAttribute(attr), hideAttribute);
+        await candidate.getByRole("button", { name: "Run (1)", exact: true }).waitFor();
     });
 
     await t.test("a missing runtime reports the error and clears the busy state", async () => {
@@ -220,7 +228,7 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
             await broken.route("**/pythonModule-*.js", (route) => route.abort());
             await broken.goto(`http://127.0.0.1:${server.address().port}`);
             const python = broken.locator("webwriter-code-python");
-            await python.getByRole("button", { name: "Run", exact: true }).press("Enter");
+            await python.getByRole("button", { name: "Run (0)", exact: true }).press("Enter");
             await python
                 .locator("output")
                 .getByText(/failed to fetch dynamically imported module/i)
@@ -237,7 +245,7 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
     await t.test("changing the document language updates the cell and drawer", async () => {
         const js = widget("javascript").first();
         await page.evaluate(() => (document.documentElement.lang = "de"));
-        await js.getByRole("button", { name: "Ausführen", exact: true }).waitFor();
+        await js.getByRole("button", { name: "Ausführen (1)", exact: true }).waitFor();
         assert.equal(
             await js.evaluate((element) => element.options.disableExecution.label._),
             "Codeausführung deaktivieren",

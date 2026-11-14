@@ -159,13 +159,13 @@ export default abstract class Code extends LitElementWw {
                     locale,
                 ),
             },
-            showExecutionCount: {
+            hideExecutionCount: {
                 type: Boolean,
-                attribute: "showexecutioncount",
+                attribute: "hide-execution-count",
                 group: "results",
                 label: drawerLabel(
-                    msg("Show execution count"),
-                    { en: "Show execution count", de: "Anzahl der Ausführungen anzeigen" },
+                    msg("Hide execution count"),
+                    { en: "Hide execution count", de: "Anzahl der Ausführungen ausblenden" },
                     locale,
                 ),
             },
@@ -273,9 +273,18 @@ export default abstract class Code extends LitElementWw {
     @state()
     accessor executionTime: number = 0;
 
-    /** Whether to display the execution count in the run button. */
-    @property({ type: Boolean, attribute: "showexecutioncount", reflect: true })
-    accessor showExecutionCount = false;
+    /** Whether to hide the execution count in the run button. */
+    @property({ type: Boolean, attribute: "hide-execution-count", reflect: true })
+    accessor hideExecutionCount = false;
+
+    /** Whether the run button displays the execution count. */
+    get showExecutionCount() {
+        return !this.hideExecutionCount;
+    }
+
+    set showExecutionCount(value: boolean) {
+        this.hideExecutionCount = !value;
+    }
 
     /** The number of times the code has been executed. */
     @state()
