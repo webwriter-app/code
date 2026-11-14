@@ -1,7 +1,7 @@
 {
   "name": "@webwriter/code",
   "version": "4.0.0",
-  "description": "Write and run code as a code cell. Supports several languages (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).",
+  "description": "Write and run code in HTML, JavaScript, TypeScript, Python, Java, WebAssembly, SQL, Lua, Prolog, and Scheme.",
   "repository": "github:@webwriter-app/code",
   "keywords": [
     "webwriter-widget",
@@ -157,8 +157,10 @@
     "@codemirror/lang-java": "^6.0.2",
     "@codemirror/lang-javascript": ">=6.2.1 <7.0.0-0",
     "@codemirror/lang-python": ">=6.1.3 <7.0.0-0",
+    "@codemirror/lang-sql": "^6.10.0",
     "@codemirror/lang-wast": ">=6.0.1 <7.0.0-0",
     "@codemirror/language": ">=6.9.1 <7.0.0-0",
+    "@codemirror/legacy-modes": "^6.5.5",
     "@codemirror/search": ">=6.5.4 <7.0.0-0",
     "@codemirror/state": ">=6.3.0 <7.0.0-0",
     "@codemirror/theme-one-dark": "^6.1.3",
@@ -168,12 +170,18 @@
     "@replit/codemirror-indentation-markers": ">=6.5.0 <7.0.0-0",
     "@shoelace-style/shoelace": ">=2.9.0 <3.0.0-0",
     "@webwriter/lit": "^3.0.0",
+    "biwascheme": "0.8.3",
+    "codemirror-lang-prolog": "^0.1.0",
     "lit": ">=3.0.0 <4.0.0-0",
+    "sql.js": "1.16.0",
+    "tau-prolog": "0.3.4",
     "typescript": ">=4.9.5 <5.0.0-0",
-    "wabt": "^1.0.37"
+    "wabt": "^1.0.37",
+    "wasmoon": "1.16.0"
   },
   "devDependencies": {
     "@lit/localize-tools": "^0.8.0",
+    "@types/sql.js": "^1.4.11",
     "@webwriter/build": "^1.13.1",
     "patch-package": "^8.0.0",
     "playwright": "^1.65.1",
@@ -207,6 +215,26 @@
       "source": "./src/webassembly/ww-code-webassembly.ts",
       "default": "./dist/widgets/ww-code-webassembly.*"
     },
+    "./widgets/webwriter-code-sql.*": {
+      "source": "./src/sql/ww-code-sql.ts",
+      "default": "./dist/widgets/ww-code-sql.*"
+    },
+    "./snippets/sql.html": "./snippets/sql.html",
+    "./widgets/webwriter-code-lua.*": {
+      "source": "./src/lua/ww-code-lua.ts",
+      "default": "./dist/widgets/ww-code-lua.*"
+    },
+    "./snippets/lua.html": "./snippets/lua.html",
+    "./widgets/webwriter-code-prolog.*": {
+      "source": "./src/prolog/ww-code-prolog.ts",
+      "default": "./dist/widgets/ww-code-prolog.*"
+    },
+    "./snippets/prolog.html": "./snippets/prolog.html",
+    "./widgets/webwriter-code-scheme.*": {
+      "source": "./src/scheme/ww-code-scheme.ts",
+      "default": "./dist/widgets/ww-code-scheme.*"
+    },
+    "./snippets/scheme.html": "./snippets/scheme.html",
     "./package.json": "./package.json",
     "./icon": "./icon.svg",
     "./editing-config.json": "./editing-config.json",
@@ -221,8 +249,10 @@
     "@codemirror/lang-java",
     "@codemirror/lang-javascript",
     "@codemirror/lang-python",
+    "@codemirror/lang-sql",
     "@codemirror/lang-wast",
     "@codemirror/language",
+    "@codemirror/legacy-modes",
     "@codemirror/search",
     "@codemirror/state",
     "@codemirror/theme-one-dark",
@@ -232,8 +262,13 @@
     "@replit/codemirror-indentation-markers",
     "@shoelace-style/shoelace",
     "@webwriter/lit",
+    "biwascheme",
+    "codemirror-lang-prolog",
     "lit",
+    "sql.js",
+    "tau-prolog",
     "typescript",
-    "wabt"
+    "wabt",
+    "wasmoon"
   ]
 }

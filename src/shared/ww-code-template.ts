@@ -1,7 +1,7 @@
 import "@shoelace-style/shoelace/dist/themes/light.css";
 import { LitElementWw } from "@webwriter/lit";
 import { LitElement, html } from "lit";
-import type { PropertyValues } from "lit";
+import type { CSSResultGroup, PropertyValues } from "lit";
 import { property, query, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 
@@ -74,7 +74,7 @@ export default abstract class Code extends LitElementWw {
         return rules;
     }
 
-    static styles = style;
+    static styles: CSSResultGroup = style;
 
     /** @internal */
     static get scopedElements() {
@@ -431,8 +431,13 @@ export default abstract class Code extends LitElementWw {
         </div>`;
     }
 
+    protected renderRunInput() {
+        return html``;
+    }
+
     private Controls() {
         return html`<div class="controls">
+            ${this.renderRunInput()}
             <sl-button
                 variant="primary"
                 size="small"
@@ -479,25 +484,19 @@ export default abstract class Code extends LitElementWw {
     }
 
     protected Result() {
-        switch (this.languageModule.name) {
-            case "Python":
-            case "WebAssembly":
-            case "Java":
-                const outputs = this.results
-                    .filter((r: any) => r !== undefined)
-                    .map((r: any) => html`<pre style="color:${r?.color}">${r?.text}</pre>`);
-                return html` <div class="outputs">${outputs}</div>`;
-            case "HTML":
-                return html` <iframe
-                    id="iframePreview"
-                    class="htmlPreview"
-                    title=${this.languageModule.name}
-                    srcdoc=${this.results[0] ?? ""}
-                    sandbox="allow-scripts allow-modals"
-                ></iframe>`;
-            default:
-                return html``;
+        if (this.languageModule.name === "HTML") {
+            return html` <iframe
+                id="iframePreview"
+                class="htmlPreview"
+                title=${this.languageModule.name}
+                srcdoc=${this.results[0] ?? ""}
+                sandbox="allow-scripts allow-modals"
+            ></iframe>`;
         }
+        const outputs = this.results
+            .filter((r: any) => r !== undefined)
+            .map((r: any) => html`<pre style="color:${r?.color}">${r?.text}</pre>`);
+        return html` <div class="outputs">${outputs}</div>`;
     }
 
     private Diagnostics() {
@@ -542,7 +541,7 @@ export default abstract class Code extends LitElementWw {
         `;
     }
 
-    private async runCode() {
+    protected async runCode() {
         if (!this.isConnected || this.disableExecution || this.running) return;
 
         const { signal } = this.connection;

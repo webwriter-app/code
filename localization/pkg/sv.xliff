@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.1" srcLang="en" trgLang="sv">
 <file id="." original=".">
-<unit id="description"><segment><source>Write and run code as a code cell. Supports several languages (HTML, JavaScript/TypeScript, Python, Java, WebAssembly).</source><target></target></segment></unit>
+<unit id="description"><segment><source>Write and run code in HTML, JavaScript, TypeScript, Python, Java, WebAssembly, SQL, Lua, Prolog, and Scheme.</source><target></target></segment></unit>
 <unit id="label"><segment><source>Code</source><target>Code</target></segment></unit>
 </file>
 <file id="./widgets/webwriter-code-javascript" original="./widgets/webwriter-code-javascript">
@@ -24,5 +24,29 @@
 </file>
 <file id="./snippets/HTML" original="./snippets/HTML">
 <unit id="label"><segment><source>Code (HTML)</source><target>Code (HTML)</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-sql" original="./widgets/webwriter-code-sql">
+<unit id="label"><segment><source>Code (SQL)</source><target>Code (SQL)</target></segment></unit>
+</file>
+<file id="./snippets/sql" original="./snippets/sql">
+<unit id="label"><segment><source>Code (SQL)</source><target>Code (SQL)</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-lua" original="./widgets/webwriter-code-lua">
+<unit id="label"><segment><source>Code (Lua)</source><target>Code (Lua)</target></segment></unit>
+</file>
+<file id="./snippets/lua" original="./snippets/lua">
+<unit id="label"><segment><source>Code (Lua)</source><target>Code (Lua)</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-prolog" original="./widgets/webwriter-code-prolog">
+<unit id="label"><segment><source>Code (Prolog)</source><target>Code (Prolog)</target></segment></unit>
+</file>
+<file id="./snippets/prolog" original="./snippets/prolog">
+<unit id="label"><segment><source>Code (Prolog)</source><target>Code (Prolog)</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-scheme" original="./widgets/webwriter-code-scheme">
+<unit id="label"><segment><source>Code (Scheme)</source><target>Code (Scheme)</target></segment></unit>
+</file>
+<file id="./snippets/scheme" original="./snippets/scheme">
+<unit id="label"><segment><source>Code (Scheme)</source><target>Code (Scheme)</target></segment></unit>
 </file>
 </xliff>

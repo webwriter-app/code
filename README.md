@@ -1,6 +1,6 @@
 # Code
 
-Write and run interactive code exercises in WebWriter. The package has six cell types:
+Write and run interactive code exercises in WebWriter. The package has ten cell types:
 
 | Cell | Element | Runtime |
 | --- | --- | --- |
@@ -10,11 +10,14 @@ Write and run interactive code exercises in WebWriter. The package has six cell 
 | Python | `webwriter-code-python` | Pyodide |
 | Java | `webwriter-code-java` | TeaVM (Java 21) |
 | WebAssembly | `webwriter-code-webassembly` | WABT for WebAssembly Text Format (WAT) |
+| SQL | `webwriter-code-sql` | SQLite via sql.js |
+| Lua | `webwriter-code-lua` | Lua 5.4 via Wasmoon |
+| Prolog | `webwriter-code-prolog` | Tau Prolog |
+| Scheme | `webwriter-code-scheme` | BiwaScheme |
 
 The editor and syntax highlighting load when the cell opens. The execution runtime
-loads on the first **Run**, or on load when **Run on load** is enabled. Java,
-JavaScript, TypeScript, and WebAssembly use bundled runtimes. A WebWriter
-**Offline HTML** export includes the runtimes required by its runnable cells.
+loads on the first **Run**, or on load when **Run on load** is enabled. A WebWriter
+**Offline HTML** export includes the bundled runtimes required by its runnable cells.
 Python's widget module is also included when needed, but Pyodide and its Python
 packages still require an internet connection. HTML previews can also request
 external resources referenced by authored code.
@@ -52,8 +55,13 @@ Widget drawer to hide it. Run results, diagnostics, counts, and timings stay in
 memory. Older `code` and `lockedlines` attributes remain readable when their
 fields are absent from the data block.
 
-The package also exports the HTML and Java snippets as
-`@webwriter/code/snippets/HTML.html` and `@webwriter/code/snippets/java.html`.
+SQL starts with an empty in-memory database on each run. Use the same cell to
+create tables, insert data, and query it. Each query result shows up to 500 rows
+in its own table. In Prolog, enter facts and rules in the editor and the goal in
+the **Query** field. The goal is saved in the cell's `goal` attribute.
+
+The package exports the `HTML.html`, `java.html`, `sql.html`, `lua.html`,
+`prolog.html`, and `scheme.html` starter snippets under `@webwriter/code/snippets/`.
 
 ## Development
 

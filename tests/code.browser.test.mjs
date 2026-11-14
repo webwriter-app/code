@@ -14,12 +14,17 @@ const fixtures = {
     ],
     webassembly: ['(module (func (export "main") (result i32) i32.const 27))', "27"],
     python: ['print("Python output")', "Python output"],
+    sql: ["SELECT 'Ada' AS name, 42 AS score;", "Ada"],
+    lua: ['print("Lua output")', "Lua output"],
+    prolog: ["parent(ada, grace).\nparent(ada, alan).", "Who = grace"],
+    scheme: ["(map (lambda (x) (* x x)) '(1 2 3))", "(1 4 9)"],
 };
 
-const runtime = /\/(?:javaModule|typescript-runtime|javascript-runtime|pythonModule|webassemblyModule)-/;
+const runtime =
+    /\/(?:javaModule|typescript-runtime|javascript-runtime|pythonModule|webassemblyModule|sql-runtime|lua-runtime|prolog-runtime|scheme-runtime)-/;
 const languages = Object.keys(fixtures);
 const cell = (language, code) =>
-    `<webwriter-code-${language}><script type="application/json" slot="data">${JSON.stringify({ code }).replace(/</g, "\\u003c")}</script></webwriter-code-${language}>`;
+    `<webwriter-code-${language}${language === "prolog" ? ' goal="parent(ada, Who)."' : ""}><script type="application/json" slot="data">${JSON.stringify({ code }).replace(/</g, "\\u003c")}</script></webwriter-code-${language}>`;
 const markup = `<!doctype html><html lang="en"><meta charset="utf-8">${languages
     .map(
         (language) => `
@@ -76,7 +81,10 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
             if (language === "html") {
                 await widget(language).frameLocator("iframe").getByText(output).waitFor();
             } else {
-                await widget(language).locator("output").getByText(output, { exact: true }).waitFor();
+                await widget(language)
+                    .locator("output")
+                    .getByText(output, { exact: language !== "prolog" })
+                    .waitFor();
                 assert.ok(
                     requests.slice(start).some((url) => runtime.test(url)),
                     language,
@@ -88,6 +96,47 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
         await js.locator("button.log-clickable[aria-expanded=true]").waitFor();
         await js.getByRole("button", { expanded: false }).press("Enter");
         await js.getByText("value: 42", { exact: true }).waitFor();
+    });
+
+    await t.test("SQL renders multiple result sets, including empty tables and exact integers", async () => {
+        const sql = widget("sql");
+        await sql.evaluate((el) => {
+            el.code = `CREATE TABLE example (name TEXT);
+                INSERT INTO example VALUES ('<em>Ada</em>');
+                SELECT name, null AS missing, 9223372036854775807 AS big FROM example;
+                SELECT name FROM example WHERE 0;`;
+        });
+        await sql.getByRole("button", { name: "Run (1)" }).click();
+        await sql.getByRole("cell", { name: "No rows" }).waitFor();
+        assert.equal(await sql.getByRole("table").count(), 2);
+        assert.deepEqual(await sql.getByRole("columnheader").allTextContents(), ["name", "missing", "big", "name"]);
+        await sql.getByRole("cell", { name: "<em>Ada</em>" }).waitFor();
+        await sql.getByRole("cell", { name: "9223372036854775807" }).waitFor();
+
+        // Creating the same table again verifies that each run gets a fresh database.
+        await sql.evaluate((el) => {
+            el.code = `CREATE TABLE example (name TEXT);
+                WITH RECURSIVE nums(n) AS (SELECT 1 UNION ALL SELECT n + 1 FROM nums WHERE n < 501)
+                SELECT n FROM nums;`;
+        });
+        await sql.getByRole("button", { name: "Run (2)" }).click();
+        await sql.getByText("Only the first 500 rows are shown.").waitFor();
+        assert.equal(await sql.getByRole("cell").count(), 500);
+    });
+
+    await t.test("Prolog keeps the query in the authored markup and runs it on Enter", async () => {
+        const prolog = widget("prolog");
+        const query = prolog.getByRole("textbox", { name: "Query" });
+        await query.fill("?- parent(ada, alan)");
+        await query.press("Enter");
+        await prolog.locator("output").getByText("true.").waitFor();
+        assert.equal(await prolog.getAttribute("goal"), "?- parent(ada, alan)");
+        await prolog.evaluate((el) => el.setAttribute("goal", "parent(ada, Who)."));
+        assert.equal(await query.inputValue(), "parent(ada, Who).");
+        await prolog.evaluate((el) => el.removeAttribute("goal"));
+        assert.equal(await query.inputValue(), "");
+        await query.press("Enter");
+        await prolog.getByText("Enter a Prolog query.").waitFor();
     });
 
     await t.test("vertical resizing preserves the toolbar and output and scrolls the editor", async () => {
@@ -233,10 +282,7 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
                 .locator("output")
                 .getByText(/failed to fetch dynamically imported module/i)
                 .waitFor();
-            assert.equal(
-                await python.locator("sl-button").first().getAttribute("aria-busy"),
-                "false",
-            );
+            assert.equal(await python.locator("sl-button").first().getAttribute("aria-busy"), "false");
         } finally {
             await broken.close();
         }
