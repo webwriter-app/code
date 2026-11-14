@@ -1053,6 +1053,7 @@
         }
     },
     "./snippets/HTML": {
+        "uninsertable": true,
         "label": {
             "_": "Code (HTML)",
             "ar": "Code (HTML)",
