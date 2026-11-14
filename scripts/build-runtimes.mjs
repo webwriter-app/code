@@ -1,7 +1,11 @@
 import { build, context } from "esbuild";
 import { fileURLToPath } from "node:url";
-import { dirname } from "node:path";
-import { copyFile, cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { dirname, relative } from "node:path";
+import { createReadStream, createWriteStream } from "node:fs";
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
+import { createGzip } from "node:zlib";
+import { copyFile, cp, mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 
 const targets = {
     javascript: "src/javascript/shared/javascript.worker.ts",
@@ -29,17 +33,37 @@ if (!watch) {
         ["runtime", "widgets", "chunks"].map((directory) => rm("dist/" + directory, { recursive: true, force: true })),
     );
 }
-await mkdir("dist/runtime/java", { recursive: true });
-await Promise.all(
-    ["compiler.wasm", "compile-classlib-teavm.bin", "runtime-classlib-teavm.bin"].map((file) =>
-        copyFile("src/java/teavm/" + file, "dist/runtime/java/" + file),
-    ),
-);
+const assets = {
+    "java/compiler.wasm": "src/java/teavm/compiler.wasm",
+    "java/compile-classlib-teavm.bin": "src/java/teavm/compile-classlib-teavm.bin",
+    "java/runtime-classlib-teavm.bin": "src/java/teavm/runtime-classlib-teavm.bin",
+    "clang/clang.wasm": "node_modules/browsercc/dist/clang.wasm",
+    "clang/lld.wasm": "node_modules/browsercc/dist/lld.wasm",
+    "clang/sysroot.tar": "node_modules/browsercc/dist/sysroot.tar",
+    "php/php_8_4.wasm": "node_modules/@php-wasm/web-8-4/asyncify/8_4_27/php_8_4.wasm",
+    "python/pyodide.asm.wasm": "node_modules/pyodide/pyodide.asm.wasm",
+    "python/pyodide-lock.json": "node_modules/pyodide/pyodide-lock.json",
+    "sql/sql-wasm-browser.wasm": "node_modules/sql.js/dist/sql-wasm-browser.wasm",
+    "lua/glue.wasm": "node_modules/wasmoon/dist/glue.wasm",
+};
 await cp("assets/runtime", "dist/runtime", { recursive: true });
+async function compressAsset(path, input) {
+    await mkdir(dirname(path), { recursive: true });
+    await pipeline(input, createGzip({ level: 9 }), createWriteStream(path));
+}
+const staticAssets = Promise.all([
+    ...Object.entries(assets).map(([path, input]) =>
+        compressAsset("dist/runtime/" + path + ".gz", createReadStream(input)),
+    ),
+    mkdir("dist/runtime/python", { recursive: true }).then(() =>
+        copyFile("node_modules/pyodide/python_stdlib.zip", "dist/runtime/python/python_stdlib.zip"),
+    ),
+]);
 const options = {
     entryPoints: targets,
     outdir: "dist/runtime",
     bundle: true,
+    write: false,
     minify: true,
     define: { "process.browser": "true" },
     platform: "browser",
@@ -86,19 +110,39 @@ const options = {
             },
         },
         {
-            name: "pyodide-classic-worker",
+            name: "compressed-worker-assets",
             setup(build) {
-                build.onEnd(async ({ errors }) => {
+                build.onEnd(async ({ errors, outputFiles }) => {
                     if (errors.length) return;
-                    // The classic loader uses Emscripten's global without fetching a script.
-                    const python = await Promise.all(
-                        [
-                            "node_modules/pyodide/pyodide.asm.js",
-                            "node_modules/pyodide/pyodide.js",
-                            "dist/runtime/python.js",
-                        ].map((file) => readFile(file, "utf8")),
+                    const pyodide = await Promise.all(
+                        ["pyodide.asm.js", "pyodide.js"].map((file) =>
+                            readFile("node_modules/pyodide/" + file, "utf8"),
+                        ),
                     );
-                    await writeFile("dist/runtime/python.js", python.join("\n;\n"));
+                    await Promise.all(
+                        outputFiles.map(({ path, contents }) =>
+                            compressAsset(
+                                path + ".gz",
+                                Readable.from(
+                                    path.endsWith("/python.js")
+                                        ? [...pyodide.map((script) => script + "\n;\n"), contents]
+                                        : [contents],
+                                ),
+                            ),
+                        ),
+                    );
+                    await staticAssets;
+                    const root = "dist/runtime";
+                    const files = (await readdir(root, { recursive: true, withFileTypes: true })).filter(
+                        (entry) => entry.isFile() && entry.name !== "sizes.json",
+                    );
+                    const sizes = await Promise.all(
+                        files.map(async (entry) => {
+                            const path = entry.parentPath + "/" + entry.name;
+                            return [relative(root, path).split("\\").join("/"), (await stat(path)).size];
+                        }),
+                    );
+                    await writeFile(root + "/sizes.json", JSON.stringify(Object.fromEntries(sizes)));
                 });
             },
         },
@@ -106,7 +150,7 @@ const options = {
 };
 if (watch) {
     const workerBuild = await context(options);
-    await workerBuild.rebuild();
+    await Promise.all([staticAssets, workerBuild.rebuild()]);
     await workerBuild.watch();
     const { spawn } = await import("node:child_process");
     const cli = new URL("../node_modules/@webwriter/build/build.js", import.meta.url);
@@ -123,5 +167,5 @@ if (watch) {
         process.exitCode = code ?? 0;
     });
 } else {
-    await build(options);
+    await Promise.all([staticAssets, build(options)]);
 }

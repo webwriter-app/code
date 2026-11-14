@@ -1,10 +1,9 @@
-import { fetchRuntimeAsset } from "../shared/runtime-assets";
 import initSql, { type SqlValue } from "sql.js";
 import { replyWithResult } from "../shared/run-worker";
 import type { SqlTable } from "./sql-runtime";
 
-replyWithResult(async ({ code, wasm }: { code: string; wasm: string }) => {
-    const wasmBinary = await (await fetchRuntimeAsset(wasm)).arrayBuffer();
+replyWithResult(async ({ code, wasm }: { code: string; wasm: Blob }) => {
+    const wasmBinary = await wasm.arrayBuffer();
     const { Database } = await initSql({ wasmBinary });
     const database = new Database();
 

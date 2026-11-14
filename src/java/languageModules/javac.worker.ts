@@ -1,23 +1,19 @@
-import { fetchRuntimeAsset } from "../../shared/runtime-assets";
 import { load } from "../teavm/compiler.wasm-runtime.js";
 import { Compiler, CompilerLibrary } from "../teavm/types.js";
 
 let compiler: Compiler;
 
-async function initializeCompiler({ wasm, sdk, classlib }: { wasm: string; sdk: string; classlib: string }) {
+async function initializeCompiler({ wasm, sdk, classlib }: { wasm: Blob; sdk: Blob; classlib: Blob }) {
     if (compiler) return;
 
-    const [compilerWasmResponse, compileClasslibResponse, runtimeClasslibResponse] = await Promise.all(
-        [wasm, sdk, classlib].map((url) => fetchRuntimeAsset(url)),
-    );
-    const compilerWasmUrl = URL.createObjectURL(await compilerWasmResponse.blob());
+    const compilerWasmUrl = URL.createObjectURL(wasm);
     const teavm = await load(compilerWasmUrl).finally(() => URL.revokeObjectURL(compilerWasmUrl));
     let compilerLib = teavm.exports as CompilerLibrary;
     compiler = compilerLib.createCompiler();
 
-    compiler.setSdk(new Int8Array(await compileClasslibResponse.arrayBuffer()));
+    compiler.setSdk(new Int8Array(await sdk.arrayBuffer()));
 
-    compiler.setTeaVMClasslib(new Int8Array(await runtimeClasslibResponse.arrayBuffer()));
+    compiler.setTeaVMClasslib(new Int8Array(await classlib.arrayBuffer()));
 
     compiler.onDiagnostic((diagnostic) => {
         diagnostics.push({

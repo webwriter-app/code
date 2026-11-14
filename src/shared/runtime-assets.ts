@@ -1,7 +1,11 @@
-export type RuntimeAsset = { path: string; mimeType: string };
+export type RuntimeAsset = { path: string; mimeType: string; gunzip?: true; bytes?: number };
 
-export const scriptAsset = (name: string): RuntimeAsset => ({ path: name + ".js", mimeType: "text/javascript" });
-export const wasmAsset = (path: string): RuntimeAsset => ({ path, mimeType: "application/wasm" });
+export const gzipAsset = (path: string, mimeType: string): RuntimeAsset => ({
+    path: path + ".gz",
+    mimeType,
+    gunzip: true,
+});
+export const scriptAsset = (name: string) => gzipAsset(name + ".js", "text/javascript");
 
 const originalEntriesAttribute = "data-webwriter-original-package-entries";
 const offlineAssetManifests = new WeakMap<Element, Record<string, string>>();
@@ -50,9 +54,16 @@ function relativeRuntimeURL(path: string, entry: string) {
 export const runtimeAssetURL = (asset: RuntimeAsset, owner: Document) =>
     assetURL(publishedAssetURL(asset.path, owner), owner);
 
+export function hasOfflineRuntimeAssets(owner: Document) {
+    return Boolean(owner.head?.querySelector('script#webwriter-offline-assets[type="application/json"]'));
+}
+
 export function offlineRuntimeAssets(element: Element, assets: readonly RuntimeAsset[]) {
     if (element.hasAttribute("disable-execution")) return [];
-    return assets.map(({ path, mimeType }) => ({ url: publishedAssetURL(path, element.ownerDocument), mimeType }));
+    return assets.map(({ path, mimeType, gunzip }) => ({
+        url: publishedAssetURL(path, element.ownerDocument),
+        mimeType: gunzip ? "application/gzip" : mimeType,
+    }));
 }
 
 export async function fetchRuntimeAsset(url: string, signal?: AbortSignal) {

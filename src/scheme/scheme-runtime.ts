@@ -3,5 +3,8 @@ import { runInWorker } from "../shared/run-worker";
 import type { CodeRunner } from "../shared/ww-code-template";
 
 export const execute: CodeRunner = async (code, context, signal) => {
-    context.results = [{ text: await runInWorker<string>(schemeWorker, context.ownerDocument, { code }, signal) }];
+    await context.withRuntimeAssets([schemeWorker], signal, async (runtime) => {
+        const result = await runInWorker<string>(await runtime.asset(schemeWorker).text(), { code }, signal);
+        context.results = [{ text: result }];
+    });
 };

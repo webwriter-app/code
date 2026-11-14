@@ -25,9 +25,14 @@ Write and run interactive code exercises in WebWriter. The package has 17 cell t
 The editor loads syntax highlighting on activation. Workers, compilers, and libraries
 are fetched on **Run**, or on load when **Run on load** is enabled. WebWriter's
 **Offline HTML** export uses the `offlineAssets` interface to embed each runtime
-file once for the runnable cells in the document. The export requires network
-access to download runtime files that are hosted on a CDN. The saved HTML runs
-with networking disabled.
+file once for the runnable cells in the document. Runtime files are embedded as
+gzip or their original archive format and opened on demand. The export requires
+network access to fetch Rust's toolchain from its CDN. The saved HTML runs with
+networking disabled.
+
+While fetching a runtime, the Run button shows the download status and fills
+when the total size is known. When reusing a prefetched runtime or running from
+Offline HTML, it shows **Running…**.
 
 Python's core interpreter and standard library are included. Add-on packages
 downloaded by Pyodide and external resources referenced by authored programs or
@@ -87,8 +92,7 @@ through WebWriter's **Develop → Local packages → Load**. Use
 
 Run `npm test` with Chrome installed to check the built exports, lazy runtime
 loading, saved state, author and reader behavior, and keyboard interactions.
-Set `CODE_TEST_RUNTIMES_ONLINE=1` to include Python, C, C++, PHP, and Rust
-fixtures against their pinned CDN assets.
+Set `CODE_TEST_RUNTIMES_ONLINE=1` to test Rust with its pinned CDN assets.
 
 The prebuilt Go and C# archives are checked in so ordinary widget builds only
 need Node and npm. See [toolchain build instructions](scripts/toolchains/README.md)

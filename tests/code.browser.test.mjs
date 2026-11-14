@@ -28,7 +28,6 @@ const fixtures = {
 };
 
 const runtime = /\/dist\/runtime\/|\.(?:wasm|tar|gz)(?:$|\?)/;
-const requiresOnlineAssets = new Set(["python", "c", "cpp", "php", "rust"]);
 const languages = Object.keys(fixtures);
 const cell = (language, code) =>
     `<webwriter-code-${language}${language === "prolog" ? ' goal="parent(ada, Who)."' : ""}><script type="application/json" slot="data">${JSON.stringify({ code }).replace(/</g, "\\u003c")}</script></webwriter-code-${language}>`;
@@ -42,14 +41,32 @@ const markup = `<!doctype html><html lang="en"><meta charset="utf-8">${languages
     <body>${languages.map((language) => cell(language, fixtures[language][0])).join("")}</body></html>`;
 
 test("code widgets defer runtimes and preserve authored content", async (t) => {
+    let finishDownload;
     const server = createServer(async (req, res) => {
-        const { pathname } = new URL(req.url, "http://127.0.0.1");
-        if (pathname === "/") return res.setHeader("content-type", "text/html").end(markup);
+        const { pathname, searchParams } = new URL(req.url, "http://127.0.0.1");
+        if (pathname === "/") {
+            const base = searchParams.has("cross-origin")
+                ? `<base href="http://localhost:${server.address().port}/">`
+                : "";
+            return res
+                .setHeader("content-type", "text/html")
+                .end(markup.replace('<meta charset="utf-8">', base + '<meta charset="utf-8">'));
+        }
         if (pathname === "/favicon.ico") return res.writeHead(204).end();
         if (!/^\/dist\/(?:(?:widgets|chunks)\/[\w-]+\.(?:js|css)|runtime\/(?:[\w-]+\/)?[\w.-]+)$/.test(pathname))
             return res.writeHead(404).end();
+        res.setHeader("access-control-allow-origin", "*");
         try {
             const file = await readFile(new URL(".." + pathname, import.meta.url));
+            if (pathname.endsWith("/javascript.js.gz")) res.setHeader("cache-control", "public, max-age=3600");
+            const progress = searchParams.get("test-progress");
+            if (pathname.endsWith("/javascript.js.gz") && progress) {
+                if (progress === "known") res.setHeader("content-length", file.length);
+                const midway = Math.floor(file.length / 2);
+                finishDownload = () => res.end(file.subarray(midway));
+                res.write(file.subarray(0, midway));
+                return;
+            }
             res.setHeader(
                 "content-type",
                 pathname.endsWith(".js")
@@ -75,18 +92,6 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
     const page = await browser.newPage({ viewport: { width: 375, height: 900 } });
     const errors = [];
     const requests = [];
-    const localDependency = new Map([
-        ["/sql.js@1.16.0/dist/sql-wasm-browser.wasm", "sql.js/dist/sql-wasm-browser.wasm"],
-        ["/wasmoon@1.16.0/dist/glue.wasm", "wasmoon/dist/glue.wasm"],
-    ]);
-    await page.route("https://cdn.jsdelivr.net/npm/**", async (route) => {
-        const path = localDependency.get(new URL(route.request().url()).pathname);
-        if (!path) return route.continue();
-        await route.fulfill({
-            body: await readFile(new URL("../node_modules/" + path, import.meta.url)),
-            headers: { "Content-Type": "application/wasm", "Access-Control-Allow-Origin": "*" },
-        });
-    });
     page.on("request", (request) => requests.push(request.url()));
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto(`http://127.0.0.1:${server.address().port}`);
@@ -121,7 +126,7 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
         assert.deepEqual(declarations.c, declarations.cpp);
         assert.ok(
             declarations.sql.some(
-                ({ url, mimeType }) => url.includes("sql-wasm-browser.wasm") && mimeType === "application/wasm",
+                ({ url, mimeType }) => url.includes("sql-wasm-browser.wasm.gz") && mimeType === "application/gzip",
             ),
         );
         assert.deepEqual(
@@ -130,9 +135,137 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
         );
     });
 
+    await t.test("Run shows determinate and indeterminate download progress", async () => {
+        for (const progress of ["known", "unknown", "cors"]) {
+            const measurable = progress !== "unknown";
+            const loading = await browser.newPage({ viewport: { width: 320, height: 640 } });
+            try {
+                await loading.route("**/dist/runtime/javascript.js.gz", (route) =>
+                    route.continue({ url: route.request().url() + "?test-progress=" + progress }),
+                );
+                await loading.goto(
+                    `http://127.0.0.1:${server.address().port}/${progress === "cors" ? "?cross-origin" : ""}`,
+                );
+                const js = loading.locator("webwriter-code-javascript");
+                await js.getByRole("button", { name: "Run (0)", exact: true }).press("Enter");
+                const label = measurable ? /^Downloading runtime [1-9]\d?%$/ : "Downloading runtime…";
+                await js.getByRole("button", { name: label }).waitFor();
+                const indicator = js.getByRole("progressbar", { name: "Downloading runtime" });
+                const value = await indicator.getAttribute("value");
+                if (measurable) {
+                    assert.ok(Number(value) > 0 && Number(value) < 1);
+                    const fill = await js
+                        .locator(".run-button")
+                        .evaluate(
+                            (button) => getComputedStyle(button.shadowRoot.querySelector("button")).backgroundImage,
+                        );
+                    assert.match(fill, /^linear-gradient/);
+                } else {
+                    assert.equal(value, null);
+                    await js.locator(".runtime-spinner").waitFor();
+                }
+                finishDownload();
+                await js.locator("output").getByText("JS output").waitFor();
+                await js.getByRole("button", { name: "Run (1)", exact: true }).waitFor();
+                assert.equal(await indicator.count(), 0);
+            } finally {
+                finishDownload?.();
+                finishDownload = undefined;
+                await loading.close();
+            }
+        }
+    });
+
+    await t.test("Run says Running while reading a prefetched runtime", async () => {
+        const prefetched = await browser.newPage();
+        try {
+            await prefetched.goto(`http://127.0.0.1:${server.address().port}`);
+            await prefetched.evaluate(async () => {
+                await (await fetch("/dist/runtime/javascript.js.gz")).arrayBuffer();
+                const button = document
+                    .querySelector("webwriter-code-javascript")
+                    .shadowRoot.querySelector(".run-button");
+                window.runtimeLabels = [];
+                new MutationObserver(() => window.runtimeLabels.push(button.textContent.trim())).observe(button, {
+                    childList: true,
+                    characterData: true,
+                    subtree: true,
+                });
+                const fetchAsset = window.fetch.bind(window);
+                window.fetch = async (url, options) => {
+                    const response = await fetchAsset(url, options);
+                    if (options?.cache === "only-if-cached" && response.ok) {
+                        // Keep the cache hit pending long enough to expose a misleading download label.
+                        const stream = response.body.pipeThrough(
+                            new TransformStream({
+                                async transform(chunk, controller) {
+                                    await new Promise((resolve) => setTimeout(resolve, 600));
+                                    controller.enqueue(chunk);
+                                },
+                            }),
+                        );
+                        return new Response(stream, { headers: response.headers });
+                    }
+                    return response;
+                };
+            });
+            const js = prefetched.locator("webwriter-code-javascript");
+            await js.getByRole("button", { name: "Run (0)", exact: true }).press("Enter");
+            await js.getByRole("button", { name: "Running…", exact: true }).waitFor();
+            await js.locator("output").getByText("JS output").waitFor();
+            assert.equal(await js.getByRole("progressbar").count(), 0);
+            assert.deepEqual(
+                await prefetched.evaluate(() =>
+                    window.runtimeLabels.filter((label) => label.startsWith("Downloading")),
+                ),
+                [],
+            );
+        } finally {
+            await prefetched.close();
+        }
+    });
+
+    await t.test("gzip runtime assets in an Offline HTML manifest run without a connection", async () => {
+        const offline = await browser.newContext();
+        try {
+            const reader = await offline.newPage();
+            await reader.goto(`http://127.0.0.1:${server.address().port}`);
+            const sql = reader.locator("webwriter-code-sql");
+            const declarations = await sql.evaluate((element) => element.constructor.offlineAssets(element));
+            const assets = Object.fromEntries(
+                await Promise.all(
+                    declarations.map(async ({ url, mimeType }) => {
+                        const path = new URL(url).pathname;
+                        const bytes = await readFile(new URL(".." + path, import.meta.url));
+                        assert.equal(bytes.readUInt16BE(0), 0x1f8b);
+                        return [url, `data:${mimeType};base64,${bytes.toString("base64")}`];
+                    }),
+                ),
+            );
+            await reader.evaluate((assets) => {
+                const manifest = document.createElement("script");
+                manifest.id = "webwriter-offline-assets";
+                manifest.type = "application/json";
+                manifest.textContent = JSON.stringify(assets);
+                document.head.append(manifest);
+            }, assets);
+            await offline.setOffline(true);
+            const requests = [];
+            reader.on("request", (request) => requests.push(request.url()));
+            await sql.getByRole("button", { name: "Run (0)", exact: true }).press("Enter");
+            await sql.getByRole("cell", { name: "Ada" }).waitFor();
+            assert.deepEqual(
+                requests.filter((url) => /^https?:/.test(url)),
+                [],
+            );
+        } finally {
+            await offline.close();
+        }
+    });
+
     await t.test("first Run loads the runtime and displays output", async () => {
         for (const [language, [, output]] of Object.entries(fixtures)) {
-            if (requiresOnlineAssets.has(language) && !process.env.CODE_TEST_RUNTIMES_ONLINE) continue;
+            if (language === "rust" && !process.env.CODE_TEST_RUNTIMES_ONLINE) continue;
             const start = requests.length;
             const run = widget(language).getByRole("button", { name: "Run (0)", exact: true });
             await run.press("Enter");
@@ -337,7 +470,7 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
     await t.test("a missing runtime reports the error and clears the busy state", async () => {
         const broken = await browser.newPage();
         try {
-            await broken.route("**/dist/runtime/python.js", (route) => route.abort());
+            await broken.route("**/dist/runtime/python.js.gz", (route) => route.abort());
             await broken.goto(`http://127.0.0.1:${server.address().port}`);
             const python = broken.locator("webwriter-code-python");
             await python.getByRole("button", { name: "Run (0)", exact: true }).press("Enter");

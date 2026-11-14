@@ -1,22 +1,16 @@
 import { readRuntimeArchive } from "../shared/runtime-archive";
-import { fetchRuntimeAsset } from "../shared/runtime-assets";
 import { replyWithResult } from "../shared/run-worker";
 import { Directory, executeWasi, File, type Inode, PreopenDirectory, wasiText } from "../shared/wasi";
 
-async function decompress(url: string) {
-    const response = await fetchRuntimeAsset(url);
-    return new Response(response.body!.pipeThrough(new DecompressionStream("gzip")));
+function decompress(asset: Blob) {
+    return new Response(asset.stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer();
 }
 
-replyWithResult(async ({ code, assets: [compilerURL, linkerURL, stdURL] }: { code: string; assets: string[] }) => {
+replyWithResult(async ({ code, assets: [compilerWasm, linkerWasm, stdlib] }: { code: string; assets: Blob[] }) => {
     const [compiler, linker, archive] = await Promise.all([
-        decompress(compilerURL)
-            .then((response) => response.arrayBuffer())
-            .then(WebAssembly.compile),
-        decompress(linkerURL)
-            .then((response) => response.arrayBuffer())
-            .then(WebAssembly.compile),
-        readRuntimeArchive(stdURL),
+        decompress(compilerWasm).then(WebAssembly.compile),
+        decompress(linkerWasm).then(WebAssembly.compile),
+        readRuntimeArchive(stdlib),
     ]);
 
     const encoder = new TextEncoder();

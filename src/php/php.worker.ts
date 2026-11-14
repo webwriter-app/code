@@ -4,10 +4,10 @@ import { PHP, loadPHPRuntime } from "@php-wasm/universal";
 import { init, dependencyFilename, dependenciesTotalSize } from "@php-wasm/web-8-4/asyncify/php_8_4.js";
 import { replyWithResult } from "../shared/run-worker";
 
-replyWithResult(async ({ code, assets: [wasm] }: { code: string; assets: string[] }) => {
+replyWithResult(async ({ code, assets: [wasm] }: { code: string; assets: Blob[] }) => {
     const runtime = await loadPHPRuntime(
         { init, dependencyFilename, dependenciesTotalSize, phpWasmAsyncMode: "asyncify" },
-        { locateFile: () => wasm },
+        { wasmBinary: await wasm.arrayBuffer() },
     );
     const php = new PHP(runtime);
     const response = await php.run({ code: /^\s*<\?/.test(code) ? code : "<?php\n" + code });

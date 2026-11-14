@@ -1,9 +1,6 @@
-import { fetchRuntimeAsset } from "./runtime-assets";
-
 /** A gzip archive with a little-endian length, JSON file index, then concatenated file bytes. */
-export async function readRuntimeArchive(url: string) {
-    const response = await fetchRuntimeAsset(url);
-    const archive = await new Response(response.body!.pipeThrough(new DecompressionStream("gzip"))).arrayBuffer();
+export async function readRuntimeArchive(asset: Blob) {
+    const archive = await new Response(asset.stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer();
     const length = new DataView(archive).getUint32(0, true);
     const packages = JSON.parse(new TextDecoder().decode(new Uint8Array(archive, 4, length))) as [string, number][];
     let offset = 4 + length;

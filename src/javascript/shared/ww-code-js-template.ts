@@ -1,5 +1,5 @@
 import { javascriptWorker, typescriptWorker } from "../javascript-assets";
-import { loadWorkerSource, runInWorker } from "../../shared/run-worker";
+import { runInWorker } from "../../shared/run-worker";
 import type { LanguageSupport } from "@codemirror/language";
 import { html, TemplateResult } from "lit";
 import { createCodeWorker } from "../../shared/code-worker";
@@ -23,52 +23,55 @@ export default abstract class CodeJsTemplate extends Code {
             name,
             execute: async (code, context, signal) => {
                 this.stopWorker();
-                const owner = context.ownerDocument;
-                const [source, compiled] = await Promise.all([
-                    loadWorkerSource(javascriptWorker, owner, signal),
-                    transpile
-                        ? runInWorker<{ code: string; diagnostics: Diagnostic[] }>(
-                              typescriptWorker,
-                              owner,
-                              { code },
-                              signal,
-                              60_000,
-                          )
-                        : { code, diagnostics: [] },
-                ]);
-                this.diagnostics = compiled.diagnostics;
-                if (this.diagnostics.length) return;
-                signal.throwIfAborted();
+                const assets = transpile ? [javascriptWorker, typescriptWorker] : [javascriptWorker];
+                await context.withRuntimeAssets(assets, signal, async (runtime) => {
+                    const [source, compiled] = await Promise.all([
+                        runtime.asset(javascriptWorker).text(),
+                        transpile
+                            ? runInWorker<{ code: string; diagnostics: Diagnostic[] }>(
+                                  await runtime.asset(typescriptWorker).text(),
+                                  { code },
+                                  signal,
+                                  60_000,
+                              )
+                            : { code, diagnostics: [] },
+                    ]);
+                    this.diagnostics = compiled.diagnostics;
+                    if (this.diagnostics.length) return;
+                    signal.throwIfAborted();
 
-                const worker = (this.worker = createCodeWorker(source));
-                this.workerAlive = true;
-                const listeners = new AbortController();
-                return new Promise<void>((resolve, reject) => {
-                    const abort = () => reject(signal.reason);
-                    const fail = (event: Event) => {
-                        event.preventDefault();
-                        this.stopWorker();
-                        reject(new Error((event as ErrorEvent).message || "Could not start the JavaScript runtime"));
-                    };
-                    signal.addEventListener("abort", abort, { signal: listeners.signal });
-                    worker.onmessage = (event: MessageEvent<FromWorkerMessage>) => {
-                        if (event.data.type === "executionStatus" && event.data.status === "terminated") {
-                            resolve();
-                        } else {
-                            this.handleMessage(event);
+                    const worker = (this.worker = createCodeWorker(source));
+                    this.workerAlive = true;
+                    const listeners = new AbortController();
+                    return new Promise<void>((resolve, reject) => {
+                        const abort = () => reject(signal.reason);
+                        const fail = (event: Event) => {
+                            event.preventDefault();
+                            this.stopWorker();
+                            reject(
+                                new Error((event as ErrorEvent).message || "Could not start the JavaScript runtime"),
+                            );
+                        };
+                        signal.addEventListener("abort", abort, { signal: listeners.signal });
+                        worker.onmessage = (event: MessageEvent<FromWorkerMessage>) => {
+                            if (event.data.type === "executionStatus" && event.data.status === "terminated") {
+                                resolve();
+                            } else {
+                                this.handleMessage(event);
+                            }
+                        };
+                        worker.onerror = worker.onmessageerror = fail;
+                        worker.postMessage({
+                            type: "execute",
+                            executionId: "main",
+                            code: compiled.code,
+                        } satisfies ExecuteCodeMessage);
+                    }).finally(() => {
+                        listeners.abort();
+                        if (this.worker === worker) {
+                            worker.onerror = worker.onmessageerror = null;
                         }
-                    };
-                    worker.onerror = worker.onmessageerror = fail;
-                    worker.postMessage({
-                        type: "execute",
-                        executionId: "main",
-                        code: compiled.code,
-                    } satisfies ExecuteCodeMessage);
-                }).finally(() => {
-                    listeners.abort();
-                    if (this.worker === worker) {
-                        worker.onerror = worker.onmessageerror = null;
-                    }
+                    });
                 });
             },
             languageExtension,

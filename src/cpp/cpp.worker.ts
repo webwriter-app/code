@@ -1,5 +1,4 @@
 import { Clang, LLD, setUpSysroot } from "browsercc";
-import { fetchRuntimeAsset } from "../shared/runtime-assets";
 import { replyWithResult } from "../shared/run-worker";
 import { executeWasi, wasiText } from "../shared/wasi";
 
@@ -7,28 +6,29 @@ replyWithResult(
     async ({
         code,
         language,
-        assets: [clangURL, linkerURL, sysrootURL],
+        assets: [clangWasm, linkerWasm, sysrootTar],
     }: {
         code: string;
         language: string;
-        assets: string[];
+        assets: Blob[];
     }) => {
         let diagnostic = "";
         const printErr = (line: string) => {
             diagnostic += line + "\n";
         };
-        const sysrootPromise = fetchRuntimeAsset(sysrootURL).then((response) => response.arrayBuffer());
-        const [compilerBinary, linker, sysroot] = await Promise.all([
-            fetchRuntimeAsset(clangURL).then((response) => response.arrayBuffer()),
-            LLD({ thisProgram: "wasm-ld", locateFile: () => linkerURL, printErr }),
-            sysrootPromise,
-        ]);
+        const [compilerBinary, linkerBinary, sysroot] = await Promise.all(
+            [clangWasm, linkerWasm, sysrootTar].map((asset) => asset.arrayBuffer()),
+        );
+        // The bundled Emscripten loaders ask for a filename even with wasmBinary.
+        // Returning that filename avoids their import.meta.url fallback in the worker.
+        const locateFile = (name: string) => name;
+        const linker = await LLD({ thisProgram: "wasm-ld", wasmBinary: linkerBinary, printErr, locateFile });
         const driverName = language === "cpp" ? "clang++" : "clang";
         const name = language === "cpp" ? "main.cpp" : "main.c";
         const compilerOptions = {
             thisProgram: driverName,
             wasmBinary: compilerBinary,
-            locateFile: () => clangURL,
+            locateFile,
             printErr,
         };
         const driver = await Clang(compilerOptions);

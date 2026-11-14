@@ -1,6 +1,4 @@
 import { pythonAssets, pythonWorker } from "../python-assets";
-import { runtimeAssetURL } from "../../shared/runtime-assets";
-import { loadWorkerSource } from "../../shared/run-worker";
 import { createCodeWorker, requestWorker } from "../../shared/code-worker";
 import type { CodeRunner } from "../../shared/ww-code-template";
 
@@ -28,21 +26,18 @@ export const execute: CodeRunner = (code, context, signal) => {
         );
     }
 
-    const run = queue.then(async () => {
-        signal.throwIfAborted();
-        const owner = context.ownerDocument;
-        const [wasm, lock, stdlib] = pythonAssets.map((asset) => runtimeAssetURL(asset, owner));
-        const runtime = (worker ??= createCodeWorker(await loadWorkerSource(pythonWorker, owner, signal), true));
+    const runPython = async (runtime: Worker, message: object) => {
         try {
             // When a cell leaves during a run, keep the queue blocked until that
             // run finishes unless the last client has already stopped the worker.
             const lifetime = (pending = new AbortController());
             try {
-                const { error, results } = await requestWorker<{ error?: string; results?: string }>(
-                    runtime,
-                    { code, wasm, lock, stdlib },
-                    lifetime.signal,
-                );
+                const { error, results, initializationError } = await requestWorker<{
+                    error?: string;
+                    results?: string;
+                    initializationError?: boolean;
+                }>(runtime, message, lifetime.signal);
+                if (initializationError) throw new Error(error);
                 if (!signal.aborted) context.results = [{ text: error ?? results, color: error ? "red" : undefined }];
             } finally {
                 pending = undefined;
@@ -52,6 +47,19 @@ export const execute: CodeRunner = (code, context, signal) => {
             if (worker === runtime) worker = undefined;
             throw error;
         }
+    };
+
+    const run = queue.then(async () => {
+        signal.throwIfAborted();
+        if (worker) return runPython(worker, { code });
+
+        await context.withRuntimeAssets([pythonWorker, ...pythonAssets], signal, async (assets) => {
+            const [wasm, lock, stdlib] = pythonAssets.map(assets.asset);
+            const source = await assets.asset(pythonWorker).text();
+            signal.throwIfAborted();
+            worker = createCodeWorker(source, true);
+            await runPython(worker, { code, assets: { wasm, lock, stdlib } });
+        });
     });
     queue = run.catch(() => {});
     return run;

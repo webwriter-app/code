@@ -1,6 +1,4 @@
 import { javaClasslib, javaCompiler, javaCompilerWorker, javaRunnerWorker, javaSdk } from "../java-assets";
-import { runtimeAssetURL } from "../../shared/runtime-assets";
-import { loadWorkerSource } from "../../shared/run-worker";
 import { createCodeWorker, requestWorker } from "../../shared/code-worker";
 import type { CodeRunner } from "../../shared/ww-code-template";
 import type { JavaDiagnostic } from "../teavm/types";
@@ -17,67 +15,73 @@ export const execute: CodeRunner = async (code, context, signal) => {
         return;
     }
 
-    const owner = context.ownerDocument;
-    const [compilerSource, runnerSource] = await Promise.all([
-        loadWorkerSource(javaCompilerWorker, owner, signal),
-        loadWorkerSource(javaRunnerWorker, owner, signal),
-    ]);
-    const assets = {
-        wasm: runtimeAssetURL(javaCompiler, owner),
-        sdk: runtimeAssetURL(javaSdk, owner),
-        classlib: runtimeAssetURL(javaClasslib, owner),
-    };
-    const compiler = createCodeWorker(compilerSource);
-    let wasm: Uint8Array;
-    try {
-        const response = await requestWorker<{ wasm: Uint8Array; diagnostics?: JavaDiagnostic[]; error?: string }>(
-            compiler,
-            { code, mainClass, assets },
-            signal,
-        );
-        if (response.error) throw new Error(response.error);
-        if (response.diagnostics) {
-            context.diagnostics = response.diagnostics
-                .filter((diagnostic) => diagnostic.severity === "error")
-                .map((diagnostic) => ({
-                    message: diagnostic.message,
-                    start: diagnostic.startPosition,
-                    line: diagnostic.lineNumber,
-                    character: diagnostic.columnNumber,
-                }));
-            return;
-        }
-        wasm = response.wasm;
-    } finally {
-        compiler.terminate();
-    }
-
-    signal.throwIfAborted();
-    const worker = createCodeWorker(runnerSource);
-    const listeners = new AbortController();
-    try {
-        await new Promise<void>((resolve, reject) => {
-            worker.onmessage = ({ data }) => {
-                if (data.type === "stdout" || data.type === "stderr") {
-                    context.results = [
-                        ...context.results,
-                        { text: data.data, color: data.type === "stderr" ? "red" : undefined },
-                    ];
-                } else if (data.type === "terminated") {
-                    if (data.error) context.results = [...context.results, { text: data.error, color: "red" }];
-                    resolve();
+    await context.withRuntimeAssets(
+        [javaCompilerWorker, javaRunnerWorker, javaCompiler, javaSdk, javaClasslib],
+        signal,
+        async (runtime) => {
+            const [compilerSource, runnerSource] = await Promise.all([
+                runtime.asset(javaCompilerWorker).text(),
+                runtime.asset(javaRunnerWorker).text(),
+            ]);
+            const assets = {
+                wasm: runtime.asset(javaCompiler),
+                sdk: runtime.asset(javaSdk),
+                classlib: runtime.asset(javaClasslib),
+            };
+            signal.throwIfAborted();
+            const compiler = createCodeWorker(compilerSource);
+            let wasm: Uint8Array;
+            try {
+                const response = await requestWorker<{
+                    wasm: Uint8Array;
+                    diagnostics?: JavaDiagnostic[];
+                    error?: string;
+                }>(compiler, { code, mainClass, assets }, signal);
+                if (response.error) throw new Error(response.error);
+                if (response.diagnostics) {
+                    context.diagnostics = response.diagnostics
+                        .filter((diagnostic) => diagnostic.severity === "error")
+                        .map((diagnostic) => ({
+                            message: diagnostic.message,
+                            start: diagnostic.startPosition,
+                            line: diagnostic.lineNumber,
+                            character: diagnostic.columnNumber,
+                        }));
+                    return;
                 }
-            };
-            worker.onerror = (event) => {
-                event.preventDefault();
-                reject(new Error(event.message || "Could not start the Java runtime"));
-            };
-            worker.onmessageerror = () => reject(new Error("Could not read the Java runtime response"));
-            signal.addEventListener("abort", () => reject(signal.reason), { signal: listeners.signal });
-            worker.postMessage({ wasm, mainClass });
-        });
-    } finally {
-        listeners.abort();
-        worker.terminate();
-    }
+                wasm = response.wasm;
+            } finally {
+                compiler.terminate();
+            }
+
+            signal.throwIfAborted();
+            const worker = createCodeWorker(runnerSource);
+            const listeners = new AbortController();
+            try {
+                await new Promise<void>((resolve, reject) => {
+                    worker.onmessage = ({ data }) => {
+                        if (data.type === "stdout" || data.type === "stderr") {
+                            context.results = [
+                                ...context.results,
+                                { text: data.data, color: data.type === "stderr" ? "red" : undefined },
+                            ];
+                        } else if (data.type === "terminated") {
+                            if (data.error) context.results = [...context.results, { text: data.error, color: "red" }];
+                            resolve();
+                        }
+                    };
+                    worker.onerror = (event) => {
+                        event.preventDefault();
+                        reject(new Error(event.message || "Could not start the Java runtime"));
+                    };
+                    worker.onmessageerror = () => reject(new Error("Could not read the Java runtime response"));
+                    signal.addEventListener("abort", () => reject(signal.reason), { signal: listeners.signal });
+                    worker.postMessage({ wasm, mainClass });
+                });
+            } finally {
+                listeners.abort();
+                worker.terminate();
+            }
+        },
+    );
 };

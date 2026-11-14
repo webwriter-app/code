@@ -3,6 +3,7 @@ import { LitElementWw } from "@webwriter/lit";
 import { LitElement, html } from "lit";
 import type { CSSResultGroup, PropertyValues } from "lit";
 import { property, query, state } from "lit/decorators.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 import { styleMap } from "lit/directives/style-map.js";
 
 import { style } from "./ww-code-css-single";
@@ -30,6 +31,8 @@ import "./shoelace-icons";
 import type { MsgFn } from "@lit/localize";
 import { createLocalizer, drawerLabel, sourceMsg } from "../../localization/localizer";
 import { readData, writeData } from "./data-block";
+import { withRuntimeAssets, type LoadedRuntime, type RuntimeDownload } from "./runtime-download";
+import type { RuntimeAsset } from "./runtime-assets";
 
 export type CodeRunner = (code: string, context: Code, signal: AbortSignal) => void | Promise<void>;
 
@@ -227,6 +230,7 @@ export default abstract class Code extends LitElementWw {
         this.codeMirror?.destroy();
         this.codeMirror = undefined;
         this.running = false;
+        this.runtimeDownload = undefined;
         super.disconnectedCallback();
     }
 
@@ -265,6 +269,26 @@ export default abstract class Code extends LitElementWw {
 
     @state()
     private accessor running = false;
+
+    @state()
+    private accessor runtimeDownload: RuntimeDownload | undefined;
+
+    /** @internal */
+    withRuntimeAssets<T>(
+        assets: readonly RuntimeAsset[],
+        signal: AbortSignal,
+        use: (runtime: LoadedRuntime) => Promise<T>,
+    ) {
+        return withRuntimeAssets(
+            assets,
+            this.ownerDocument,
+            signal,
+            (download) => {
+                this.runtimeDownload = download;
+            },
+            use,
+        );
+    }
 
     @state()
     private accessor runtimeError = "";
@@ -409,24 +433,50 @@ export default abstract class Code extends LitElementWw {
     }
 
     private Controls() {
+        const download = this.runtimeDownload;
+        const fraction = download?.total ? Math.min(1, download.received / download.total) : undefined;
+        const percent = fraction === undefined ? undefined : Math.floor(fraction * 100);
+        const downloadLabel = this.msg("Downloading runtime");
+        const runningLabel = this.msg("Running…");
+        const label = download
+            ? downloadLabel + (percent === undefined ? "…" : ` ${percent}%`)
+            : this.running
+              ? runningLabel
+              : this.msg("Run") + (this.showExecutionCount ? ` (${this.executionCount})` : "");
+        const status = download ? downloadLabel : this.running ? runningLabel : "";
         return html`<div class="controls">
             ${this.renderRunInput()}
-            <sl-button
-                variant="primary"
-                size="small"
-                aria-busy=${this.running}
-                ?loading=${this.running}
-                @click="${this.runCode}"
-                style=${!this.disableExecution ? "" : "display: none"}
-            >
-                <sl-icon
-                    library="code"
-                    aria-hidden="true"
-                    name="${this.autoRun ? "play-circle" : "play-fill"}"
-                    slot="prefix"
-                ></sl-icon>
-                ${this.msg("Run")} ${this.showExecutionCount ? `(${this.executionCount})` : ""}
-            </sl-button>
+            <span class="run-control" ?hidden=${this.disableExecution}>
+                <sl-button
+                    class="run-button"
+                    variant="primary"
+                    size="small"
+                    aria-busy=${this.running}
+                    ?data-progress=${fraction !== undefined}
+                    style=${styleMap({
+                        "--runtime-progress": fraction === undefined ? undefined : `${fraction * 100}%`,
+                    })}
+                    @click=${this.runCode}
+                >
+                    ${download && fraction === undefined
+                        ? html`<span class="runtime-spinner" slot="prefix" aria-hidden="true"></span>`
+                        : html`<sl-icon
+                              library="code"
+                              aria-hidden="true"
+                              name="${this.autoRun ? "play-circle" : "play-fill"}"
+                              slot="prefix"
+                          ></sl-icon>`}
+                    ${label}
+                </sl-button>
+                ${download
+                    ? html`<progress
+                          class="visually-hidden"
+                          aria-label=${downloadLabel}
+                          value=${ifDefined(fraction)}
+                      ></progress>`
+                    : ""}
+                <span class="visually-hidden" role="status">${status}</span>
+            </span>
             ${this.showExecutionTime ? html`<div class="executionTime">${this.executionTime.toFixed(1)}ms</div>` : ""}
             <div class="language-label">${this.languageModule.name}</div>
             <sl-button

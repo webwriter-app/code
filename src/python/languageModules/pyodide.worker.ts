@@ -5,23 +5,32 @@ import { pyodideRoot } from "../python-assets";
 let stdout = "";
 let pyodide: Awaited<ReturnType<typeof loadPyodide>> | undefined;
 const networkFetch = globalThis.fetch.bind(globalThis);
-const offline = new Map<string, string>();
 
 self.onmessage = async ({
-    data: { code, wasm, lock, stdlib },
-}: MessageEvent<{ code: string; wasm: string; lock: string; stdlib: string }>) => {
+    data: { code, assets },
+}: MessageEvent<{ code: string; assets?: { wasm: Blob; lock: Blob; stdlib: Blob } }>) => {
     try {
         if (!pyodide) {
-            offline.set(pyodideRoot + "pyodide.asm.wasm", wasm);
+            if (!assets) throw new Error("Python runtime assets are missing");
+            const { wasm, lock, stdlib } = assets;
+            const lockFileURL = URL.createObjectURL(lock);
+            const stdLibURL = URL.createObjectURL(stdlib);
             globalThis.fetch = (input, init) => {
                 const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-                return networkFetch(offline.get(url) ?? input, init);
+                if (url === pyodideRoot + "pyodide.asm.wasm") return Promise.resolve(new Response(wasm));
+                return networkFetch(input, init);
             };
-            pyodide = await (globalThis as typeof globalThis & { loadPyodide: typeof loadPyodide }).loadPyodide({
-                indexURL: pyodideRoot,
-                stdLibURL: stdlib,
-                lockFileURL: lock,
-            });
+            try {
+                pyodide = await (globalThis as typeof globalThis & { loadPyodide: typeof loadPyodide }).loadPyodide({
+                    indexURL: pyodideRoot,
+                    stdLibURL,
+                    lockFileURL,
+                });
+            } finally {
+                globalThis.fetch = networkFetch;
+                URL.revokeObjectURL(lockFileURL);
+                URL.revokeObjectURL(stdLibURL);
+            }
             pyodide.setStdout({
                 batched: (message: string) => {
                     stdout += message + "\n";
@@ -33,7 +42,10 @@ self.onmessage = async ({
         await pyodide.runPythonAsync(code);
         self.postMessage({ results: stdout });
     } catch (error) {
-        self.postMessage({ error: error instanceof Error ? error.message : String(error) });
+        self.postMessage({
+            error: error instanceof Error ? error.message : String(error),
+            initializationError: !pyodide,
+        });
     } finally {
         stdout = "";
     }

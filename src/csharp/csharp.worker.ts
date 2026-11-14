@@ -1,7 +1,7 @@
 import { replyWithResult } from "../shared/run-worker";
 import { readRuntimeArchive } from "../shared/runtime-archive";
 
-replyWithResult(async ({ code, assets: [archive] }: { code: string; assets: string[] }) => {
+replyWithResult(async ({ code, assets: [archive] }: { code: string; assets: Blob[] }) => {
     const files = await readRuntimeArchive(archive);
     const modules = new Map<string, string>();
     const moduleURL = (name: string) => {
