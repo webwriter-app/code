@@ -1,5 +1,5 @@
 // @ts-ignore
-import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.26.3/full/pyodide.mjs";
+import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.mjs";
 
 let resMessage = "";
 let pyodide: any = null;
