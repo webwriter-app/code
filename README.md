@@ -1,6 +1,6 @@
 # Code
 
-Write and run interactive code exercises in WebWriter. The package has ten cell types:
+Write and run interactive code exercises in WebWriter. The package has 17 cell types:
 
 | Cell | Element | Runtime |
 | --- | --- | --- |
@@ -14,13 +14,24 @@ Write and run interactive code exercises in WebWriter. The package has ten cell 
 | Lua | `webwriter-code-lua` | Lua 5.4 via Wasmoon |
 | Prolog | `webwriter-code-prolog` | Tau Prolog |
 | Scheme | `webwriter-code-scheme` | BiwaScheme |
+| C | `webwriter-code-c` | Clang and WASI libc |
+| C++ | `webwriter-code-cpp` | Clang and WASI libc++ |
+| C# | `webwriter-code-csharp` | Roslyn and .NET 10 WebAssembly |
+| PHP | `webwriter-code-php` | PHP 8.4 from WordPress Playground |
+| Go | `webwriter-code-go` | Go 1.27.4 compiler and linker |
+| Rust | `webwriter-code-rust` | rustc's Miri interpreter via LiveCodes |
+| Bash | `webwriter-code-shell` | Bash-compatible shell via just-bash |
 
-The editor and syntax highlighting load when the cell opens. The execution runtime
-loads on the first **Run**, or on load when **Run on load** is enabled. A WebWriter
-**Offline HTML** export includes the bundled runtimes required by its runnable cells.
-Python's widget module is also included when needed, but Pyodide and its Python
-packages still require an internet connection. HTML previews can also request
-external resources referenced by authored code.
+The editor loads syntax highlighting on activation. Workers, compilers, and libraries
+are fetched on **Run**, or on load when **Run on load** is enabled. WebWriter's
+**Offline HTML** export uses the `offlineAssets` interface to embed each runtime
+file once for the runnable cells in the document. The export requires network
+access to download runtime files that are hosted on a CDN. The saved HTML runs
+with networking disabled.
+
+Python's core interpreter and standard library are included. Add-on packages
+downloaded by Pyodide and external resources referenced by authored programs or
+HTML previews require their usual network access.
 
 ## Authoring and embedding
 
@@ -42,9 +53,9 @@ matching built stylesheet and module when embedding on a plain page:
 </webwriter-code-javascript>
 ```
 
-Publish or serve the whole `dist` directory, including `dist/chunks`. Each
-entry shares the same editor dependencies and loads its runtime via a relative
-module import; the browser needs no import map for this build. Source text
+Publish or serve the whole `dist` directory, including `dist/chunks` and
+`dist/runtime`. The widget entry scripts use those relative paths to locate
+their workers. The browser needs no import map for this build. Source text
 containing a literal `<` should use the JSON escape `\u003c` in hand-authored
 data blocks.
 
@@ -60,15 +71,25 @@ create tables, insert data, and query it. Each query result shows up to 500 rows
 in its own table. In Prolog, enter facts and rules in the editor and the goal in
 the **Query** field. The goal is saved in the cell's `goal` attribute.
 
-The package exports the `HTML.html`, `java.html`, `sql.html`, `lua.html`,
-`prolog.html`, and `scheme.html` starter snippets under `@webwriter/code/snippets/`.
+The Code menu includes starter snippets under `@webwriter/code/snippets/`.
+C and C++ share one compiler and sysroot. They target WASI, with C++ exceptions
+disabled in the bundled sysroot. Go includes a subset of its standard library.
+Rust uses a single source file with the bundled standard library and runs under
+Miri. C# uses the browser .NET framework and exposes console output. Bash
+supports Bash syntax and a virtual filesystem with bundled commands.
 
 ## Development
 
-Use Node.js 22 or newer. Run `npm ci` and `npm run dev`, then load this package
+Use Node.js 24.18+ and npm 11.16+ for the current PHP build dependencies.
+Run `npm ci` and `npm run dev`, then load this package
 through WebWriter's **Develop → Local packages → Load**. Use
 `npm run prepublishOnly` for a one-time production build.
 
 Run `npm test` with Chrome installed to check the built exports, lazy runtime
 loading, saved state, author and reader behavior, and keyboard interactions.
-Set `CODE_TEST_PYTHON_ONLINE=1` to execute the Python fixture against the CDN.
+Set `CODE_TEST_RUNTIMES_ONLINE=1` to include Python, C, C++, PHP, and Rust
+fixtures against their pinned CDN assets.
+
+The prebuilt Go and C# archives are checked in so ordinary widget builds only
+need Node and npm. See [toolchain build instructions](scripts/toolchains/README.md)
+for updating those archives.

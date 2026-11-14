@@ -1,3 +1,6 @@
+import { execute } from "./prolog-runtime";
+import { prologWorker } from "./prolog-assets";
+import { offlineRuntimeAssets } from "../shared/runtime-assets";
 import { prolog } from "codemirror-lang-prolog";
 import { css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
@@ -31,15 +34,15 @@ export default class CodeProlog extends Code {
     @property({ type: String, reflect: true })
     accessor goal = "";
 
-    static offlineImports(element: Element) {
-        return Code.runtimeImports(element, "./ww-code-prolog.js");
+    static offlineAssets(element: Element) {
+        return offlineRuntimeAssets(element, [prologWorker]);
     }
 
     constructor() {
         super({
             name: "Prolog",
             languageExtension: prolog(),
-            loadRuntime: () => import("./prolog-runtime"),
+            execute,
         });
     }
 

@@ -36,13 +36,8 @@ export type CodeRunner = (code: string, context: Code, signal: AbortSignal) => v
 export type LanguageModule = {
     name: string;
     languageExtension: LanguageSupport;
-} & (
-    | { execute: CodeRunner; loadRuntime?: never }
-    | {
-          execute?: never;
-          loadRuntime: () => Promise<{ execute: CodeRunner }>;
-      }
-);
+    execute: CodeRunner;
+};
 
 export type Diagnostic = {
     message: string;
@@ -52,28 +47,6 @@ export type Diagnostic = {
 };
 
 export default abstract class Code extends LitElementWw {
-    // Each language entry has one runtime import. Its generated specifier
-    // can change on every build, so keep all imports from that entry.
-    protected static runtimeImports(element: Element, importer: string) {
-        const keep = element.hasAttribute("disable-execution") ? [] : ("*" as const);
-        const rules = [{ importer, keep }];
-
-        // WebWriter adds a revision query to local entry scripts. A relative
-        // path drops that query, so also match the installed local entry URL.
-        const window = element.ownerDocument.defaultView ?? globalThis.window;
-        for (const script of window.document.querySelectorAll<HTMLScriptElement>('script[type="module"][src]')) {
-            const url = new URL(script.src);
-            if (
-                url.pathname.startsWith("/__webwriter/local-packages/") &&
-                url.pathname.endsWith("/dist/widgets/" + importer.slice(2)) &&
-                url.search
-            ) {
-                rules.push({ importer: url.href, keep });
-            }
-        }
-        return rules;
-    }
-
     static styles: CSSResultGroup = style;
 
     /** @internal */
@@ -554,11 +527,7 @@ export default abstract class Code extends LitElementWw {
         const start = performance.now();
 
         try {
-            const runtime = this.languageModule.loadRuntime
-                ? await this.languageModule.loadRuntime()
-                : this.languageModule;
-            signal.throwIfAborted();
-            if (!this.disableExecution) await runtime.execute(code, this, signal);
+            await this.languageModule.execute(code, this, signal);
         } catch (error) {
             if (!signal.aborted) {
                 this.runtimeError = error instanceof Error ? error.message : String(error);

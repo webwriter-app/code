@@ -1,3 +1,6 @@
+import { execute } from "./sql-runtime";
+import { sqlWorker, sqlWasm } from "./sql-assets";
+import { offlineRuntimeAssets } from "../shared/runtime-assets";
 import { SQLite, sql } from "@codemirror/lang-sql";
 import { css, html } from "lit";
 import { customElement } from "lit/decorators.js";
@@ -65,15 +68,15 @@ export default class CodeSql extends Code {
         `,
     ];
 
-    static offlineImports(element: Element) {
-        return Code.runtimeImports(element, "./ww-code-sql.js");
+    static offlineAssets(element: Element) {
+        return offlineRuntimeAssets(element, [sqlWorker, sqlWasm]);
     }
 
     constructor() {
         super({
             name: "SQL",
             languageExtension: sql({ dialect: SQLite }),
-            loadRuntime: () => import("./sql-runtime"),
+            execute,
         });
     }
 

@@ -18,10 +18,17 @@ const fixtures = {
     lua: ['print("Lua output")', "Lua output"],
     prolog: ["parent(ada, grace).\nparent(ada, alan).", "Who = grace"],
     scheme: ["(map (lambda (x) (* x x)) '(1 2 3))", "(1 4 9)"],
+    shell: ['printf "Bash output\\n" | grep Bash', "Bash output"],
+    csharp: ['using System; Console.WriteLine("C# output");', "C# output"],
+    go: ['package main\nimport "fmt"\nfunc main() { fmt.Println("Go output") }', "Go output"],
+    c: ['#include <stdio.h>\nint main(void) { puts("C output"); }', "C output"],
+    cpp: ['#include <iostream>\nint main() { std::cout << "C++ output" << std::endl; }', "C++ output"],
+    php: ['<?php echo "PHP output";', "PHP output"],
+    rust: ['fn main() { println!("Rust output"); }', "Rust output"],
 };
 
-const runtime =
-    /\/(?:javaModule|typescript-runtime|javascript-runtime|pythonModule|webassemblyModule|sql-runtime|lua-runtime|prolog-runtime|scheme-runtime)-/;
+const runtime = /\/dist\/runtime\/|\.(?:wasm|tar|gz)(?:$|\?)/;
+const requiresOnlineAssets = new Set(["python", "c", "cpp", "php", "rust"]);
 const languages = Object.keys(fixtures);
 const cell = (language, code) =>
     `<webwriter-code-${language}${language === "prolog" ? ' goal="parent(ada, Who)."' : ""}><script type="application/json" slot="data">${JSON.stringify({ code }).replace(/</g, "\\u003c")}</script></webwriter-code-${language}>`;
@@ -39,10 +46,20 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
         const { pathname } = new URL(req.url, "http://127.0.0.1");
         if (pathname === "/") return res.setHeader("content-type", "text/html").end(markup);
         if (pathname === "/favicon.ico") return res.writeHead(204).end();
-        if (!/^\/dist\/(?:widgets|chunks)\/[\w-]+\.(?:js|css)$/.test(pathname)) return res.writeHead(404).end();
+        if (!/^\/dist\/(?:(?:widgets|chunks)\/[\w-]+\.(?:js|css)|runtime\/(?:[\w-]+\/)?[\w.-]+)$/.test(pathname))
+            return res.writeHead(404).end();
         try {
             const file = await readFile(new URL(".." + pathname, import.meta.url));
-            res.setHeader("content-type", pathname.endsWith(".js") ? "text/javascript" : "text/css").end(file);
+            res.setHeader(
+                "content-type",
+                pathname.endsWith(".js")
+                    ? "text/javascript"
+                    : pathname.endsWith(".css")
+                      ? "text/css"
+                      : pathname.endsWith(".wasm")
+                        ? "application/wasm"
+                        : "application/octet-stream",
+            ).end(file);
         } catch {
             res.writeHead(404).end();
         }
@@ -58,6 +75,18 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
     const page = await browser.newPage({ viewport: { width: 375, height: 900 } });
     const errors = [];
     const requests = [];
+    const localDependency = new Map([
+        ["/sql.js@1.16.0/dist/sql-wasm-browser.wasm", "sql.js/dist/sql-wasm-browser.wasm"],
+        ["/wasmoon@1.16.0/dist/glue.wasm", "wasmoon/dist/glue.wasm"],
+    ]);
+    await page.route("https://cdn.jsdelivr.net/npm/**", async (route) => {
+        const path = localDependency.get(new URL(route.request().url()).pathname);
+        if (!path) return route.continue();
+        await route.fulfill({
+            body: await readFile(new URL("../node_modules/" + path, import.meta.url)),
+            headers: { "Content-Type": "application/wasm", "Access-Control-Allow-Origin": "*" },
+        });
+    });
     page.on("request", (request) => requests.push(request.url()));
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto(`http://127.0.0.1:${server.address().port}`);
@@ -73,18 +102,52 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
         );
     });
 
+    await t.test("offline asset declarations skip disabled cells and share the C toolchain", async () => {
+        const declarations = await page.evaluate(() => {
+            const get = (language) => {
+                const tag = "webwriter-code-" + language;
+                return customElements.get(tag).offlineAssets(document.querySelector(tag).cloneNode(true));
+            };
+            const disabled = document.querySelector("webwriter-code-sql").cloneNode(true);
+            disabled.setAttribute("disable-execution", "");
+            return {
+                c: get("c"),
+                cpp: get("cpp"),
+                sql: get("sql"),
+                disabled: customElements.get("webwriter-code-sql").offlineAssets(disabled),
+            };
+        });
+        assert.deepEqual(declarations.disabled, []);
+        assert.deepEqual(declarations.c, declarations.cpp);
+        assert.ok(
+            declarations.sql.some(
+                ({ url, mimeType }) => url.includes("sql-wasm-browser.wasm") && mimeType === "application/wasm",
+            ),
+        );
+        assert.deepEqual(
+            requests.filter((url) => runtime.test(url)),
+            [],
+        );
+    });
+
     await t.test("first Run loads the runtime and displays output", async () => {
         for (const [language, [, output]] of Object.entries(fixtures)) {
-            if (language === "python" && !process.env.CODE_TEST_PYTHON_ONLINE) continue;
+            if (requiresOnlineAssets.has(language) && !process.env.CODE_TEST_RUNTIMES_ONLINE) continue;
             const start = requests.length;
-            await widget(language).getByRole("button", { name: "Run (0)", exact: true }).press("Enter");
+            const run = widget(language).getByRole("button", { name: "Run (0)", exact: true });
+            await run.press("Enter");
             if (language === "html") {
                 await widget(language).frameLocator("iframe").getByText(output).waitFor();
             } else {
                 await widget(language)
                     .locator("output")
                     .getByText(output, { exact: language !== "prolog" })
-                    .waitFor();
+                    .waitFor({ timeout: 120_000 })
+                    .catch(async (error) => {
+                        throw new Error(language + ": " + (await widget(language).locator("output").innerText()), {
+                            cause: error,
+                        });
+                    });
                 assert.ok(
                     requests.slice(start).some((url) => runtime.test(url)),
                     language,
@@ -274,13 +337,13 @@ test("code widgets defer runtimes and preserve authored content", async (t) => {
     await t.test("a missing runtime reports the error and clears the busy state", async () => {
         const broken = await browser.newPage();
         try {
-            await broken.route("**/pythonModule-*.js", (route) => route.abort());
+            await broken.route("**/dist/runtime/python.js", (route) => route.abort());
             await broken.goto(`http://127.0.0.1:${server.address().port}`);
             const python = broken.locator("webwriter-code-python");
             await python.getByRole("button", { name: "Run (0)", exact: true }).press("Enter");
             await python
                 .locator("output")
-                .getByText(/failed to fetch dynamically imported module/i)
+                .getByText(/failed to fetch/i)
                 .waitFor();
             assert.equal(await python.locator("sl-button").first().getAttribute("aria-busy"), "false");
         } finally {

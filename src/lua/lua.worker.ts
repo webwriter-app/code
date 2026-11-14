@@ -1,8 +1,7 @@
 import { LuaFactory } from "wasmoon";
-import wasm from "wasmoon/dist/glue.wasm";
 import { replyWithResult } from "../shared/run-worker";
 
-replyWithResult(async ({ code }: { code: string }) => {
+replyWithResult(async ({ code, wasm }: { code: string; wasm: string }) => {
     // Wasmoon initializes the Lua standard streams from the worker console.
     const output: string[] = [];
     const stdout = console.log;

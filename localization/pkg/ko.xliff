@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.1" srcLang="en" trgLang="ko">
 <file id="." original=".">
-<unit id="description"><segment><source>Write and run code in HTML, JavaScript, TypeScript, Python, Java, WebAssembly, SQL, Lua, Prolog, and Scheme.</source><target></target></segment></unit>
+<unit id="description"><segment><source>Write and run code in HTML, JavaScript, TypeScript, Python, Java, WebAssembly, SQL, Lua, Prolog, Scheme, C#, C, C++, PHP, Go, Rust, and Bash.</source><target></target></segment></unit>
 <unit id="label"><segment><source>Code</source><target>Code</target></segment></unit>
 </file>
 <file id="./widgets/webwriter-code-javascript" original="./widgets/webwriter-code-javascript">
@@ -48,5 +48,47 @@
 </file>
 <file id="./snippets/scheme" original="./snippets/scheme">
 <unit id="label"><segment><source>Code (Scheme)</source><target>Code (Scheme)</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-c" original="./widgets/webwriter-code-c">
+<unit id="label"><segment><source>Code (C)</source><target>Code (C)</target></segment></unit>
+</file>
+<file id="./snippets/c" original="./snippets/c">
+<unit id="label"><segment><source>Code (C)</source><target>Code (C)</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-cpp" original="./widgets/webwriter-code-cpp">
+<unit id="label"><segment><source>Code (C++)</source><target>Code (C++)</target></segment></unit>
+</file>
+<file id="./snippets/cpp" original="./snippets/cpp">
+<unit id="label"><segment><source>Code (C++)</source><target>Code (C++)</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-csharp" original="./widgets/webwriter-code-csharp">
+<unit id="label"><segment><source>Code (C#)</source><target>Code (C#)</target></segment></unit>
+</file>
+<file id="./snippets/csharp" original="./snippets/csharp">
+<unit id="label"><segment><source>Code (C#)</source><target>Code (C#)</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-php" original="./widgets/webwriter-code-php">
+<unit id="label"><segment><source>Code (PHP)</source><target>Code (PHP)</target></segment></unit>
+</file>
+<file id="./snippets/php" original="./snippets/php">
+<unit id="label"><segment><source>Code (PHP)</source><target>Code (PHP)</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-go" original="./widgets/webwriter-code-go">
+<unit id="label"><segment><source>Code (Go)</source><target>Code (Go)</target></segment></unit>
+</file>
+<file id="./snippets/go" original="./snippets/go">
+<unit id="label"><segment><source>Code (Go)</source><target>Code (Go)</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-rust" original="./widgets/webwriter-code-rust">
+<unit id="label"><segment><source>Code (Rust)</source><target>Code (Rust)</target></segment></unit>
+</file>
+<file id="./snippets/rust" original="./snippets/rust">
+<unit id="label"><segment><source>Code (Rust)</source><target>Code (Rust)</target></segment></unit>
+</file>
+<file id="./widgets/webwriter-code-shell" original="./widgets/webwriter-code-shell">
+<unit id="label"><segment><source>Code (Bash)</source><target>Code (Bash)</target></segment></unit>
+</file>
+<file id="./snippets/shell" original="./snippets/shell">
+<unit id="label"><segment><source>Code (Bash)</source><target>Code (Bash)</target></segment></unit>
 </file>
 </xliff>

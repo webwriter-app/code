@@ -1,3 +1,5 @@
+import { javascriptWorker } from "./javascript-assets";
+import { offlineRuntimeAssets } from "../shared/runtime-assets";
 import { javascript } from "@codemirror/lang-javascript";
 import { customElement } from "lit/decorators.js";
 import { style } from "../shared/ww-code-css-single";
@@ -9,11 +11,11 @@ import CodeJsTemplate from "./shared/ww-code-js-template";
 export default class CodeJavaScript extends CodeJsTemplate {
     static styles = [style, jsTemplateStyle] as any;
 
-    static offlineImports(element: Element) {
-        return CodeJsTemplate.runtimeImports(element, "./ww-code-javascript.js");
+    static offlineAssets(element: Element) {
+        return offlineRuntimeAssets(element, [javascriptWorker]);
     }
 
     constructor() {
-        super("JavaScript", javascript(), () => import("./shared/javascript-runtime"));
+        super("JavaScript", javascript());
     }
 }

@@ -1,7 +1,7 @@
 # Updating the TeaVM runtime
 
-`../compiler.wasm.tiff`, `../compiler.wasm-runtime.js`, `../compile-classlib-teavm.bin.tiff`
-and `../runtime-classlib-teavm.bin.tiff` are prebuilt artifacts from
+`../compiler.wasm`, `../compiler.wasm-runtime.js`, `../compile-classlib-teavm.bin`
+and `../runtime-classlib-teavm.bin` are prebuilt artifacts from
 [`teavm-javac`](https://github.com/konsoletyper/teavm-javac), which can be updated by running:
 
 ```bash

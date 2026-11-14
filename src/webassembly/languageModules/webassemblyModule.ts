@@ -1,10 +1,11 @@
-import WebAssemblyWorker from "worker:./webassembly.worker";
+import { loadWorkerSource } from "../../shared/run-worker";
+import { webAssemblyWorker } from "../webassembly-assets";
 import { Text } from "@codemirror/state";
 import { createCodeWorker, requestWorker } from "../../shared/code-worker";
 import type { CodeRunner } from "../../shared/ww-code-template";
 
 export const execute: CodeRunner = async (code, context, signal) => {
-    const worker = createCodeWorker(WebAssemblyWorker);
+    const worker = createCodeWorker(await loadWorkerSource(webAssemblyWorker, context.ownerDocument, signal));
     try {
         const { error, result } = await requestWorker<{ error?: string; result: unknown }>(worker, { code }, signal);
         if (error) {

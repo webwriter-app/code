@@ -1,4 +1,6 @@
-import PyodideWorker from "worker:./pyodide.worker";
+import { pythonAssets, pythonWorker } from "../python-assets";
+import { runtimeAssetURL } from "../../shared/runtime-assets";
+import { loadWorkerSource } from "../../shared/run-worker";
 import { createCodeWorker, requestWorker } from "../../shared/code-worker";
 import type { CodeRunner } from "../../shared/ww-code-template";
 
@@ -28,7 +30,9 @@ export const execute: CodeRunner = (code, context, signal) => {
 
     const run = queue.then(async () => {
         signal.throwIfAborted();
-        const runtime = (worker ??= createCodeWorker(PyodideWorker));
+        const owner = context.ownerDocument;
+        const [wasm, lock, stdlib] = pythonAssets.map((asset) => runtimeAssetURL(asset, owner));
+        const runtime = (worker ??= createCodeWorker(await loadWorkerSource(pythonWorker, owner, signal), true));
         try {
             // When a cell leaves during a run, keep the queue blocked until that
             // run finishes unless the last client has already stopped the worker.
@@ -36,7 +40,7 @@ export const execute: CodeRunner = (code, context, signal) => {
             try {
                 const { error, results } = await requestWorker<{ error?: string; results?: string }>(
                     runtime,
-                    { code },
+                    { code, wasm, lock, stdlib },
                     lifetime.signal,
                 );
                 if (!signal.aborted) context.results = [{ text: error ?? results, color: error ? "red" : undefined }];

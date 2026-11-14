@@ -1,7 +1,7 @@
 {
   "name": "@webwriter/code",
   "version": "4.0.0",
-  "description": "Write and run code in HTML, JavaScript, TypeScript, Python, Java, WebAssembly, SQL, Lua, Prolog, and Scheme.",
+  "description": "Write and run code in HTML, JavaScript, TypeScript, Python, Java, WebAssembly, SQL, Lua, Prolog, Scheme, C#, C, C++, PHP, Go, Rust, and Bash.",
   "repository": "github:@webwriter-app/code",
   "keywords": [
     "webwriter-widget",
@@ -142,8 +142,8 @@
     "Jorik van Genuchten"
   ],
   "scripts": {
-    "prepublishOnly": "build --shared-dependencies",
-    "dev": "build dev --shared-dependencies",
+    "prepublishOnly": "node scripts/build-runtimes.mjs && build --shared-dependencies",
+    "dev": "node scripts/build-runtimes.mjs --watch",
     "localize": "lit-localize extract && npx @webwriter/build localize && lit-localize build",
     "format": "prettier --write .",
     "postinstall": "patch-package",
@@ -152,11 +152,15 @@
   "dependencies": {
     "@codemirror/autocomplete": ">=6.10.2 <7.0.0-0",
     "@codemirror/commands": ">=6.3.0 <7.0.0-0",
+    "@codemirror/lang-cpp": "6.0.3",
     "@codemirror/lang-css": ">=6.2.1 <7.0.0-0",
+    "@codemirror/lang-go": "6.0.1",
     "@codemirror/lang-html": ">=6.4.6 <7.0.0-0",
     "@codemirror/lang-java": "^6.0.2",
     "@codemirror/lang-javascript": ">=6.2.1 <7.0.0-0",
+    "@codemirror/lang-php": "6.0.2",
     "@codemirror/lang-python": ">=6.1.3 <7.0.0-0",
+    "@codemirror/lang-rust": "6.0.2",
     "@codemirror/lang-sql": "^6.10.0",
     "@codemirror/lang-wast": ">=6.0.1 <7.0.0-0",
     "@codemirror/language": ">=6.9.1 <7.0.0-0",
@@ -180,12 +184,21 @@
     "wasmoon": "1.16.0"
   },
   "devDependencies": {
+    "@bjorn3/browser_wasi_shim": "0.4.2",
     "@lit/localize-tools": "^0.8.0",
+    "@live-codes/rust-wasm": "0.3.0",
+    "@php-wasm/universal": "3.1.64",
+    "@php-wasm/web-8-4": "3.1.64",
     "@types/sql.js": "^1.4.11",
     "@webwriter/build": "^1.13.1",
+    "browsercc": "0.1.1",
+    "esbuild": "0.25.12",
+    "fflate": "0.8.2",
+    "just-bash": "3.6.0",
     "patch-package": "^8.0.0",
     "playwright": "^1.65.1",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "pyodide": "0.26.3"
   },
   "type": "module",
   "exports": {
@@ -235,6 +248,41 @@
       "default": "./dist/widgets/ww-code-scheme.*"
     },
     "./snippets/scheme.html": "./snippets/scheme.html",
+    "./widgets/webwriter-code-c.*": {
+      "source": "./src/c/ww-code-c.ts",
+      "default": "./dist/widgets/ww-code-c.*"
+    },
+    "./snippets/c.html": "./snippets/c.html",
+    "./widgets/webwriter-code-cpp.*": {
+      "source": "./src/cpp/ww-code-cpp.ts",
+      "default": "./dist/widgets/ww-code-cpp.*"
+    },
+    "./snippets/cpp.html": "./snippets/cpp.html",
+    "./widgets/webwriter-code-csharp.*": {
+      "source": "./src/csharp/ww-code-csharp.ts",
+      "default": "./dist/widgets/ww-code-csharp.*"
+    },
+    "./snippets/csharp.html": "./snippets/csharp.html",
+    "./widgets/webwriter-code-php.*": {
+      "source": "./src/php/ww-code-php.ts",
+      "default": "./dist/widgets/ww-code-php.*"
+    },
+    "./snippets/php.html": "./snippets/php.html",
+    "./widgets/webwriter-code-go.*": {
+      "source": "./src/go/ww-code-go.ts",
+      "default": "./dist/widgets/ww-code-go.*"
+    },
+    "./snippets/go.html": "./snippets/go.html",
+    "./widgets/webwriter-code-rust.*": {
+      "source": "./src/rust/ww-code-rust.ts",
+      "default": "./dist/widgets/ww-code-rust.*"
+    },
+    "./snippets/rust.html": "./snippets/rust.html",
+    "./widgets/webwriter-code-shell.*": {
+      "source": "./src/shell/ww-code-shell.ts",
+      "default": "./dist/widgets/ww-code-shell.*"
+    },
+    "./snippets/shell.html": "./snippets/shell.html",
     "./package.json": "./package.json",
     "./icon": "./icon.svg",
     "./editing-config.json": "./editing-config.json",
@@ -244,11 +292,15 @@
   "prebuiltDependencies": [
     "@codemirror/autocomplete",
     "@codemirror/commands",
+    "@codemirror/lang-cpp",
     "@codemirror/lang-css",
+    "@codemirror/lang-go",
     "@codemirror/lang-html",
     "@codemirror/lang-java",
     "@codemirror/lang-javascript",
+    "@codemirror/lang-php",
     "@codemirror/lang-python",
+    "@codemirror/lang-rust",
     "@codemirror/lang-sql",
     "@codemirror/lang-wast",
     "@codemirror/language",

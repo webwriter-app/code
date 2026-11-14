@@ -1,8 +1,8 @@
 import { DiagnosticCategory, flattenDiagnosticMessageText, ModuleKind, transpileModule } from "typescript";
 
-export { workerSource } from "./javascript-runtime";
+import { replyWithResult } from "../../shared/run-worker";
 
-export function build(code: string) {
+function build(code: string) {
     const out = transpileModule(code, {
         compilerOptions: { module: ModuleKind.CommonJS, strict: true },
         reportDiagnostics: true,
@@ -19,3 +19,5 @@ export function build(code: string) {
             }),
     };
 }
+
+replyWithResult(({ code }: { code: string }) => build(code));

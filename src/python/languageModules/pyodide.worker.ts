@@ -1,24 +1,34 @@
-let stdout = "";
-let pyodide: any;
+// The build places Pyodide's classic loader and Emscripten glue ahead of this adapter.
+import type { loadPyodide } from "pyodide";
+import { pyodideRoot } from "../python-assets";
 
-self.onmessage = async ({ data: { code } }: MessageEvent<{ code: string }>) => {
+let stdout = "";
+let pyodide: Awaited<ReturnType<typeof loadPyodide>> | undefined;
+const networkFetch = globalThis.fetch.bind(globalThis);
+const offline = new Map<string, string>();
+
+self.onmessage = async ({
+    data: { code, wasm, lock, stdlib },
+}: MessageEvent<{ code: string; wasm: string; lock: string; stdlib: string }>) => {
     try {
         if (!pyodide) {
-            // @ts-ignore This module is loaded by the browser.
-            const { loadPyodide } = await import("https://cdn.jsdelivr.net/pyodide/v0.26.3/full/pyodide.mjs");
-            pyodide = await loadPyodide();
+            offline.set(pyodideRoot + "pyodide.asm.wasm", wasm);
+            globalThis.fetch = (input, init) => {
+                const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+                return networkFetch(offline.get(url) ?? input, init);
+            };
+            pyodide = await (globalThis as typeof globalThis & { loadPyodide: typeof loadPyodide }).loadPyodide({
+                indexURL: pyodideRoot,
+                stdLibURL: stdlib,
+                lockFileURL: lock,
+            });
             pyodide.setStdout({
                 batched: (message: string) => {
                     stdout += message + "\n";
                 },
             });
         }
-    } catch {
-        self.postMessage({ error: "Python could not load Pyodide. Running Python requires an internet connection." });
-        return;
-    }
 
-    try {
         await pyodide.loadPackagesFromImports(code);
         await pyodide.runPythonAsync(code);
         self.postMessage({ results: stdout });

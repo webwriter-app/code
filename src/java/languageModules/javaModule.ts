@@ -1,5 +1,6 @@
-import JavaRunnerWorker from "worker:./java-runner.worker";
-import JavacWorker from "worker:./javac.worker";
+import { javaClasslib, javaCompiler, javaCompilerWorker, javaRunnerWorker, javaSdk } from "../java-assets";
+import { runtimeAssetURL } from "../../shared/runtime-assets";
+import { loadWorkerSource } from "../../shared/run-worker";
 import { createCodeWorker, requestWorker } from "../../shared/code-worker";
 import type { CodeRunner } from "../../shared/ww-code-template";
 import type { JavaDiagnostic } from "../teavm/types";
@@ -16,12 +17,22 @@ export const execute: CodeRunner = async (code, context, signal) => {
         return;
     }
 
-    const compiler = createCodeWorker(JavacWorker);
+    const owner = context.ownerDocument;
+    const [compilerSource, runnerSource] = await Promise.all([
+        loadWorkerSource(javaCompilerWorker, owner, signal),
+        loadWorkerSource(javaRunnerWorker, owner, signal),
+    ]);
+    const assets = {
+        wasm: runtimeAssetURL(javaCompiler, owner),
+        sdk: runtimeAssetURL(javaSdk, owner),
+        classlib: runtimeAssetURL(javaClasslib, owner),
+    };
+    const compiler = createCodeWorker(compilerSource);
     let wasm: Uint8Array;
     try {
         const response = await requestWorker<{ wasm: Uint8Array; diagnostics?: JavaDiagnostic[]; error?: string }>(
             compiler,
-            { code, mainClass },
+            { code, mainClass, assets },
             signal,
         );
         if (response.error) throw new Error(response.error);
@@ -42,7 +53,7 @@ export const execute: CodeRunner = async (code, context, signal) => {
     }
 
     signal.throwIfAborted();
-    const worker = createCodeWorker(JavaRunnerWorker);
+    const worker = createCodeWorker(runnerSource);
     const listeners = new AbortController();
     try {
         await new Promise<void>((resolve, reject) => {
