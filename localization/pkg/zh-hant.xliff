@@ -19,4 +19,10 @@
 <file id="./widgets/webwriter-code-webassembly" original="./widgets/webwriter-code-webassembly">
 <unit id="label"><segment><source>Code (WebAssembly)</source><target>程式碼 (WebAssembly)</target></segment></unit>
 </file>
+<file id="./snippets/java" original="./snippets/java">
+<unit id="label"><segment><source>Code (Java)</source><target>程式碼 (Java)</target></segment></unit>
+</file>
+<file id="./snippets/HTML" original="./snippets/HTML">
+<unit id="label"><segment><source>Code (HTML)</source><target>程式碼 (HTML)</target></segment></unit>
+</file>
 </xliff>
