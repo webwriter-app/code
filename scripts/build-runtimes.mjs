@@ -8,26 +8,44 @@ import { createGzip } from "node:zlib";
 import { copyFile, cp, mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 
 const targets = {
-    javascript: "src/javascript/shared/javascript.worker.ts",
-    typescript: "src/javascript/shared/typescript.worker.ts",
-    "java-compiler": "src/java/languageModules/javac.worker.ts",
-    "java-runner": "src/java/languageModules/java-runner.worker.ts",
-    webassembly: "src/webassembly/languageModules/webassembly.worker.ts",
-    sql: "src/sql/sql.worker.ts",
-    lua: "src/lua/lua.worker.ts",
-    prolog: "src/prolog/prolog.worker.ts",
-    scheme: "src/scheme/scheme.worker.ts",
-    python: "src/python/languageModules/pyodide.worker.ts",
-    csharp: "src/csharp/csharp.worker.ts",
-    cpp: "src/cpp/cpp.worker.ts",
-    php: "src/php/php.worker.ts",
-    go: "src/go/go.worker.ts",
-    rust: "src/rust/rust.worker.ts",
-    shell: "src/shell/shell.worker.ts",
-    haskell: "src/haskell/haskell.worker.ts",
+    javascript: "src/model/javascript/javascript.worker.ts",
+    typescript: "src/model/javascript/typescript.worker.ts",
+    "java-compiler": "src/model/java/javac.worker.ts",
+    "java-runner": "src/model/java/java-runner.worker.ts",
+    webassembly: "src/model/webassembly/webassembly.worker.ts",
+    sql: "src/model/sql/sql.worker.ts",
+    lua: "src/model/lua/lua.worker.ts",
+    prolog: "src/model/prolog/prolog.worker.ts",
+    scheme: "src/model/scheme/scheme.worker.ts",
+    python: "src/model/python/pyodide.worker.ts",
+    csharp: "src/model/csharp/csharp.worker.ts",
+    cpp: "src/model/cpp/cpp.worker.ts",
+    php: "src/model/php/php.worker.ts",
+    go: "src/model/go/go.worker.ts",
+    rust: "src/model/rust/rust.worker.ts",
+    shell: "src/model/shell/shell.worker.ts",
+    haskell: "src/model/haskell/haskell.worker.ts",
 };
 
 const watch = process.argv.includes("--watch");
+
+// `@webwriter/build` builds the Mocha modules only in its dev mode, so a one-off build bundles them here.
+async function buildTests() {
+    const { exports } = JSON.parse(await readFile("package.json", "utf8"));
+    const entryPoints = Object.entries(exports)
+        .filter(([key]) => key.startsWith("./tests/"))
+        .map(([, { source, default: output }]) => ({ in: source, out: output.replace(/\.\*$/, "").replace(/^\.\//, "") }));
+    if (entryPoints.length)
+        await build({
+            entryPoints,
+            outdir: ".",
+            bundle: true,
+            format: "esm",
+            target: "es2022",
+            logLevel: "warning",
+            loader: { ".html": "text" },
+        });
+}
 if (!watch) {
     // Remove obsolete hashed chunks so they never end up in a published tarball.
     await Promise.all(
@@ -35,16 +53,16 @@ if (!watch) {
     );
 }
 const haskellRoot = "node_modules/@live-codes/browser-haskell/dist";
-const haskellPackages = JSON.parse(await readFile("src/haskell/package-files.json", "utf8"));
+const haskellPackages = JSON.parse(await readFile("src/assets/haskell-package-files.json", "utf8"));
 const haskellIndex = JSON.parse(await readFile(haskellRoot + "/pkgs/index.json", "utf8"));
 if (JSON.stringify(haskellPackages) !== JSON.stringify(Object.keys(haskellIndex.packages).sort())) {
-    throw new Error("Update src/haskell/package-files.json to match MicroHs's package index.");
+    throw new Error("Update src/assets/haskell-package-files.json to match MicroHs's package index.");
 }
 
 const assets = {
-    "java/compiler.wasm": "src/java/teavm/compiler.wasm",
-    "java/compile-classlib-teavm.bin": "src/java/teavm/compile-classlib-teavm.bin",
-    "java/runtime-classlib-teavm.bin": "src/java/teavm/runtime-classlib-teavm.bin",
+    "java/compiler.wasm": "scripts/teavm/compiler.wasm",
+    "java/compile-classlib-teavm.bin": "scripts/teavm/compile-classlib-teavm.bin",
+    "java/runtime-classlib-teavm.bin": "scripts/teavm/runtime-classlib-teavm.bin",
     "clang/clang.wasm": "node_modules/browsercc/dist/clang.wasm",
     "clang/lld.wasm": "node_modules/browsercc/dist/lld.wasm",
     "clang/sysroot.tar": "node_modules/browsercc/dist/sysroot.tar",
@@ -55,7 +73,7 @@ const assets = {
     "lua/glue.wasm": "node_modules/wasmoon/dist/glue.wasm",
     "haskell/index.json": haskellRoot + "/pkgs/index.json",
 };
-await cp("assets/runtime", "dist/runtime", { recursive: true });
+await cp("scripts/runtime-assets", "dist/runtime", { recursive: true });
 async function compressAsset(path, input) {
     await mkdir(dirname(path), { recursive: true });
     await pipeline(input, createGzip({ level: 9 }), createWriteStream(path));
@@ -88,7 +106,7 @@ const options = {
             name: "runtime-adapters",
             setup(build) {
                 build.onResolve({ filter: /^node:zlib$/ }, () => ({
-                    path: fileURLToPath(new URL("../src/shell/zlib.ts", import.meta.url)),
+                    path: fileURLToPath(new URL("../src/model/shell/zlib.ts", import.meta.url)),
                 }));
                 build.onResolve({ filter: /^worker_threads$/ }, () => ({
                     path: "worker_threads",
@@ -178,5 +196,5 @@ if (watch) {
         process.exitCode = code ?? 0;
     });
 } else {
-    await Promise.all([staticAssets, build(options)]);
+    await Promise.all([staticAssets, build(options), buildTests()]);
 }

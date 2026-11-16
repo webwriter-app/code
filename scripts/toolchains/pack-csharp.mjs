@@ -33,8 +33,8 @@ for (const name of referenceNames) {
 const index = Buffer.from(JSON.stringify(names.map((name, i) => [name, buffers[i].length])));
 const header = Buffer.alloc(4);
 header.writeUInt32LE(index.length);
-await mkdir("assets/runtime/csharp", { recursive: true });
+await mkdir("scripts/runtime-assets/csharp", { recursive: true });
 await writeFile(
-    "assets/runtime/csharp/framework.gz",
+    "scripts/runtime-assets/csharp/framework.gz",
     gzipSync(Buffer.concat([header, index, ...buffers]), { level: 9 }),
 );

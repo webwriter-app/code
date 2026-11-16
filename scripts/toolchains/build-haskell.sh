@@ -2,7 +2,7 @@
 # Run from the widget root after activating Emscripten 4.0.23.
 set -eu
 
-output="$PWD/assets/runtime/haskell"
+output="$PWD/scripts/runtime-assets/haskell"
 work=$(mktemp -d)
 trap 'rm -rf "$work"' 0
 

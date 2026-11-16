@@ -32,7 +32,7 @@ const standardPackages = [
 const exec = promisify(execFile);
 const go = process.env.WEBWRITER_GO ?? "go";
 const env = { ...process.env, GOOS: "wasip1", GOARCH: "wasm", CGO_ENABLED: "0" };
-const output = resolve("assets/runtime/go");
+const output = resolve("scripts/runtime-assets/go");
 const tmp = await mkdtemp(join(tmpdir(), "webwriter-go-"));
 await mkdir(output, { recursive: true });
 try {
