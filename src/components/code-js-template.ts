@@ -24,11 +24,16 @@ export abstract class CodeJsTemplate extends Code {
 
     private objectRealizationRequests = new Map<number, SerializedObject | SerializedArray>();
 
+    // A loop that logs thousands of lines sends one message per line; render them once per frame.
+    private pendingLogs: LogResult[] = [];
+    private logFrame = 0;
+
     constructor(name: string, languageExtension: LanguageSupport, transpile = false) {
         super({
             name,
             execute: async (code, context, signal) => {
                 this.stopWorker();
+                this.discardPendingLogs();
                 const assets = transpile ? [javascriptWorker, typescriptWorker] : [javascriptWorker];
                 await context.withRuntimeAssets(assets, signal, async (runtime) => {
                     const [source, compiled] = await Promise.all([
@@ -53,6 +58,7 @@ export abstract class CodeJsTemplate extends Code {
                         const abort = () => reject(signal.reason);
                         const fail = (event: Event) => {
                             event.preventDefault();
+                            this.flushLogs();
                             this.stopWorker();
                             reject(
                                 new Error((event as ErrorEvent).message || "Could not start the JavaScript runtime"),
@@ -61,6 +67,7 @@ export abstract class CodeJsTemplate extends Code {
                         signal.addEventListener("abort", abort, { signal: listeners.signal });
                         worker.onmessage = (event: MessageEvent<FromWorkerMessage>) => {
                             if (event.data.type === "executionStatus" && event.data.status === "terminated") {
+                                this.flushLogs();
                                 resolve();
                             } else {
                                 this.handleMessage(event);
@@ -86,6 +93,7 @@ export abstract class CodeJsTemplate extends Code {
 
     disconnectedCallback() {
         this.stopWorker();
+        this.discardPendingLogs();
         super.disconnectedCallback();
     }
 
@@ -94,6 +102,20 @@ export abstract class CodeJsTemplate extends Code {
         this.worker = null;
         this.workerAlive = false;
         this.objectRealizationRequests.clear();
+    }
+
+    private flushLogs() {
+        cancelAnimationFrame(this.logFrame);
+        this.logFrame = 0;
+        if (!this.pendingLogs.length) return;
+        this.results = [...this.results, ...this.pendingLogs];
+        this.pendingLogs = [];
+    }
+
+    private discardPendingLogs() {
+        cancelAnimationFrame(this.logFrame);
+        this.logFrame = 0;
+        this.pendingLogs = [];
     }
 
     private requestObjectRealization(ref: SerializedObject | SerializedArray) {
@@ -110,8 +132,10 @@ export abstract class CodeJsTemplate extends Code {
         const message = event.data as FromWorkerMessage;
 
         if (message.type == "log") {
-            this.results = [...this.results, { label: message.label, logs: message.logs }];
+            this.pendingLogs.push({ label: message.label, logs: message.logs });
+            this.logFrame ||= requestAnimationFrame(() => this.flushLogs());
         } else if (message.type === "consoleClear") {
+            this.discardPendingLogs();
             this.results = [];
         } else if (message.type == "realizedObject") {
             if (!this.objectRealizationRequests.has(message.objectId)) {

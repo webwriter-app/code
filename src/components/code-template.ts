@@ -51,10 +51,10 @@ export type LanguageModule = {
     execute: CodeRunner;
 };
 
-export type TextResult = { text: string; color?: string };
+type TextResult = { text: string; color?: string };
 export type LogResult = { label: string; logs: SerializedValue[] };
 /** One entry of a run's output: HTML source, text, console log lines or a SQL table. */
-export type CodeResult = string | TextResult | LogResult | SqlTable;
+type CodeResult = string | TextResult | LogResult | SqlTable;
 
 export type Diagnostic = {
     message: string;

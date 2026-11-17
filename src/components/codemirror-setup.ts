@@ -34,10 +34,10 @@ export const lineLockEffect = StateEffect.define<{ pos: number; on: boolean }>({
     map: (val, mapping) => ({ pos: mapping.mapPos(val.pos), on: val.on }),
 });
 
-export const showLockedTooltipEffect = StateEffect.define<{ pos: number }>({
+const showLockedTooltipEffect = StateEffect.define<{ pos: number }>({
     map: (val, mapping) => ({ pos: mapping.mapPos(val.pos) }),
 });
-export const hideLockedTooltipEffect = StateEffect.define<{}>({});
+const hideLockedTooltipEffect = StateEffect.define<{}>({});
 
 const lineLockMarker = new (class extends GutterMarker {
     toDOM() {

@@ -6,7 +6,7 @@ export type ExecuteCodeMessage = {
     code: string;
 };
 
-export type ExecutionStatusMessage = {
+type ExecutionStatusMessage = {
     type: "executionStatus";
     executionId: string;
     status: "running" | "terminated";
@@ -14,14 +14,14 @@ export type ExecutionStatusMessage = {
 
 // Logging
 
-export type SerializedNull = { type: "null" };
-export type SerializedUndefined = { type: "undefined" };
-export type SerializedString = { type: "string"; value: string };
-export type SerializedNumber = { type: "number"; value: number };
-export type SerializedBoolean = { type: "boolean"; value: boolean };
-export type SerializedBigInt = { type: "bigint"; value: string };
-export type SerializedSymbol = { type: "symbol"; description: string };
-export type SerializedFunction = { type: "function"; value: string };
+type SerializedNull = { type: "null" };
+type SerializedUndefined = { type: "undefined" };
+type SerializedString = { type: "string"; value: string };
+type SerializedNumber = { type: "number"; value: number };
+type SerializedBoolean = { type: "boolean"; value: boolean };
+type SerializedBigInt = { type: "bigint"; value: string };
+type SerializedSymbol = { type: "symbol"; description: string };
+type SerializedFunction = { type: "function"; value: string };
 export type SerializedArray = {
     type: "array";
     length: number;
@@ -47,14 +47,14 @@ export type SerializedValue =
     | SerializedArray
     | SerializedObject;
 
-export type LogMessage = {
+type LogMessage = {
     type: "log";
     executionId: string;
     label: "debug" | "info" | "warning" | "error";
     logs: SerializedValue[];
 };
 
-export type ConsoleClearMessage = {
+type ConsoleClearMessage = {
     type: "consoleClear";
 };
 
@@ -63,13 +63,13 @@ export type RealizeObjectMessage = {
     objectId: number;
 };
 
-export type RealizedObjectMessage = {
+type RealizedObjectMessage = {
     type: "realizedObject";
     objectId: number;
     value: SerializedObject | SerializedArray;
 };
 
-export type ToWorkerMessage = ExecuteCodeMessage | RealizeObjectMessage;
+type ToWorkerMessage = ExecuteCodeMessage | RealizeObjectMessage;
 export type FromWorkerMessage = ExecutionStatusMessage | LogMessage | ConsoleClearMessage | RealizedObjectMessage;
 
 //#endregion
