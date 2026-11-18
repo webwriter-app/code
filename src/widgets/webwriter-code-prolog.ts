@@ -6,14 +6,25 @@ import { css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { live } from "lit/directives/live.js";
 import { Code } from "../components/code-template";
+import { sourceConversions } from "../model/source-files";
 
 /**
  * Code widget for Prolog facts, rules and queries, powered by Tau Prolog.
  *
  * Enter facts and rules in the editor and the goal in the Query field. The goal is saved in the `goal` attribute.
+ *
+ * Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+ *
+ * Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
+ *
+ * @part editor - The code editor.
+ * @part output - The area for results, console lines and tables.
  */
 @customElement("webwriter-code-prolog")
 export class WebwriterCodeProlog extends Code {
+    static convertFrom = sourceConversions("prolog").convertFrom;
+    static convertTo = sourceConversions("prolog").convertTo;
+
     static styles = [
         Code.styles,
         css`

@@ -6,12 +6,16 @@ export const style = css`
         display: block;
         box-sizing: border-box;
         min-width: 300px;
+        max-width: 2100px;
         min-height: min-content;
+        color: var(--ww-text-color, inherit);
+        font-family: var(--ww-font-family, inherit);
         border: solid var(--code-border-width) var(--sl-color-neutral-300);
         border-radius: var(--sl-border-radius-medium);
     }
 
     .layout {
+        container-type: inline-size;
         display: grid;
         grid-template-columns: minmax(0, 1fr);
         grid-template-rows: minmax(4rem, 1fr) max-content max-content;
@@ -78,6 +82,10 @@ export const style = css`
 
     .cm-lock-gutter .cm-gutterElement {
         padding-left: 0.5em;
+    }
+
+    .print-code {
+        display: none;
     }
 
     .cm-locked-line {
@@ -176,7 +184,7 @@ export const style = css`
         text-transform: uppercase;
         font-weight: 600;
         font-size: var(--sl-font-size-x-small);
-        color: var(--sl-color-neutral-400);
+        color: var(--sl-color-neutral-600);
     }
 
     :host([hideExecutionTime]) .executionTime {
@@ -220,7 +228,6 @@ export const style = css`
         font-size: var(--sl-font-size-medium);
     }
 
-    /* TODO: Handle printing well */
 
     /* --- Diagnostics --- */
     .diagnostics-container {
@@ -240,12 +247,97 @@ export const style = css`
     }
 
     .diagnostic-line-number {
-        color: var(--sl-color-primary-700);
+        display: inline-flex;
+        align-items: center;
+        min-inline-size: 24px;
+        min-block-size: 24px;
+        color: var(--ww-link-color, var(--sl-color-primary-700));
         text-decoration: underline;
     }
 
     .diagnostic-message {
         white-space: pre-wrap;
         overflow-wrap: anywhere;
+    }
+
+    /* --- Narrow containers --- */
+    @container (max-width: 24rem) {
+        .language-label {
+            flex-basis: 100%;
+            order: -1;
+            text-align: start;
+        }
+    }
+
+    /* --- Touch --- */
+    @media (pointer: coarse) {
+        .controls sl-button::part(base) {
+            min-block-size: 2.75rem;
+        }
+
+        .cm-author-mode .cm-lock-gutter .cm-gutterElement,
+        .cm-foldGutter .cm-gutterElement {
+            min-inline-size: 1.75rem;
+        }
+
+        .diagnostic-line-number {
+            min-inline-size: 44px;
+            min-block-size: 44px;
+        }
+    }
+
+    /* --- Print --- */
+    @media print {
+        :host {
+            max-width: none;
+            max-height: none !important;
+            break-inside: avoid;
+        }
+
+        .layout {
+            display: block;
+            block-size: auto;
+            max-block-size: none;
+            min-block-size: 0;
+        }
+
+        .editor {
+            display: none;
+        }
+
+        /* CodeMirror renders only the lines near the viewport, so paper gets a plain copy of the program. */
+        .print-code {
+            display: block;
+            margin: 0;
+            padding: var(--sl-spacing-x-small);
+            font-family: var(--sl-font-mono);
+            font-size: var(--sl-font-size-small);
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            tab-size: 4;
+        }
+
+        .run-control,
+        .controls sl-button,
+        .executionTime {
+            display: none;
+        }
+
+        .language-label {
+            text-align: start;
+        }
+
+        output[data-empty] {
+            display: none;
+        }
+
+        output .outputs,
+        .diagnostics-container {
+            break-inside: avoid;
+        }
+
+        .htmlPreview {
+            break-inside: avoid;
+        }
     }
 `;

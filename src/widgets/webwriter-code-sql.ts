@@ -2,18 +2,31 @@ import { execute } from "../model/sql/sql-runtime";
 import { sqlWorker, sqlWasm } from "../model/sql/sql-assets";
 import { offlineRuntimeAssets } from "../model/runtime-assets";
 import { SQLite, sql } from "@codemirror/lang-sql";
+import { computed, signal } from "@webwriter/lit";
 import { css, html } from "lit";
+import type { PropertyValues } from "lit";
 import { customElement } from "lit/decorators.js";
 import { Code } from "../components/code-template";
 import type { SqlTable } from "../model/sql/sql-runtime";
+import { sourceConversions } from "../model/source-files";
 
 /**
  * Code widget for SQLite with tabular query results.
  *
  * Uses SQLite via sql.js. Each run starts with an empty in-memory database; use the same cell to create tables, insert data and query it. Each query result shows up to 500 rows in its own table.
+ *
+ * Signals: `output` (string), `failed` (boolean) and `table` (`{columns, rows}`, the first query result, or null).
+ *
+ * Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+ *
+ * @part editor - The code editor.
+ * @part output - The area for results, console lines and tables.
  */
 @customElement("webwriter-code-sql")
 export class WebwriterCodeSql extends Code {
+    static convertFrom = sourceConversions("sql").convertFrom;
+    static convertTo = sourceConversions("sql").convertTo;
+
     static styles = [
         Code.styles,
         css`
@@ -31,8 +44,20 @@ export class WebwriterCodeSql extends Code {
             }
 
             .table-wrapper:focus-visible {
-                outline: 2px solid var(--sl-color-primary-600);
+                outline: 2px solid var(--ww-theme-accent-1, var(--sl-color-primary-600));
                 outline-offset: -2px;
+            }
+
+            @media print {
+                .table-wrapper {
+                    overflow: visible;
+                    max-block-size: none;
+                    break-inside: avoid;
+                }
+
+                tr {
+                    break-inside: avoid;
+                }
             }
 
             table {
@@ -76,12 +101,23 @@ export class WebwriterCodeSql extends Code {
         return offlineRuntimeAssets(element, [sqlWorker, sqlWasm]);
     }
 
+    #table = signal<{ columns: string[]; rows: string[][] } | null>(null);
+
     constructor() {
         super({
             name: "SQL",
             languageExtension: sql({ dialect: SQLite }),
             execute,
         });
+        this.signals = { ...this.signals, table: computed(() => this.#table.get()) };
+    }
+
+    protected willUpdate(changed: PropertyValues) {
+        super.willUpdate(changed);
+        if (changed.has("results")) {
+            const first = (this.results as SqlTable[])[0];
+            this.#table.set(first ? { columns: first.columns, rows: first.rows } : null);
+        }
     }
 
     protected Result() {

@@ -8,9 +8,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for C.\n\nC and C++ share one compiler (Clang) and sysroot. They target WASI, with C++ exceptions disabled in the bundled sysroot.",
+          "description": "Code widget for C.\n\nC and C++ share one compiler (Clang) and sysroot. They target WASI, with C++ exceptions disabled in the bundled sysroot.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodeC",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -110,6 +130,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -369,6 +420,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -498,9 +627,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for C++.\n\nC and C++ share one compiler (Clang) and sysroot. They target WASI, with C++ exceptions disabled in the bundled sysroot.",
+          "description": "Code widget for C++.\n\nC and C++ share one compiler (Clang) and sysroot. They target WASI, with C++ exceptions disabled in the bundled sysroot.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodeCpp",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -600,6 +749,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -859,6 +1039,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -988,9 +1246,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for C#.\n\nUses Roslyn and the browser .NET 10 framework and exposes console output.",
+          "description": "Code widget for C#.\n\nUses Roslyn and the browser .NET 10 framework and exposes console output.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodeCsharp",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -1090,6 +1368,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -1349,6 +1658,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -1478,9 +1865,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for Go.\n\nGo 1.27.4 compiler and linker, with a subset of the standard library.",
+          "description": "Code widget for Go.\n\nGo 1.27.4 compiler and linker, with a subset of the standard library.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodeGo",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -1580,6 +1987,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -1839,6 +2277,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -1968,9 +2484,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for Haskell, powered by MicroHs.\n\nRuns a single `Main` module with `main :: IO ()`. The compiler includes MicroHs's base library and loads optional packages such as QuickCheck, Parsec and mtl on demand; offline HTML includes all 43 optional packages so readers can change imports after export. MicroHs supports extended Haskell 2010, with gaps including Template Haskell and type families. The cell captures text output; canvas and audio APIs are not available.",
+          "description": "Code widget for Haskell, powered by MicroHs.\n\nRuns a single `Main` module with `main :: IO ()`. The compiler includes MicroHs's base library and loads optional packages such as QuickCheck, Parsec and mtl on demand; offline HTML includes all 43 optional packages so readers can change imports after export. MicroHs supports extended Haskell 2010, with gaps including Template Haskell and type families. The cell captures text output; canvas and audio APIs are not available.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodeHaskell",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -2070,6 +2606,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -2329,6 +2896,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -2462,15 +3107,33 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for HTML with live preview functionality.\n\nRenders the preview in a sandboxed iframe. External resources referenced by the authored HTML need their usual network access.",
+          "description": "Code widget for HTML with live preview functionality.\n\nRenders the preview in a sandboxed iframe. External resources referenced by the authored HTML need their usual network access.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) and `failed` (boolean) exist for every widget but stay empty and false for HTML, because the preview page is not run through the shared runner.",
           "name": "WebwriterCodeHtml",
-          "superclass": {
-            "name": "Code",
-            "module": "/src/components/code-template"
-          },
-          "tagName": "webwriter-code-html",
-          "customElement": true,
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            },
+            {
+              "description": "The frame that shows the rendered page.",
+              "name": "preview"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "field",
               "name": "settings",
@@ -2557,6 +3220,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -2823,6 +3517,84 @@
             },
             {
               "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "resetExecutionCount",
               "inheritedFrom": {
                 "name": "Code",
@@ -2910,6 +3682,12 @@
               }
             }
           ],
+          "superclass": {
+            "name": "Code",
+            "module": "/src/components/code-template"
+          },
+          "tagName": "webwriter-code-html",
+          "customElement": true,
           "modulePath": "src/widgets/webwriter-code-html.ts",
           "definitionPath": "src/widgets/webwriter-code-html.ts"
         }
@@ -2939,9 +3717,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for Java with compilation and execution capabilities using TeaVM (Java 21).\n\nCompiles Java 21 with TeaVM.",
+          "description": "Code widget for Java with compilation and execution capabilities using TeaVM (Java 21).\n\nCompiles Java 21 with TeaVM.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodeJava",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -3048,6 +3846,37 @@
             },
             {
               "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "#program",
               "privacy": "private",
               "inheritedFrom": {
@@ -3300,6 +4129,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -3429,9 +4336,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for JavaScript with execution capabilities.\n\nRuns in a worker with an interactive console.\n\nAuthoring: the Widget drawer controls execution, autocompletion, code visibility and execution statistics. While authoring, click the lock gutter or press Control+L (Command+L on macOS) to toggle locks on selected lines; readers may edit unlocked lines. The program and locked lines are stored in an inert JSON script (`<script type=\"application/json\" slot=\"data\">`, with `{\"code\":\"...\",\"lockedLines\":[1]}`); a literal `<` should be written as `\\u003c`. The authored attributes are `autorun`, `autocomplete`, `hide-code`, `disable-execution`, `showexecutiontime` and `hide-execution-count`. Older `code` and `lockedlines` attributes stay readable when the data block lacks the fields. Run results, diagnostics, counts and timings stay in memory.\n\nEmbedding on a plain page: serve the whole `dist` directory (including `dist/chunks` and `dist/runtime`), because the entry scripts locate their workers relative to themselves. No import map is needed.",
+          "description": "Code widget for JavaScript with execution capabilities.\n\nRuns in a worker with an interactive console.\n\nAuthoring: the Widget drawer controls execution, autocompletion, code visibility and execution statistics. While authoring, click the lock gutter or press Control+L (Command+L on macOS) to toggle locks on selected lines; readers may edit unlocked lines. The program and locked lines are stored in an inert JSON script (`<script type=\"application/json\" slot=\"data\">`, with `{\"code\":\"...\",\"lockedLines\":[1]}`); a literal `<` should be written as `\\u003c`. The authored attributes are `autorun`, `autocomplete`, `hide-code`, `disable-execution`, `showexecutiontime` and `hide-execution-count`. Older `code` and `lockedlines` attributes stay readable when the data block lacks the fields. Run results, diagnostics, counts and timings stay in memory.\n\nEmbedding on a plain page: serve the whole `dist` directory (including `dist/chunks` and `dist/runtime`), because the entry scripts locate their workers relative to themselves. No import map is needed.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error (in JavaScript and TypeScript also after `console.error`).",
           "name": "WebwriterCodeJavascript",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -3482,8 +4409,52 @@
               }
             },
             {
+              "kind": "field",
+              "name": "pendingLogs",
+              "type": {
+                "text": "LogResult[]"
+              },
+              "privacy": "private",
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CodeJsTemplate",
+                "module": "src/components/code-js-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "logFrame",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "private",
+              "default": "0",
+              "inheritedFrom": {
+                "name": "CodeJsTemplate",
+                "module": "src/components/code-js-template.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "stopWorker",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "CodeJsTemplate",
+                "module": "src/components/code-js-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "flushLogs",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "CodeJsTemplate",
+                "module": "src/components/code-js-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "discardPendingLogs",
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CodeJsTemplate",
@@ -3747,6 +4718,37 @@
             },
             {
               "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "#program",
               "privacy": "private",
               "inheritedFrom": {
@@ -3999,6 +5001,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -4119,9 +5199,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for Lua 5.4, powered by Wasmoon.",
+          "description": "Code widget for Lua 5.4, powered by Wasmoon.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodeLua",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -4221,6 +5321,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -4480,6 +5611,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -4609,9 +5818,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for PHP.\n\nRuns PHP 8.4 from WordPress Playground.",
+          "description": "Code widget for PHP.\n\nRuns PHP 8.4 from WordPress Playground.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodePhp",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -4711,6 +5940,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -4970,6 +6230,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -5099,9 +6437,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for Prolog facts, rules and queries, powered by Tau Prolog.\n\nEnter facts and rules in the editor and the goal in the Query field. The goal is saved in the `goal` attribute.",
+          "description": "Code widget for Prolog facts, rules and queries, powered by Tau Prolog.\n\nEnter facts and rules in the editor and the goal in the Query field. The goal is saved in the `goal` attribute.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodeProlog",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -5221,6 +6579,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -5480,6 +6869,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -5611,9 +7078,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for Python with execution capabilities using Pyodide.\n\nThe interpreter and standard library are bundled; add-on packages downloaded by Pyodide need network access.",
+          "description": "Code widget for Python with execution capabilities using Pyodide.\n\nThe interpreter and standard library are bundled; add-on packages downloaded by Pyodide need network access.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodePython",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -5713,6 +7200,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -5972,6 +7490,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -6101,9 +7697,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for Rust.\n\nRuns rustc's Miri interpreter via LiveCodes on a single source file with the bundled standard library. Offline HTML export needs network access to fetch the toolchain from its CDN; the saved HTML runs with networking disabled.",
+          "description": "Code widget for Rust.\n\nRuns rustc's Miri interpreter via LiveCodes on a single source file with the bundled standard library. Offline HTML export needs network access to fetch the toolchain from its CDN; the saved HTML runs with networking disabled.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodeRust",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -6203,6 +7819,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -6462,6 +8109,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -6591,9 +8316,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for Scheme, powered by BiwaScheme.",
+          "description": "Code widget for Scheme, powered by BiwaScheme.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodeScheme",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -6693,6 +8438,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -6952,6 +8728,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -7081,9 +8935,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for Bash.\n\nBash-compatible shell via just-bash, with a virtual filesystem and bundled commands.",
+          "description": "Code widget for Bash.\n\nBash-compatible shell via just-bash, with a virtual filesystem and bundled commands.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodeShell",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -7183,6 +9057,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -7442,6 +9347,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -7571,9 +9554,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for SQLite with tabular query results.\n\nUses SQLite via sql.js. Each run starts with an empty in-memory database; use the same cell to create tables, insert data and query it. Each query result shows up to 500 rows in its own table.",
+          "description": "Code widget for SQLite with tabular query results.\n\nUses SQLite via sql.js. Each run starts with an empty in-memory database; use the same cell to create tables, insert data and query it. Each query result shows up to 500 rows in its own table.\n\nSignals: `output` (string), `failed` (boolean) and `table` (`{columns, rows}`, the first query result, or null).\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).",
           "name": "WebwriterCodeSql",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -7588,9 +9591,27 @@
               ]
             },
             {
+              "kind": "field",
+              "name": "#table",
+              "privacy": "private"
+            },
+            {
               "kind": "method",
               "name": "Result",
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ ...this.signals, table: computed(() => this.#table.get()) }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -7682,6 +9703,24 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -7948,6 +9987,84 @@
             },
             {
               "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "resetExecutionCount",
               "inheritedFrom": {
                 "name": "Code",
@@ -8061,9 +10178,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for TypeScript with compilation and execution capabilities.\n\nTranspiles with the TypeScript compiler, then runs the JavaScript in a worker.",
+          "description": "Code widget for TypeScript with compilation and execution capabilities.\n\nTranspiles with the TypeScript compiler, then runs the JavaScript in a worker.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error (in JavaScript and TypeScript also after `console.error`).",
           "name": "WebwriterCodeTypescript",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -8114,8 +10251,52 @@
               }
             },
             {
+              "kind": "field",
+              "name": "pendingLogs",
+              "type": {
+                "text": "LogResult[]"
+              },
+              "privacy": "private",
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CodeJsTemplate",
+                "module": "src/components/code-js-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "logFrame",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "private",
+              "default": "0",
+              "inheritedFrom": {
+                "name": "CodeJsTemplate",
+                "module": "src/components/code-js-template.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "stopWorker",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "CodeJsTemplate",
+                "module": "src/components/code-js-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "flushLogs",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "CodeJsTemplate",
+                "module": "src/components/code-js-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "discardPendingLogs",
               "privacy": "private",
               "inheritedFrom": {
                 "name": "CodeJsTemplate",
@@ -8379,6 +10560,37 @@
             },
             {
               "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "#program",
               "privacy": "private",
               "inheritedFrom": {
@@ -8631,6 +10843,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -8751,9 +11041,29 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Code widget for WebAssembly with compilation and execution capabilities.\n\nAssembles WebAssembly Text Format (WAT) with WABT.",
+          "description": "Code widget for WebAssembly with compilation and execution capabilities.\n\nAssembles WebAssembly Text Format (WAT) with WABT.\n\nConversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).\n\nSignals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.",
           "name": "WebwriterCodeWebassembly",
+          "cssParts": [
+            {
+              "description": "The code editor.",
+              "name": "editor"
+            },
+            {
+              "description": "The area for results, console lines and tables.",
+              "name": "output"
+            }
+          ],
           "members": [
+            {
+              "kind": "field",
+              "name": "convertFrom",
+              "static": true
+            },
+            {
+              "kind": "field",
+              "name": "convertTo",
+              "static": true
+            },
             {
               "kind": "method",
               "name": "offlineAssets",
@@ -8853,6 +11163,37 @@
               "name": "#permissions",
               "privacy": "private",
               "default": "new Permissions(this)",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#output",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "#failed",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "signals",
+              "type": {
+                "text": "Record<string, { get(): unknown }>"
+              },
+              "default": "{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }",
+              "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -9112,6 +11453,84 @@
               "name": "editMode",
               "privacy": "private",
               "default": "new Compartment()",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "publishOutput",
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "loadPre",
+              "parameters": [
+                {
+                  "name": "fragment",
+                  "type": {
+                    "text": "DocumentFragment"
+                  }
+                }
+              ],
+              "description": "Takes the program from a `pre` element (conversion). Declines when the fragment has none.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "toPre",
+              "description": "The program as a `pre` element with a `code` child (conversion).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "importSource",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": {
+                    "text": "File"
+                  }
+                }
+              ],
+              "description": "Reads a source file and returns the function that replaces the program with it (import).",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "exportSource",
+              "description": "The program as a source file with the language's extension (export). Locked lines are not part of the file.",
+              "inheritedFrom": {
+                "name": "Code",
+                "module": "src/components/code-template.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applySource",
+              "privacy": "private",
+              "parameters": [
+                {
+                  "name": "text",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"

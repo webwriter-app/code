@@ -1,5 +1,5 @@
 import "@shoelace-style/shoelace/dist/themes/light.css";
-import { LitElementWw } from "@webwriter/lit";
+import { LitElementWw, computed, signal } from "@webwriter/lit";
 import { jsonData } from "@webwriter/lit/data";
 import { Permissions } from "@webwriter/lit/permissions";
 import { Settings } from "@webwriter/lit/settings";
@@ -42,6 +42,8 @@ import { withRuntimeAssets, type LoadedRuntime, type RuntimeDownload } from "./r
 import type { RuntimeAsset } from "../model/runtime-assets";
 import type { SerializedValue } from "../model/javascript/javascript.worker";
 import type { SqlTable } from "../model/sql/sql-runtime";
+import { resultText } from "../model/output-text";
+import { fileNameOf, languageOf, readSource } from "../model/source-files";
 
 export type CodeRunner = (code: string, context: Code, signal: AbortSignal) => void | Promise<void>;
 
@@ -145,6 +147,17 @@ export abstract class Code extends Settings(LitElementWw, {
     readonly msg = this.localize.msg;
 
     #permissions = new Permissions(this);
+    #output = signal("");
+    #failed = signal(false);
+
+    /**
+     * Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;
+     * `failed` (boolean) is true when the last run ended with an error or logged one to the console.
+     */
+    signals: Record<string, { get(): unknown }> = {
+        output: computed(() => this.#output.get()),
+        failed: computed(() => this.#failed.get()),
+    };
     #program = jsonData<{ code?: string; lockedLines?: number[] }>(this, { defaults: {} });
 
     /** The execution time in milliseconds of the last code run. */
@@ -247,6 +260,21 @@ export abstract class Code extends Settings(LitElementWw, {
         super.disconnectedCallback();
     }
 
+    protected willUpdate(changed: PropertyValues) {
+        super.willUpdate(changed);
+        if (changed.has("results") || changed.has("diagnostics") || changed.has("runtimeError")) this.publishOutput();
+    }
+
+    private publishOutput() {
+        const errors = [this.runtimeError, ...this.diagnostics.map((diagnostic) => diagnostic.message)].filter(Boolean);
+        const lines = errors.length
+            ? errors
+            : this.results.map(resultText).filter((text) => text !== undefined);
+        this.#output.set(lines.join("\n"));
+        // A JavaScript run reports an uncaught error as a console line of level "error".
+        this.#failed.set(errors.length > 0 || this.results.some((result) => (result as LogResult).label === "error"));
+    }
+
     protected updated(changed: PropertyValues) {
         if (!this.isConnected) return;
         if (!this.codeMirror) {
@@ -261,6 +289,7 @@ export abstract class Code extends Settings(LitElementWw, {
                     this.autocompletion.of(this.autocomplete ? autocompletion() : []),
                     EditorView.contentAttributes.of({
                         "aria-label": this.languageModule.name + " " + this.msg("Editor"),
+                        "aria-description": this.msg("Press Escape, then Tab to leave the editor."),
                     }),
                     EditorView.updateListener.of((update) => {
                         if (update.transactions.some((tr) => tr.annotation(hostUpdate))) return;
@@ -317,6 +346,40 @@ export abstract class Code extends Settings(LitElementWw, {
             },
             use,
         );
+    }
+
+    /** Takes the program from a `pre` element (conversion). Declines when the fragment has none. */
+    loadPre(fragment: DocumentFragment) {
+        const pre = fragment.querySelector("pre");
+        if (!pre) return false;
+        this.applySource(pre.textContent ?? "");
+    }
+
+    /** The program as a `pre` element with a `code` child (conversion). */
+    toPre() {
+        const pre = this.ownerDocument.createElement("pre");
+        const code = pre.appendChild(this.ownerDocument.createElement("code"));
+        code.className = "language-" + languageOf(this.localName);
+        code.textContent = this.editorSource();
+        return pre;
+    }
+
+    /** Reads a source file and returns the function that replaces the program with it (import). */
+    async importSource(file: File) {
+        const text = readSource(new Uint8Array(await file.arrayBuffer()));
+        if (text === undefined) throw new Error(this.msg("The file is not a text file, or it is larger than 1 MB."));
+        return () => this.applySource(text);
+    }
+
+    /** The program as a source file with the language's extension (export). Locked lines are not part of the file. */
+    exportSource() {
+        const code = this.editorSource();
+        return new File([code], fileNameOf(languageOf(this.localName), code), { type: "text/plain" });
+    }
+
+    private applySource(text: string) {
+        this.code = text;
+        this.lockedLines = [];
     }
 
     resetExecutionCount() {
@@ -399,7 +462,8 @@ export abstract class Code extends Settings(LitElementWw, {
                 opacity: this.hideCode ? "0.5" : undefined,
             })}
         >
-            <div class="editor"></div>
+            <div class="editor" part="editor"></div>
+            <pre class="print-code">${this.editorSource()}</pre>
             ${this.Controls()} ${this.Output()}
         </div>`;
     }
@@ -470,7 +534,8 @@ export abstract class Code extends Settings(LitElementWw, {
     }
 
     private Output() {
-        return html`<output aria-live="polite">
+        const empty = !this.runtimeError && !this.diagnostics.length && !this.results.length;
+        return html`<output part="output" aria-live="polite" ?data-empty=${empty}>
             ${this.runtimeError
                 ? html`<div class="diagnostics-container">
                       <pre class="diagnostic-message">${this.runtimeError}</pre>
@@ -486,6 +551,7 @@ export abstract class Code extends Settings(LitElementWw, {
             return html` <iframe
                 id="iframePreview"
                 class="htmlPreview"
+                part="preview"
                 title=${this.languageModule.name}
                 srcdoc=${String(this.results[0] ?? "")}
                 sandbox="allow-scripts allow-modals"

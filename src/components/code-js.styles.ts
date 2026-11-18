@@ -109,4 +109,15 @@ export const jsTemplateStyle = css`
         padding-top: 0.5em;
         padding-left: 1em;
     }
+
+    @media print {
+        output {
+            max-height: none;
+            overflow: visible;
+        }
+
+        .log-line {
+            break-inside: avoid;
+        }
+    }
 `;

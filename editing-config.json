@@ -347,7 +347,14 @@
             "ckb-Arab": "کۆد (JavaScript)",
             "af-ZA": "Kode (JavaScript)",
             "af-NA": "Kode (JavaScript)"
-        }
+        },
+        "importFormats": [
+            ".js",
+            ".mjs"
+        ],
+        "exportFormats": [
+            ".js"
+        ]
     },
     "./widgets/webwriter-code-java": {
         "uninsertable": true,
@@ -465,7 +472,13 @@
             "ckb-Arab": "کۆد (Java)",
             "af-ZA": "Kode (Java)",
             "af-NA": "Kode (Java)"
-        }
+        },
+        "importFormats": [
+            ".java"
+        ],
+        "exportFormats": [
+            ".java"
+        ]
     },
     "./snippets/java": {
         "label": {
@@ -699,7 +712,13 @@
             "ckb-Arab": "کۆد (TypeScript)",
             "af-ZA": "Kode (TypeScript)",
             "af-NA": "Kode (TypeScript)"
-        }
+        },
+        "importFormats": [
+            ".ts"
+        ],
+        "exportFormats": [
+            ".ts"
+        ]
     },
     "./widgets/webwriter-code-python": {
         "label": {
@@ -816,7 +835,13 @@
             "ckb-Arab": "کۆد (Python)",
             "af-ZA": "Kode (Python)",
             "af-NA": "Kode (Python)"
-        }
+        },
+        "importFormats": [
+            ".py"
+        ],
+        "exportFormats": [
+            ".py"
+        ]
     },
     "./widgets/webwriter-code-webassembly": {
         "label": {
@@ -933,7 +958,14 @@
             "ckb-Arab": "کۆد (WebAssembly)",
             "af-ZA": "Kode (WebAssembly)",
             "af-NA": "Kode (WebAssembly)"
-        }
+        },
+        "importFormats": [
+            ".wat",
+            ".wast"
+        ],
+        "exportFormats": [
+            ".wat"
+        ]
     },
     "./widgets/webwriter-code-html": {
         "label": {
@@ -1050,7 +1082,14 @@
             "ckb-Arab": "کۆد (HTML)",
             "af-ZA": "Kode (HTML)",
             "af-NA": "Kode (HTML)"
-        }
+        },
+        "importFormats": [
+            ".html",
+            ".htm"
+        ],
+        "exportFormats": [
+            ".html"
+        ]
     },
     "./snippets/HTML": {
         "uninsertable": true,
@@ -1286,7 +1325,13 @@
             "ckb-Arab": "کۆد (SQL)",
             "af-ZA": "Kode (SQL)",
             "af-NA": "Kode (SQL)"
-        }
+        },
+        "importFormats": [
+            ".sql"
+        ],
+        "exportFormats": [
+            ".sql"
+        ]
     },
     "./snippets/sql": {
         "label": {
@@ -1521,7 +1566,13 @@
             "ckb-Arab": "کۆد (Lua)",
             "af-ZA": "Kode (Lua)",
             "af-NA": "Kode (Lua)"
-        }
+        },
+        "importFormats": [
+            ".lua"
+        ],
+        "exportFormats": [
+            ".lua"
+        ]
     },
     "./snippets/lua": {
         "label": {
@@ -1756,7 +1807,14 @@
             "ckb-Arab": "کۆد (Prolog)",
             "af-ZA": "Kode (Prolog)",
             "af-NA": "Kode (Prolog)"
-        }
+        },
+        "importFormats": [
+            ".pl",
+            ".pro"
+        ],
+        "exportFormats": [
+            ".pl"
+        ]
     },
     "./snippets/prolog": {
         "label": {
@@ -1991,7 +2049,14 @@
             "ckb-Arab": "کۆد (Scheme)",
             "af-ZA": "Kode (Scheme)",
             "af-NA": "Kode (Scheme)"
-        }
+        },
+        "importFormats": [
+            ".scm",
+            ".ss"
+        ],
+        "exportFormats": [
+            ".scm"
+        ]
     },
     "./snippets/scheme": {
         "label": {
@@ -2226,7 +2291,13 @@
             "af-ZA": "Kode (C)",
             "af-NA": "Kode (C)"
         },
-        "uninsertable": true
+        "uninsertable": true,
+        "importFormats": [
+            ".c"
+        ],
+        "exportFormats": [
+            ".c"
+        ]
     },
     "./snippets/c": {
         "label": {
@@ -2461,7 +2532,15 @@
             "af-ZA": "Kode (C++)",
             "af-NA": "Kode (C++)"
         },
-        "uninsertable": true
+        "uninsertable": true,
+        "importFormats": [
+            ".cpp",
+            ".cc",
+            ".cxx"
+        ],
+        "exportFormats": [
+            ".cpp"
+        ]
     },
     "./snippets/cpp": {
         "label": {
@@ -2696,7 +2775,13 @@
             "af-ZA": "Kode (C#)",
             "af-NA": "Kode (C#)"
         },
-        "uninsertable": true
+        "uninsertable": true,
+        "importFormats": [
+            ".cs"
+        ],
+        "exportFormats": [
+            ".cs"
+        ]
     },
     "./snippets/csharp": {
         "label": {
@@ -2931,7 +3016,13 @@
             "af-ZA": "Kode (PHP)",
             "af-NA": "Kode (PHP)"
         },
-        "uninsertable": true
+        "uninsertable": true,
+        "importFormats": [
+            ".php"
+        ],
+        "exportFormats": [
+            ".php"
+        ]
     },
     "./snippets/php": {
         "label": {
@@ -3166,7 +3257,13 @@
             "af-ZA": "Kode (Go)",
             "af-NA": "Kode (Go)"
         },
-        "uninsertable": true
+        "uninsertable": true,
+        "importFormats": [
+            ".go"
+        ],
+        "exportFormats": [
+            ".go"
+        ]
     },
     "./snippets/go": {
         "label": {
@@ -3401,7 +3498,13 @@
             "af-ZA": "Kode (Rust)",
             "af-NA": "Kode (Rust)"
         },
-        "uninsertable": true
+        "uninsertable": true,
+        "importFormats": [
+            ".rs"
+        ],
+        "exportFormats": [
+            ".rs"
+        ]
     },
     "./snippets/rust": {
         "label": {
@@ -3636,7 +3739,13 @@
             "af-ZA": "Kode (Bash)",
             "af-NA": "Kode (Bash)"
         },
-        "uninsertable": true
+        "uninsertable": true,
+        "importFormats": [
+            ".sh"
+        ],
+        "exportFormats": [
+            ".sh"
+        ]
     },
     "./snippets/shell": {
         "label": {
@@ -3756,10 +3865,20 @@
         }
     },
     "./widgets/webwriter-code-haskell": {
-        "label": { "_": "Code (Haskell)" },
-        "uninsertable": true
+        "label": {
+            "_": "Code (Haskell)"
+        },
+        "uninsertable": true,
+        "importFormats": [
+            ".hs"
+        ],
+        "exportFormats": [
+            ".hs"
+        ]
     },
     "./snippets/haskell": {
-        "label": { "_": "Code (Haskell)" }
+        "label": {
+            "_": "Code (Haskell)"
+        }
     }
 }

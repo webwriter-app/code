@@ -1,5 +1,5 @@
-import { closeBrackets, closeBracketsKeymap, completionKeymap } from "@codemirror/autocomplete";
-import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
+import { closeBrackets, closeBracketsKeymap, completionKeymap, completionStatus } from "@codemirror/autocomplete";
+import { defaultKeymap, history, historyKeymap, indentLess, indentMore } from "@codemirror/commands";
 import { bracketMatching, foldGutter, HighlightStyle, indentOnInput, syntaxHighlighting } from "@codemirror/language";
 import { Annotation, EditorState, Facet, RangeSet, StateEffect, StateField, type Extension } from "@codemirror/state";
 import { color, oneDarkHighlightStyle } from "@codemirror/theme-one-dark";
@@ -27,6 +27,36 @@ import LockFillIcon from "@tabler/icons/filled/lock.svg";
 export { EditorView } from "@codemirror/view";
 
 const canLockLines = Facet.define<() => boolean, () => boolean>({ combine: (values) => values[0] ?? (() => false) });
+
+// Tab indents, so it would trap keyboard focus: Escape lets the next Tab move on to the next control.
+const tabReleased = new WeakSet<EditorView>();
+
+const tabEscape = [
+    keymap.of([
+        {
+            key: "Escape",
+            run: (view) => {
+                // Escape that closes the completion popup keeps Tab indenting.
+                if (!completionStatus(view.state)) tabReleased.add(view);
+                return false;
+            },
+        },
+        {
+            key: "Tab",
+            run: (view) => !tabReleased.has(view) && indentMore(view),
+            shift: (view) => !tabReleased.has(view) && indentLess(view),
+        },
+    ]),
+    EditorView.domEventHandlers({
+        keydown(event, view) {
+            if (!["Escape", "Tab", "Shift"].includes(event.key)) tabReleased.delete(view);
+            return false;
+        },
+        blur(_event, view) {
+            tabReleased.delete(view);
+        },
+    }),
+];
 
 export const hostUpdate = Annotation.define<boolean>();
 
@@ -316,13 +346,13 @@ export function setupCodeMirror(
                 rectangularSelection(),
                 crosshairCursor(),
                 highlightActiveLine(),
+                tabEscape,
                 keymap.of([
                     { key: "Mod-l", run: (view) => inEditView() && toggleLockKeyCommand(view) },
                     ...closeBracketsKeymap,
                     ...defaultKeymap,
                     ...historyKeymap,
                     ...completionKeymap,
-                    indentWithTab,
                 ]),
                 ...extensions,
             ],
