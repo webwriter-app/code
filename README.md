@@ -115,11 +115,11 @@ npm install @webwriter/code
 ## `WebwriterCodeHtml` (`<webwriter-code-html>`)
 Code widget for HTML with live preview functionality.
 
-Renders the preview in a sandboxed iframe. External resources referenced by the authored HTML need their usual network access.
+Renders the preview with the shared self-contained HTML sandbox, with a fresh isolated frame for each Run. The runner is bundled into the widget and works offline and in standalone exports; resources referenced by the authored HTML must also be embedded for offline use. Hosts enforcing CSP must authorize the shared runner hash. Inline event attributes and document.write are not supported under the editor policy.
 
 Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
 
-Signals: `output` (string) and `failed` (boolean) exist for every widget but stay empty and false for HTML, because the preview page is not run through the shared runner.
+Signals: `output` (string) and `failed` (boolean) exist for every widget but stay empty and false for HTML, because iframe output is not captured as console text or worker errors.
 
 ### Usage
 

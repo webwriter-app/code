@@ -155,6 +155,7 @@
     "Jorik van Genuchten"
   ],
   "scripts": {
+    "test:html-sandbox": "node scripts/test-html-sandbox.mjs",
     "prepublishOnly": "node scripts/build-runtimes.mjs && npx @webwriter/build --shared-dependencies",
     "dev": "node scripts/build-runtimes.mjs --watch",
     "localize": "lit-localize extract && npx @webwriter/build localize && lit-localize build",
@@ -184,7 +185,7 @@
     "@shoelace-style/shoelace": "^2.20.1",
     "@tabler/icons": "^3.52.0",
     "@webwriter/lit": "^3.2.0",
-    "@webwriter/widget": "^1.2.0",
+    "@webwriter/widget": "^1.4.0",
     "biwascheme": "0.8.3",
     "codemirror-lang-prolog": "^0.1.0",
     "lit": ">=3.3.3 <4.0.0-0",
@@ -333,6 +334,10 @@
     "./tests/presentation.*": {
       "source": "./tests/presentation.test.ts",
       "default": "./dist/tests/presentation.*"
+    },
+    "./tests/html-sandbox.*": {
+      "source": "./tests/html-sandbox.test.ts",
+      "default": "./dist/tests/html-sandbox.*"
     },
     "./tests/data.*": {
       "source": "./tests/data.test.ts",

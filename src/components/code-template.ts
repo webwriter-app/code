@@ -8,6 +8,8 @@ import type { CSSResultGroup, PropertyValues } from "lit";
 import { query, state } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { keyed } from "lit/directives/keyed.js";
+import { sandboxDocument } from "@webwriter/widget/sandbox";
 
 import { style } from "./code.styles";
 
@@ -548,14 +550,15 @@ export abstract class Code extends Settings(LitElementWw, {
 
     protected Result() {
         if (this.languageModule.name === "HTML") {
-            return html` <iframe
+            // A new result array marks a Run, including reruns of identical source.
+            return keyed(this.results, html` <iframe
                 id="iframePreview"
                 class="htmlPreview"
                 part="preview"
                 title=${this.languageModule.name}
-                srcdoc=${String(this.results[0] ?? "")}
-                sandbox="allow-scripts allow-modals"
-            ></iframe>`;
+                srcdoc=${sandboxDocument(String(this.results[0] ?? ""))}
+                sandbox="allow-scripts"
+            ></iframe>`);
         }
         const outputs = (this.results as TextResult[])
             .filter((r) => r !== undefined)
