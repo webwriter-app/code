@@ -1,10 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
   <title>JAVA</title>
-  <g transform="translate(1.500 7) scale(0.809 1.25)"
-     fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M4.4 0v5.8C4.4 7.3 3.6 8 2.2 8S0 7.2 0 5.8"/>
-    <path transform="translate(6.65)" d="M0 8L2.5 0 5 8M1 5h3"/>
-    <path transform="translate(13.9)" d="M0 0l2.4 8L4.8 0"/>
-    <path transform="translate(20.95)" d="M0 8L2.5 0 5 8M1 5h3"/>
+  <g fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10.5 3v4.75a3 2.25 0 0 1-6 0"/>
+    <path d="M13.5 10l3-7 3 7M14.7 7.25h3.6"/>
+    <path d="M4.5 14l3 7 3-7"/>
+    <path d="M13.5 21l3-7 3 7M14.7 18.25h3.6"/>
   </g>
 </svg>

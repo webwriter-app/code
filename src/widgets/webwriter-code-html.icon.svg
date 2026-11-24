@@ -1,10 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
   <title>HTML</title>
-  <g transform="translate(1.500 7) scale(0.816 1.25)"
-     fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M0 0v8m4.8-8v8M0 4h4.8"/>
-    <path transform="translate(7.05)" d="M0 0h4.7M2.35 0v8"/>
-    <path transform="translate(14)" d="M0 8V0l2.7 4.2L5.4 0v8"/>
-    <path transform="translate(21.65)" d="M0 0v8h4.1"/>
+  <g fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.5 3v7M10.5 3v7M4.5 6.5h6"/>
+    <path d="M13.5 3h6M16.5 3v7"/>
+    <path d="M4.5 21v-7l3 3.7 3-3.7v7"/>
+    <path d="M14.25 14v7h4.5"/>
   </g>
 </svg>
