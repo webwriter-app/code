@@ -1,5 +1,4 @@
-Tabler outline icons, from @tabler/icons 3.52.0.
-Haskell and WebAssembly marks were drawn for this package.
+The Code package icon uses the Tabler code icon.
 
 MIT License
 

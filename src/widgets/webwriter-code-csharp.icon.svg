@@ -1,19 +1,8 @@
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-c-sharp"
->
-  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-  <path d="M10 9a3 3 0 0 0 -3 -3h-.5a3.5 3.5 0 0 0 -3.5 3.5v5a3.5 3.5 0 0 0 3.5 3.5h.5a3 3 0 0 0 3 -3" />
-  <path d="M16 7l-1 10" />
-  <path d="M20 7l-1 10" />
-  <path d="M14 10h7.5" />
-  <path d="M21 14h-7.5" />
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <title>CS</title>
+  <g transform="translate(4.743 7) scale(1.230 1.25)"
+     fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.7 1C4 0.3 3.4 0 2.5 0 0.8 0 0 1.4 0 4s0.8 4 2.5 4c0.9 0 1.5-0.3 2.2-1"/>
+    <path transform="translate(7.2)" d="M4.6 1C4 0.3 3.2 0 2.3 0 1 0 0.1 0.7 0.1 1.9c0 1.1 0.7 1.7 2.2 2.1s2.3 1 2.3 2.1C4.6 7.3 3.7 8 2.3 8 1.4 8 0.5 7.7 0 7"/>
+  </g>
 </svg>

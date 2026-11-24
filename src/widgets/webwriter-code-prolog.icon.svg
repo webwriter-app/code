@@ -1,21 +1,8 @@
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  class="icon icon-tabler icons-tabler-outline icon-tabler-binary-tree-2"
->
-  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-  <path d="M14 6a2 2 0 1 0 -4 0a2 2 0 0 0 4 0" />
-  <path d="M7 14a2 2 0 1 0 -4 0a2 2 0 0 0 4 0" />
-  <path d="M21 14a2 2 0 1 0 -4 0a2 2 0 0 0 4 0" />
-  <path d="M14 18a2 2 0 1 0 -4 0a2 2 0 0 0 4 0" />
-  <path d="M12 8v8" />
-  <path d="M6.316 12.496l4.368 -4.992" />
-  <path d="M17.684 12.496l-4.366 -4.99" />
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <title>PL</title>
+  <g transform="translate(4.989 7) scale(1.230 1.25)"
+     fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0 8V0h2.7c1.4 0 2.1 0.8 2.1 2.1s-0.7 2.1-2.1 2.1H0"/>
+    <path transform="translate(7.3)" d="M0 0v8h4.1"/>
+  </g>
 </svg>

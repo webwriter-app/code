@@ -1,17 +1,8 @@
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="2"
-  stroke-linecap="round"
-  stroke-linejoin="round"
-  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-javascript"
->
-  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-  <path d="M20 4l-2 14.5l-6 2l-6 -2l-2 -14.5l16 0" />
-  <path d="M7.5 8h3v8l-2 -1" />
-  <path d="M16.5 8h-2.5a.5 .5 0 0 0 -.5 .5v3a.5 .5 0 0 0 .5 .5h1.423a.5 .5 0 0 1 .495 .57l-.418 2.93l-2 .5" />
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <title>JS</title>
+  <g transform="translate(4.928 7) scale(1.230 1.25)"
+     fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.4 0v5.8C4.4 7.3 3.6 8 2.2 8S0 7.2 0 5.8"/>
+    <path transform="translate(6.9)" d="M4.6 1C4 0.3 3.2 0 2.3 0 1 0 0.1 0.7 0.1 1.9c0 1.1 0.7 1.7 2.2 2.1s2.3 1 2.3 2.1C4.6 7.3 3.7 8 2.3 8 1.4 8 0.5 7.7 0 7"/>
+  </g>
 </svg>

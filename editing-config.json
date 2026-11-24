@@ -481,6 +481,7 @@
         ]
     },
     "./snippets/java": {
+        "iconWidget": "webwriter-code-java",
         "label": {
             "_": "Code (Java)",
             "ar": "Code (Java)",
@@ -1092,6 +1093,7 @@
         ]
     },
     "./snippets/HTML": {
+        "iconWidget": "webwriter-code-html",
         "uninsertable": true,
         "label": {
             "_": "Code (HTML)",
@@ -1334,6 +1336,7 @@
         ]
     },
     "./snippets/sql": {
+        "iconWidget": "webwriter-code-sql",
         "label": {
             "_": "Code (SQL)",
             "ar": "Code (SQL)",
@@ -1575,6 +1578,7 @@
         ]
     },
     "./snippets/lua": {
+        "iconWidget": "webwriter-code-lua",
         "label": {
             "_": "Code (Lua)",
             "ar": "Code (Lua)",
@@ -1817,6 +1821,7 @@
         ]
     },
     "./snippets/prolog": {
+        "iconWidget": "webwriter-code-prolog",
         "label": {
             "_": "Code (Prolog)",
             "ar": "Code (Prolog)",
@@ -2059,6 +2064,7 @@
         ]
     },
     "./snippets/scheme": {
+        "iconWidget": "webwriter-code-scheme",
         "label": {
             "_": "Code (Scheme)",
             "ar": "Code (Scheme)",
@@ -2300,6 +2306,7 @@
         ]
     },
     "./snippets/c": {
+        "iconWidget": "webwriter-code-c",
         "label": {
             "_": "Code (C)",
             "ar": "Code (C)",
@@ -2543,6 +2550,7 @@
         ]
     },
     "./snippets/cpp": {
+        "iconWidget": "webwriter-code-cpp",
         "label": {
             "_": "Code (C++)",
             "ar": "Code (C++)",
@@ -2784,6 +2792,7 @@
         ]
     },
     "./snippets/csharp": {
+        "iconWidget": "webwriter-code-csharp",
         "label": {
             "_": "Code (C#)",
             "ar": "Code (C#)",
@@ -3025,6 +3034,7 @@
         ]
     },
     "./snippets/php": {
+        "iconWidget": "webwriter-code-php",
         "label": {
             "_": "Code (PHP)",
             "ar": "Code (PHP)",
@@ -3266,6 +3276,7 @@
         ]
     },
     "./snippets/go": {
+        "iconWidget": "webwriter-code-go",
         "label": {
             "_": "Code (Go)",
             "ar": "Code (Go)",
@@ -3507,6 +3518,7 @@
         ]
     },
     "./snippets/rust": {
+        "iconWidget": "webwriter-code-rust",
         "label": {
             "_": "Code (Rust)",
             "ar": "Code (Rust)",
@@ -3748,6 +3760,7 @@
         ]
     },
     "./snippets/shell": {
+        "iconWidget": "webwriter-code-shell",
         "label": {
             "_": "Code (Bash)",
             "ar": "Code (Bash)",
@@ -3877,6 +3890,7 @@
         ]
     },
     "./snippets/haskell": {
+        "iconWidget": "webwriter-code-haskell",
         "label": {
             "_": "Code (Haskell)"
         }
