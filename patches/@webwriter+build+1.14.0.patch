@@ -1,0 +1,8 @@
+diff --git a/node_modules/@webwriter/build/build.js b/node_modules/@webwriter/build/build.js
+--- a/node_modules/@webwriter/build/build.js
++++ b/node_modules/@webwriter/build/build.js
+@@ -385,3 +385,3 @@
+   const pkg = JSON.parse(fs.readFileSync("./package.json", "utf8"))
+-  const buildableKeys = Object.keys(pkg?.exports ?? {}).filter(k => k.startsWith("./widgets/"))
++  const buildableKeys = Object.keys(pkg?.exports ?? {}).filter(k => k.startsWith("./widgets/") && !k.endsWith(".icon.svg"))
+   const testKeys = Object.keys(pkg?.exports ?? {}).filter(k => k.startsWith("./tests/"))

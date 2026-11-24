@@ -217,87 +217,105 @@
   },
   "type": "module",
   "exports": {
+    "./widgets/webwriter-code-javascript.icon.svg": "./src/widgets/webwriter-code-javascript.icon.svg",
     "./widgets/webwriter-code-javascript.*": {
       "source": "./src/widgets/webwriter-code-javascript.ts",
       "default": "./dist/widgets/webwriter-code-javascript.*"
     },
+    "./widgets/webwriter-code-html.icon.svg": "./src/widgets/webwriter-code-html.icon.svg",
     "./widgets/webwriter-code-html.*": {
       "source": "./src/widgets/webwriter-code-html.ts",
       "default": "./dist/widgets/webwriter-code-html.*"
     },
     "./snippets/HTML.html": "./snippets/html.html",
     "./snippets/java.html": "./snippets/java.html",
+    "./widgets/webwriter-code-java.icon.svg": "./src/widgets/webwriter-code-java.icon.svg",
     "./widgets/webwriter-code-java.*": {
       "source": "./src/widgets/webwriter-code-java.ts",
       "default": "./dist/widgets/webwriter-code-java.*"
     },
+    "./widgets/webwriter-code-typescript.icon.svg": "./src/widgets/webwriter-code-typescript.icon.svg",
     "./widgets/webwriter-code-typescript.*": {
       "source": "./src/widgets/webwriter-code-typescript.ts",
       "default": "./dist/widgets/webwriter-code-typescript.*"
     },
+    "./widgets/webwriter-code-python.icon.svg": "./src/widgets/webwriter-code-python.icon.svg",
     "./widgets/webwriter-code-python.*": {
       "source": "./src/widgets/webwriter-code-python.ts",
       "default": "./dist/widgets/webwriter-code-python.*"
     },
+    "./widgets/webwriter-code-webassembly.icon.svg": "./src/widgets/webwriter-code-webassembly.icon.svg",
     "./widgets/webwriter-code-webassembly.*": {
       "source": "./src/widgets/webwriter-code-webassembly.ts",
       "default": "./dist/widgets/webwriter-code-webassembly.*"
     },
+    "./widgets/webwriter-code-sql.icon.svg": "./src/widgets/webwriter-code-sql.icon.svg",
     "./widgets/webwriter-code-sql.*": {
       "source": "./src/widgets/webwriter-code-sql.ts",
       "default": "./dist/widgets/webwriter-code-sql.*"
     },
     "./snippets/sql.html": "./snippets/sql.html",
+    "./widgets/webwriter-code-lua.icon.svg": "./src/widgets/webwriter-code-lua.icon.svg",
     "./widgets/webwriter-code-lua.*": {
       "source": "./src/widgets/webwriter-code-lua.ts",
       "default": "./dist/widgets/webwriter-code-lua.*"
     },
     "./snippets/lua.html": "./snippets/lua.html",
+    "./widgets/webwriter-code-prolog.icon.svg": "./src/widgets/webwriter-code-prolog.icon.svg",
     "./widgets/webwriter-code-prolog.*": {
       "source": "./src/widgets/webwriter-code-prolog.ts",
       "default": "./dist/widgets/webwriter-code-prolog.*"
     },
     "./snippets/prolog.html": "./snippets/prolog.html",
+    "./widgets/webwriter-code-scheme.icon.svg": "./src/widgets/webwriter-code-scheme.icon.svg",
     "./widgets/webwriter-code-scheme.*": {
       "source": "./src/widgets/webwriter-code-scheme.ts",
       "default": "./dist/widgets/webwriter-code-scheme.*"
     },
     "./snippets/scheme.html": "./snippets/scheme.html",
+    "./widgets/webwriter-code-c.icon.svg": "./src/widgets/webwriter-code-c.icon.svg",
     "./widgets/webwriter-code-c.*": {
       "source": "./src/widgets/webwriter-code-c.ts",
       "default": "./dist/widgets/webwriter-code-c.*"
     },
     "./snippets/c.html": "./snippets/c.html",
+    "./widgets/webwriter-code-cpp.icon.svg": "./src/widgets/webwriter-code-cpp.icon.svg",
     "./widgets/webwriter-code-cpp.*": {
       "source": "./src/widgets/webwriter-code-cpp.ts",
       "default": "./dist/widgets/webwriter-code-cpp.*"
     },
     "./snippets/cpp.html": "./snippets/cpp.html",
+    "./widgets/webwriter-code-csharp.icon.svg": "./src/widgets/webwriter-code-csharp.icon.svg",
     "./widgets/webwriter-code-csharp.*": {
       "source": "./src/widgets/webwriter-code-csharp.ts",
       "default": "./dist/widgets/webwriter-code-csharp.*"
     },
     "./snippets/csharp.html": "./snippets/csharp.html",
+    "./widgets/webwriter-code-php.icon.svg": "./src/widgets/webwriter-code-php.icon.svg",
     "./widgets/webwriter-code-php.*": {
       "source": "./src/widgets/webwriter-code-php.ts",
       "default": "./dist/widgets/webwriter-code-php.*"
     },
     "./snippets/php.html": "./snippets/php.html",
+    "./widgets/webwriter-code-go.icon.svg": "./src/widgets/webwriter-code-go.icon.svg",
     "./widgets/webwriter-code-go.*": {
       "source": "./src/widgets/webwriter-code-go.ts",
       "default": "./dist/widgets/webwriter-code-go.*"
     },
     "./snippets/go.html": "./snippets/go.html",
+    "./widgets/webwriter-code-rust.icon.svg": "./src/widgets/webwriter-code-rust.icon.svg",
     "./widgets/webwriter-code-rust.*": {
       "source": "./src/widgets/webwriter-code-rust.ts",
       "default": "./dist/widgets/webwriter-code-rust.*"
     },
     "./snippets/rust.html": "./snippets/rust.html",
+    "./widgets/webwriter-code-shell.icon.svg": "./src/widgets/webwriter-code-shell.icon.svg",
     "./widgets/webwriter-code-shell.*": {
       "source": "./src/widgets/webwriter-code-shell.ts",
       "default": "./dist/widgets/webwriter-code-shell.*"
     },
     "./snippets/shell.html": "./snippets/shell.html",
+    "./widgets/webwriter-code-haskell.icon.svg": "./src/widgets/webwriter-code-haskell.icon.svg",
     "./widgets/webwriter-code-haskell.*": {
       "source": "./src/widgets/webwriter-code-haskell.ts",
       "default": "./dist/widgets/webwriter-code-haskell.*"
