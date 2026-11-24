@@ -1,4 +1,4 @@
-The Code package icon uses the Tabler code icon.
+The Code package icon and the Scheme widget icon use the Tabler code and lambda icons.
 
 MIT License
 

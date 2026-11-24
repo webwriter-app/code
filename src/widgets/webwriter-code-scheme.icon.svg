@@ -1,9 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-  <title>SCM</title>
-  <g transform="translate(1.500 7) scale(1.094 1.25)"
-     fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M4.6 1C4 0.3 3.2 0 2.3 0 1 0 0.1 0.7 0.1 1.9c0 1.1 0.7 1.7 2.2 2.1s2.3 1 2.3 2.1C4.6 7.3 3.7 8 2.3 8 1.4 8 0.5 7.7 0 7"/>
-    <path transform="translate(6.85)" d="M4.7 1C4 0.3 3.4 0 2.5 0 0.8 0 0 1.4 0 4s0.8 4 2.5 4c0.9 0 1.5-0.3 2.2-1"/>
-    <path transform="translate(13.8)" d="M0 8V0l2.7 4.2L5.4 0v8"/>
+  <title>λ</title>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 20l6.5-9"/>
+    <path d="M19 20c-6 0-6-16-12-16"/>
   </g>
 </svg>

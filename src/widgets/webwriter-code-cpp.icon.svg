@@ -1,9 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-  <title>CPP</title>
-  <g transform="translate(1.500 7) scale(1.117 1.25)"
-     fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M4.7 1C4 0.3 3.4 0 2.5 0 0.8 0 0 1.4 0 4s0.8 4 2.5 4c0.9 0 1.5-0.3 2.2-1"/>
-    <path transform="translate(6.95)" d="M0 8V0h2.7c1.4 0 2.1 0.8 2.1 2.1s-0.7 2.1-2.1 2.1H0"/>
-    <path transform="translate(14)" d="M0 8V0h2.7c1.4 0 2.1 0.8 2.1 2.1s-0.7 2.1-2.1 2.1H0"/>
+  <title>C++</title>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.5 8.25C6.65 7.375 5.9 7 4.85 7 2.75 7 1.75 8.75 1.75 12s1 5 3.1 5c1.05 0 1.8-.375 2.65-1.25"/>
+    <path d="M10.5 12h4.5m-2.25-2.25v4.5M17.5 12H22m-2.25-2.25v4.5"/>
   </g>
 </svg>
