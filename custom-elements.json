@@ -46,43 +46,6 @@
             },
             {
               "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "optionGroups",
               "type": {
                 "text": "object"
@@ -597,9 +560,7 @@
             "module": "/src/components/text-runtime-code"
           },
           "tagName": "webwriter-code-c",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-c.ts",
-          "definitionPath": "src/widgets/webwriter-code-c.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -662,43 +623,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
             },
             {
               "kind": "field",
@@ -1216,9 +1140,7 @@
             "module": "/src/components/text-runtime-code"
           },
           "tagName": "webwriter-code-cpp",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-cpp.ts",
-          "definitionPath": "src/widgets/webwriter-code-cpp.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -1281,43 +1203,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
             },
             {
               "kind": "field",
@@ -1835,9 +1720,7 @@
             "module": "/src/components/text-runtime-code"
           },
           "tagName": "webwriter-code-csharp",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-csharp.ts",
-          "definitionPath": "src/widgets/webwriter-code-csharp.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -1900,43 +1783,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
             },
             {
               "kind": "field",
@@ -2454,9 +2300,7 @@
             "module": "/src/components/text-runtime-code"
           },
           "tagName": "webwriter-code-go",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-go.ts",
-          "definitionPath": "src/widgets/webwriter-code-go.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -2519,43 +2363,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
             },
             {
               "kind": "field",
@@ -3073,9 +2880,7 @@
             "module": "/src/components/code-template"
           },
           "tagName": "webwriter-code-haskell",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-haskell.ts",
-          "definitionPath": "src/widgets/webwriter-code-haskell.ts"
+          "customElement": true
         },
         {
           "kind": "variable",
@@ -3133,43 +2938,6 @@
               "kind": "field",
               "name": "convertTo",
               "static": true
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
             },
             {
               "kind": "field",
@@ -3687,9 +3455,7 @@
             "module": "/src/components/code-template"
           },
           "tagName": "webwriter-code-html",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-html.ts",
-          "definitionPath": "src/widgets/webwriter-code-html.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -3752,43 +3518,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
             },
             {
               "kind": "field",
@@ -4306,9 +4035,7 @@
             "module": "/src/components/code-template"
           },
           "tagName": "webwriter-code-java",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-java.ts",
-          "definitionPath": "src/widgets/webwriter-code-java.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -4623,43 +4350,6 @@
               "inheritedFrom": {
                 "name": "CodeJsTemplate",
                 "module": "src/components/code-js-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
               }
             },
             {
@@ -5169,9 +4859,7 @@
             "module": "/src/components/code-js-template"
           },
           "tagName": "webwriter-code-javascript",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-javascript.ts",
-          "definitionPath": "src/widgets/webwriter-code-javascript.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -5234,43 +4922,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
             },
             {
               "kind": "field",
@@ -5788,9 +5439,7 @@
             "module": "/src/components/code-template"
           },
           "tagName": "webwriter-code-lua",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-lua.ts",
-          "definitionPath": "src/widgets/webwriter-code-lua.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -5853,43 +5502,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
             },
             {
               "kind": "field",
@@ -6407,9 +6019,7 @@
             "module": "/src/components/text-runtime-code"
           },
           "tagName": "webwriter-code-php",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-php.ts",
-          "definitionPath": "src/widgets/webwriter-code-php.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -6488,43 +6098,6 @@
               "kind": "method",
               "name": "renderRunInput",
               "privacy": "protected",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -7048,9 +6621,7 @@
             "module": "/src/components/code-template"
           },
           "tagName": "webwriter-code-prolog",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-prolog.ts",
-          "definitionPath": "src/widgets/webwriter-code-prolog.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -7113,43 +6684,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
             },
             {
               "kind": "field",
@@ -7667,9 +7201,7 @@
             "module": "/src/components/code-template"
           },
           "tagName": "webwriter-code-python",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-python.ts",
-          "definitionPath": "src/widgets/webwriter-code-python.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -7732,43 +7264,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
             },
             {
               "kind": "field",
@@ -8286,9 +7781,7 @@
             "module": "/src/components/text-runtime-code"
           },
           "tagName": "webwriter-code-rust",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-rust.ts",
-          "definitionPath": "src/widgets/webwriter-code-rust.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -8351,43 +7844,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
             },
             {
               "kind": "field",
@@ -8905,9 +8361,7 @@
             "module": "/src/components/code-template"
           },
           "tagName": "webwriter-code-scheme",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-scheme.ts",
-          "definitionPath": "src/widgets/webwriter-code-scheme.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -8970,43 +8424,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
             },
             {
               "kind": "field",
@@ -9524,9 +8941,7 @@
             "module": "/src/components/text-runtime-code"
           },
           "tagName": "webwriter-code-shell",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-shell.ts",
-          "definitionPath": "src/widgets/webwriter-code-shell.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -9612,43 +9027,6 @@
               },
               "default": "{ ...this.signals, table: computed(() => this.#table.get()) }",
               "description": "Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;\n`failed` (boolean) is true when the last run ended with an error or logged one to the console.",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
               "inheritedFrom": {
                 "name": "Code",
                 "module": "src/components/code-template.ts"
@@ -10148,9 +9526,7 @@
             "module": "/src/components/code-template"
           },
           "tagName": "webwriter-code-sql",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-sql.ts",
-          "definitionPath": "src/widgets/webwriter-code-sql.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -10465,43 +9841,6 @@
               "inheritedFrom": {
                 "name": "CodeJsTemplate",
                 "module": "src/components/code-js-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
               }
             },
             {
@@ -11011,9 +10350,7 @@
             "module": "/src/components/code-js-template"
           },
           "tagName": "webwriter-code-typescript",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-typescript.ts",
-          "definitionPath": "src/widgets/webwriter-code-typescript.ts"
+          "customElement": true
         }
       ],
       "exports": [
@@ -11076,43 +10413,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "settings",
-              "static": true,
-              "default": "declarations",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "finalize",
-              "static": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "settingsCore",
-              "default": "new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })",
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "options",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "Code",
-                "module": "src/components/code-template.ts"
-              }
             },
             {
               "kind": "field",
@@ -11630,9 +10930,7 @@
             "module": "/src/components/code-template"
           },
           "tagName": "webwriter-code-webassembly",
-          "customElement": true,
-          "modulePath": "src/widgets/webwriter-code-webassembly.ts",
-          "definitionPath": "src/widgets/webwriter-code-webassembly.ts"
+          "customElement": true
         }
       ],
       "exports": [
