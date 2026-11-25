@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+<file target-language="so" source-language="en" original="lit-localize-inputs" datatype="plaintext">
+<body>
+<trans-unit id="sa94ff8354d06f430">
+  <source>This section of code is locked and cannot be edited</source>
+<target>Qaybtan koodka waa la xiray lamana tafatiri karo</target></trans-unit>
+<trans-unit id="s9fbbc819fe7e66aa">
+  <source>Run</source>
+<target>Socodsii</target></trans-unit>
+<trans-unit id="s47f7722202e53f2f">
+  <source>Clear Output</source>
+<target>Nadiifi wax-soo-saarka</target></trans-unit>
+<trans-unit id="s3c96a20baa10fa75">
+  <source>Execution</source>
+<target>Socodsiin</target></trans-unit>
+<trans-unit id="sa75b95980cd80e78">
+  <source>Editor</source>
+<target>Tafatire</target></trans-unit>
+<trans-unit id="sca1a826088564455">
+  <source>Results</source>
+<target>Natiijooyin</target></trans-unit>
+<trans-unit id="s43867f9999381946">
+  <source>Disable code execution</source>
+<target>Dami socodsiinta koodka</target></trans-unit>
+<trans-unit id="sb1db8c15648f4579">
+  <source>Run on load</source>
+<target>Socodsii marka la raro</target></trans-unit>
+<trans-unit id="sd8eae573769fbf94">
+  <source>Autocompletion</source>
+<target>Dhammaystir toos ah</target></trans-unit>
+<trans-unit id="sddaa4748444ecc76">
+  <source>Hide code</source>
+<target>Qari koodka</target></trans-unit>
+<trans-unit id="s9c355ae1ea6d408f">
+  <source>Show execution time</source>
+<target>Muuji waqtiga socodsiinta</target></trans-unit>
+<trans-unit id="se3a0e370891f1769">
+  <source>Reset execution count</source>
+<target>Dib u deji tirada socodsiinta</target></trans-unit>
+<trans-unit id="s024e6b84f7720a0c">
+  <source>Hide execution count</source>
+  <target>Qari tirada jeer ee la fuliyey</target>
+</trans-unit>
+<trans-unit id="s059bf2737f0583e5">
+  <source>Press Escape, then Tab to leave the editor.</source>
+  <target>Taabo Escape dabadeed Tab si aad uga baxdo tafatiraha.</target>
+</trans-unit>
+<trans-unit id="s787fe0d56a1f0c3b">
+  <source>The file is not a text file, or it is larger than 1 MB.</source>
+  <target>Faylku ma aha fayl qoraal ah ama wuu ka weyn yahay 1 MB.</target>
+</trans-unit>
+<trans-unit id="s948bca3498023f4b">
+  <source>Downloading runtime</source>
+  <target>Deegaanka fulinta ayaa la soo dejinayaa</target>
+</trans-unit>
+<trans-unit id="s3cafc7acb8373fbe">
+  <source>Running…</source>
+  <target>Wuu socdaa…</target>
+</trans-unit>
+<trans-unit id="s146e77012a225a95">
+  <source>Enter a Prolog query.</source>
+  <target>Geli weydiin Prolog ah.</target>
+</trans-unit>
+<trans-unit id="sc74b7675f65c3e23">
+  <source>Query</source>
+  <target>Weydiin</target>
+</trans-unit>
+<trans-unit id="sf344934d54179398">
+  <source>Query result</source>
+  <target>Natiijada weydiinta</target>
+</trans-unit>
+<trans-unit id="s5f40c8d75226c663">
+  <source>No rows</source>
+  <target>Safaf ma jiraan</target>
+</trans-unit>
+<trans-unit id="sc77f43432f2a92e5">
+  <source>Only the first 500 rows are shown.</source>
+  <target>Kaliya 500 ee saf ee ugu horreeya ayaa la muujiyaa.</target>
+</trans-unit>
+</body>
+</file>
+</xliff>

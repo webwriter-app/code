@@ -1,4 +1,5 @@
-<xliff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd" version="1.2">
   <file original="lit-localize-inputs" datatype="plaintext" source-language="en" target-language="ru">
     <body>
       <trans-unit id="s9fbbc819fe7e66aa">
@@ -13,10 +14,6 @@
         <source>Execution</source>
         <target>Исполнение</target>
       </trans-unit>
-      <trans-unit id="sac95ed73c22266b9">
-        <source>Allow Code execution</source>
-        <target>Разрешить выполнение кода</target>
-      </trans-unit>
       <trans-unit id="sb1db8c15648f4579">
         <source>Run on load</source>
         <target>Работайте под нагрузкой</target>
@@ -29,10 +26,6 @@
         <source>Autocompletion</source>
         <target>Автозаполнение</target>
       </trans-unit>
-      <trans-unit id="s83f26d02dd7aa681">
-        <source>Visible</source>
-        <target>Видимый</target>
-      </trans-unit>
       <trans-unit id="sca1a826088564455">
         <source>Results</source>
         <target>Результаты</target>
@@ -40,10 +33,6 @@
       <trans-unit id="s9c355ae1ea6d408f">
         <source>Show execution time</source>
         <target>Показать время выполнения</target>
-      </trans-unit>
-      <trans-unit id="s780d4c126df3ab65">
-        <source>Show execution count</source>
-        <target>Показать счетчик выполнения</target>
       </trans-unit>
       <trans-unit id="se3a0e370891f1769">
         <source>Reset execution count</source>
@@ -53,6 +42,52 @@
         <source>This section of code is locked and cannot be edited</source>
         <target>Этот раздел кода заблокирован и не может быть отредактирован</target>
       </trans-unit>
-    </body>
+    <trans-unit id="s43867f9999381946">
+  <source>Disable code execution</source>
+<target>Отключить выполнение кода</target></trans-unit>
+<trans-unit id="sddaa4748444ecc76">
+  <source>Hide code</source>
+<target>Скрыть код</target></trans-unit>
+<trans-unit id="s024e6b84f7720a0c">
+  <source>Hide execution count</source>
+  <target>Скрыть число запусков</target>
+</trans-unit>
+<trans-unit id="s059bf2737f0583e5">
+  <source>Press Escape, then Tab to leave the editor.</source>
+  <target>Нажмите Escape, затем Tab, чтобы выйти из редактора.</target>
+</trans-unit>
+<trans-unit id="s787fe0d56a1f0c3b">
+  <source>The file is not a text file, or it is larger than 1 MB.</source>
+  <target>Файл не текстовый или его размер превышает 1 МБ.</target>
+</trans-unit>
+<trans-unit id="s948bca3498023f4b">
+  <source>Downloading runtime</source>
+  <target>Загрузка среды выполнения</target>
+</trans-unit>
+<trans-unit id="s3cafc7acb8373fbe">
+  <source>Running…</source>
+  <target>Выполняется…</target>
+</trans-unit>
+<trans-unit id="s146e77012a225a95">
+  <source>Enter a Prolog query.</source>
+  <target>Введите запрос Prolog.</target>
+</trans-unit>
+<trans-unit id="sc74b7675f65c3e23">
+  <source>Query</source>
+  <target>Запрос</target>
+</trans-unit>
+<trans-unit id="sf344934d54179398">
+  <source>Query result</source>
+  <target>Результат запроса</target>
+</trans-unit>
+<trans-unit id="s5f40c8d75226c663">
+  <source>No rows</source>
+  <target>Нет строк</target>
+</trans-unit>
+<trans-unit id="sc77f43432f2a92e5">
+  <source>Only the first 500 rows are shown.</source>
+  <target>Показаны только первые 500 строк.</target>
+</trans-unit>
+</body>
   </file>
 </xliff>

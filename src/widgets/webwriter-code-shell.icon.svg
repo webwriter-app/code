@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <title>SH</title>
+  <g transform="translate(4.682 7) scale(1.230 1.25)"
+     fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.6 1C4 0.3 3.2 0 2.3 0 1 0 0.1 0.7 0.1 1.9c0 1.1 0.7 1.7 2.2 2.1s2.3 1 2.3 2.1C4.6 7.3 3.7 8 2.3 8 1.4 8 0.5 7.7 0 7"/>
+    <path transform="translate(7.1)" d="M0 0v8m4.8-8v8M0 4h4.8"/>
+  </g>
+</svg>

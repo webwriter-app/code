@@ -1,4 +1,5 @@
-<xliff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd" version="1.2">
   <file original="lit-localize-inputs" datatype="plaintext" source-language="en" target-language="sk">
     <body>
       <trans-unit id="s9fbbc819fe7e66aa">
@@ -13,10 +14,6 @@
         <source>Execution</source>
         <target>Vykonávanie</target>
       </trans-unit>
-      <trans-unit id="sac95ed73c22266b9">
-        <source>Allow Code execution</source>
-        <target>Povolenie vykonávania kódu</target>
-      </trans-unit>
       <trans-unit id="sb1db8c15648f4579">
         <source>Run on load</source>
         <target>Spustiť pri zaťažení</target>
@@ -29,10 +26,6 @@
         <source>Autocompletion</source>
         <target>Automatické dokončovanie</target>
       </trans-unit>
-      <trans-unit id="s83f26d02dd7aa681">
-        <source>Visible</source>
-        <target>Viditeľné</target>
-      </trans-unit>
       <trans-unit id="sca1a826088564455">
         <source>Results</source>
         <target>Výsledky</target>
@@ -40,10 +33,6 @@
       <trans-unit id="s9c355ae1ea6d408f">
         <source>Show execution time</source>
         <target>Zobraziť čas vykonania</target>
-      </trans-unit>
-      <trans-unit id="s780d4c126df3ab65">
-        <source>Show execution count</source>
-        <target>Zobraziť počet vykonaní</target>
       </trans-unit>
       <trans-unit id="se3a0e370891f1769">
         <source>Reset execution count</source>
@@ -53,6 +42,52 @@
         <source>This section of code is locked and cannot be edited</source>
         <target>Táto časť kódu je uzamknutá a nemožno ju upravovať</target>
       </trans-unit>
-    </body>
+    <trans-unit id="s43867f9999381946">
+  <source>Disable code execution</source>
+<target>Zakázať spúšťanie kódu</target></trans-unit>
+<trans-unit id="sddaa4748444ecc76">
+  <source>Hide code</source>
+<target>Skryť kód</target></trans-unit>
+<trans-unit id="s024e6b84f7720a0c">
+  <source>Hide execution count</source>
+  <target>Skryť počet spustení</target>
+</trans-unit>
+<trans-unit id="s059bf2737f0583e5">
+  <source>Press Escape, then Tab to leave the editor.</source>
+  <target>Editor opustíte stlačením klávesu Escape a potom Tab.</target>
+</trans-unit>
+<trans-unit id="s787fe0d56a1f0c3b">
+  <source>The file is not a text file, or it is larger than 1 MB.</source>
+  <target>Súbor nie je textový alebo má viac ako 1 MB.</target>
+</trans-unit>
+<trans-unit id="s948bca3498023f4b">
+  <source>Downloading runtime</source>
+  <target>Sťahuje sa prostredie na spustenie</target>
+</trans-unit>
+<trans-unit id="s3cafc7acb8373fbe">
+  <source>Running…</source>
+  <target>Prebieha vykonávanie…</target>
+</trans-unit>
+<trans-unit id="s146e77012a225a95">
+  <source>Enter a Prolog query.</source>
+  <target>Zadajte dotaz v jazyku Prolog.</target>
+</trans-unit>
+<trans-unit id="sc74b7675f65c3e23">
+  <source>Query</source>
+  <target>Dotaz</target>
+</trans-unit>
+<trans-unit id="sf344934d54179398">
+  <source>Query result</source>
+  <target>Výsledok dotazu</target>
+</trans-unit>
+<trans-unit id="s5f40c8d75226c663">
+  <source>No rows</source>
+  <target>Žiadne riadky</target>
+</trans-unit>
+<trans-unit id="sc77f43432f2a92e5">
+  <source>Only the first 500 rows are shown.</source>
+  <target>Zobrazuje sa iba prvých 500 riadkov.</target>
+</trans-unit>
+</body>
   </file>
 </xliff>

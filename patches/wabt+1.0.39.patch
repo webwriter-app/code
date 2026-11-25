@@ -1,0 +1,13 @@
+diff --git a/node_modules/wabt/package.json b/node_modules/wabt/package.json
+--- a/node_modules/wabt/package.json
++++ b/node_modules/wabt/package.json
+@@ -12,6 +12,9 @@
+     "wasm"
+   ],
+   "main": "index.js",
++  "browser": {
++    "fs": false
++  },
+   "typings": "index.d.ts",
+   "bin": {
+     "wasm2c": "bin/wasm2c",

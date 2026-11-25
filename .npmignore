@@ -1,1 +1,7 @@
 !dist
+/tests/
+/scripts/runtime-assets/
+/scripts/teavm/*.wasm
+/scripts/teavm/*.bin
+/scripts/toolchains/bin/
+/scripts/toolchains/obj/

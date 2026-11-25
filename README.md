@@ -1,96 +1,42 @@
-# Code (`@webwriter/code@3.0.5`)
-[License: MIT](LICENSE) | Version: 3.0.5
+# Code (`@webwriter/code@4.0.0`)
+[License: MIT](LICENSE) | Version: 4.0.0
 
-The Code Widget enables interactive code exercises directly in the browser. Users can effortlessly write, execute, and explore code in multiple programming languages, including:
-
-- JavaScript or TypeScript
-- HTML
-- Python (powered by [Pyodide](https://pyodide.org/en/stable/))
-- Java (powered by [TeaVM](https://teavm.org/))
-- WebAssembly Text Format (WAT)
-
-## Features
-
-- **Intuitive Editor:** Based on CodeMirror, offering syntax highlighting and optional autocompletion for a smoother coding experience.
-- **Line Locking:** Allows instructors to lock specific lines, creating read-only templates to guide students effectively.
-- **Rich Output Display:** Outputs appear neatly below each code cell, with JavaScript execution featuring a fully interactive console inspector.
-- **100% Client-Side Execution:** Everything executes locally within the browser, ensuring complete offline capability and no reliance on servers.
-
-## Development
-
-To set up the development environment, clone the repository and execute the following commands:
-
-```bash
-npm install
-npm run dev # runs @webwriter/build dev
-```
-
-Finally, import the `code` directory into WebWriter to begin.
-
+Write and run code in languages such as HTML, JavaScript, Python, and Rust.
 
 ## Snippets
 [Snippets](https://webwriter.app/docs/snippets/snippets/) are examples and templates using the package's widgets.
 
 | Name | Import Path |
 | :--: | :---------: |
-| HTML | @webwriter/code/snippets/HTML.html |
+| HTML | `@webwriter/code/snippets/HTML.html` |
+| Java | `@webwriter/code/snippets/java.html` |
+| Sql | `@webwriter/code/snippets/sql.html` |
+| Lua | `@webwriter/code/snippets/lua.html` |
+| Prolog | `@webwriter/code/snippets/prolog.html` |
+| Scheme | `@webwriter/code/snippets/scheme.html` |
+| C | `@webwriter/code/snippets/c.html` |
+| Cpp | `@webwriter/code/snippets/cpp.html` |
+| Csharp | `@webwriter/code/snippets/csharp.html` |
+| Php | `@webwriter/code/snippets/php.html` |
+| Go | `@webwriter/code/snippets/go.html` |
+| Rust | `@webwriter/code/snippets/rust.html` |
+| Shell | `@webwriter/code/snippets/shell.html` |
+| Haskell | `@webwriter/code/snippets/haskell.html` |
 
 
 
-## `CodeHTML` (`<webwriter-code-html>`)
-Code widget for HTML with live preview functionality.
-
-### Usage
-
-Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
-```html
-<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-html.css" rel="stylesheet">
-<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-html.js"></script>
-<webwriter-code-html></webwriter-code-html>
-```
-
-Or use with a bundler (e.g. [Vite](https://vite.dev)):
-
-```
-npm install @webwriter/code
-```
-
-```html
-<link href="@webwriter/code/widgets/webwriter-code-html.css" rel="stylesheet">
-<script type="module" src="@webwriter/code/widgets/webwriter-code-html.js"></script>
-<webwriter-code-html></webwriter-code-html>
-```
-
-## Fields
-| Name (Attribute Name) | Type | Description | Default | Reflects |
-| :-------------------: | :--: | :---------: | :-----: | :------: |
-| `code` (`code`) | `String` | The source code content displayed in the editor. | - | ✓ |
-| `visible` (`visible`) | `boolean` | Whether the code editor is visible to the user. | `true` | ✓ |
-| `autoRun` (`autoRun`) | `boolean` | Whether to automatically run the code when the component is first loaded. | `false` | ✓ |
-| `runnable` (`runnable`) | `boolean` | Whether the code execution is allowed and the run button is enabled. | `true` | ✓ |
-| `autocomplete` (`autocomplete`) | `boolean` | Whether autocompletion is enabled in the code editor. | `false` | ✓ |
-| `lockedLines` (`lockedLines`) | `number[]` | Array of line numbers that should be locked from editing. | `[]` | ✓ |
-| `showExecutionTime` (`showExecutionTime`) | `boolean` | Whether to display the execution time in the controls. | `false` | ✓ |
-| `executionTime` (`executionTime`) | `number` | The execution time in milliseconds of the last code run. | `0` | ✓ |
-| `showExecutionCount` (`showExecutionCount`) | `boolean` | Whether to display the execution count in the run button. | `false` | ✓ |
-| `executionCount` (`executionCount`) | `number` | The number of times the code has been executed. | `0` | ✓ |
-| `results` (`results`) | `any` | The results from the last code execution. | `[]` | ✓ |
-| `diagnostics` (`diagnostics`) | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✓ |
-
-*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
-
-## Editing config
-| Name | Value |
-| :--: | :---------: |
-
-
-*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
-
-*No public methods, slots, events, custom CSS properties, or CSS parts.*
-
-
-## `CodeJavaScript` (`<webwriter-code-javascript>`)
+## `WebwriterCodeJavascript` (`<webwriter-code-javascript>`)
 Code widget for JavaScript with execution capabilities.
+
+Runs in a worker with an interactive console.
+
+Authoring: the Widget drawer controls execution, autocompletion, code visibility and execution statistics. While authoring, click the lock gutter or press Control+L (Command+L on macOS) to toggle locks on selected lines; readers may edit unlocked lines. The program and locked lines are stored in an inert JSON script (`<script type="application/json" slot="data">`, with `{"code":"...","lockedLines":[1]}`); a literal `<` should be written as `\u003c`. The authored attributes are `autorun`, `autocomplete`, `hide-code`, `disable-execution`, `showexecutiontime` and `hide-execution-count`. Older `code` and `lockedlines` attributes stay readable when the data block lacks the fields. Run results, diagnostics, counts and timings stay in memory.
+
+Embedding on a plain page: serve the whole `dist` directory (including `dist/chunks` and `dist/runtime`), because the entry scripts locate their workers relative to themselves. No import map is needed.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error (in JavaScript and TypeScript also after `console.error`).
 
 ### Usage
 
@@ -116,20 +62,41 @@ npm install @webwriter/code
 ## Fields
 | Name (Attribute Name) | Type | Description | Default | Reflects |
 | :-------------------: | :--: | :---------: | :-----: | :------: |
-| `code` (`code`) | `String` | The source code content displayed in the editor. | - | ✓ |
-| `visible` (`visible`) | `boolean` | Whether the code editor is visible to the user. | `true` | ✓ |
-| `autoRun` (`autoRun`) | `boolean` | Whether to automatically run the code when the component is first loaded. | `false` | ✓ |
-| `runnable` (`runnable`) | `boolean` | Whether the code execution is allowed and the run button is enabled. | `true` | ✓ |
-| `autocomplete` (`autocomplete`) | `boolean` | Whether autocompletion is enabled in the code editor. | `false` | ✓ |
-| `lockedLines` (`lockedLines`) | `number[]` | Array of line numbers that should be locked from editing. | `[]` | ✓ |
-| `showExecutionTime` (`showExecutionTime`) | `boolean` | Whether to display the execution time in the controls. | `false` | ✓ |
-| `executionTime` (`executionTime`) | `number` | The execution time in milliseconds of the last code run. | `0` | ✓ |
-| `showExecutionCount` (`showExecutionCount`) | `boolean` | Whether to display the execution count in the run button. | `false` | ✓ |
-| `executionCount` (`executionCount`) | `number` | The number of times the code has been executed. | `0` | ✓ |
-| `results` (`results`) | `any` | The results from the last code execution. | `[]` | ✓ |
-| `diagnostics` (`diagnostics`) | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✓ |
+| `WebwriterCodeJavascript.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeJavascript.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeJavascript.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeJavascript.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
 
 *Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
 
 ## Editing config
 | Name | Value |
@@ -138,11 +105,96 @@ npm install @webwriter/code
 
 *The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
 
-*No public methods, slots, events, custom CSS properties, or CSS parts.*
+*No public slots, events, or custom CSS properties.*
 
 
-## `CodeJava` (`<webwriter-code-java>`)
+## `WebwriterCodeHtml` (`<webwriter-code-html>`)
+Code widget for HTML with live preview functionality.
+
+Renders the preview with the shared self-contained HTML sandbox, with a fresh isolated frame for each Run. The runner is bundled into the widget and works offline and in standalone exports; resources referenced by the authored HTML must also be embedded for offline use. Hosts enforcing CSP must authorize the shared runner hash. Inline event attributes and document.write are not supported under the editor policy.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) and `failed` (boolean) exist for every widget but stay empty and false for HTML, because iframe output is not captured as console text or worker errors.
+
+### Usage
+
+Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
+```html
+<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-html.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-html.js"></script>
+<webwriter-code-html></webwriter-code-html>
+```
+
+Or use with a bundler (e.g. [Vite](https://vite.dev)):
+
+```
+npm install @webwriter/code
+```
+
+```html
+<link href="@webwriter/code/widgets/webwriter-code-html.css" rel="stylesheet">
+<script type="module" src="@webwriter/code/widgets/webwriter-code-html.js"></script>
+<webwriter-code-html></webwriter-code-html>
+```
+
+## Fields
+| Name (Attribute Name) | Type | Description | Default | Reflects |
+| :-------------------: | :--: | :---------: | :-----: | :------: |
+| `WebwriterCodeHtml.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeHtml.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeHtml.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeHtml.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
+
+*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+| preview | The frame that shows the rendered page. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
+
+## Editing config
+| Name | Value |
+| :--: | :---------: |
+
+
+*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
+
+*No public slots, events, or custom CSS properties.*
+
+
+## `WebwriterCodeJava` (`<webwriter-code-java>`)
 Code widget for Java with compilation and execution capabilities using TeaVM (Java 21).
+
+Compiles Java 21 with TeaVM.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
 
 ### Usage
 
@@ -168,20 +220,41 @@ npm install @webwriter/code
 ## Fields
 | Name (Attribute Name) | Type | Description | Default | Reflects |
 | :-------------------: | :--: | :---------: | :-----: | :------: |
-| `code` (`code`) | `String` | The source code content displayed in the editor. | - | ✓ |
-| `visible` (`visible`) | `boolean` | Whether the code editor is visible to the user. | `true` | ✓ |
-| `autoRun` (`autoRun`) | `boolean` | Whether to automatically run the code when the component is first loaded. | `false` | ✓ |
-| `runnable` (`runnable`) | `boolean` | Whether the code execution is allowed and the run button is enabled. | `true` | ✓ |
-| `autocomplete` (`autocomplete`) | `boolean` | Whether autocompletion is enabled in the code editor. | `false` | ✓ |
-| `lockedLines` (`lockedLines`) | `number[]` | Array of line numbers that should be locked from editing. | `[]` | ✓ |
-| `showExecutionTime` (`showExecutionTime`) | `boolean` | Whether to display the execution time in the controls. | `false` | ✓ |
-| `executionTime` (`executionTime`) | `number` | The execution time in milliseconds of the last code run. | `0` | ✓ |
-| `showExecutionCount` (`showExecutionCount`) | `boolean` | Whether to display the execution count in the run button. | `false` | ✓ |
-| `executionCount` (`executionCount`) | `number` | The number of times the code has been executed. | `0` | ✓ |
-| `results` (`results`) | `any` | The results from the last code execution. | `[]` | ✓ |
-| `diagnostics` (`diagnostics`) | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✓ |
+| `WebwriterCodeJava.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeJava.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeJava.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeJava.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
 
 *Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
 
 ## Editing config
 | Name | Value |
@@ -190,11 +263,17 @@ npm install @webwriter/code
 
 *The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
 
-*No public methods, slots, events, custom CSS properties, or CSS parts.*
+*No public slots, events, or custom CSS properties.*
 
 
-## `CodeTypeScript` (`<webwriter-code-typescript>`)
+## `WebwriterCodeTypescript` (`<webwriter-code-typescript>`)
 Code widget for TypeScript with compilation and execution capabilities.
+
+Transpiles with the TypeScript compiler, then runs the JavaScript in a worker.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error (in JavaScript and TypeScript also after `console.error`).
 
 ### Usage
 
@@ -220,20 +299,41 @@ npm install @webwriter/code
 ## Fields
 | Name (Attribute Name) | Type | Description | Default | Reflects |
 | :-------------------: | :--: | :---------: | :-----: | :------: |
-| `code` (`code`) | `String` | The source code content displayed in the editor. | - | ✓ |
-| `visible` (`visible`) | `boolean` | Whether the code editor is visible to the user. | `true` | ✓ |
-| `autoRun` (`autoRun`) | `boolean` | Whether to automatically run the code when the component is first loaded. | `false` | ✓ |
-| `runnable` (`runnable`) | `boolean` | Whether the code execution is allowed and the run button is enabled. | `true` | ✓ |
-| `autocomplete` (`autocomplete`) | `boolean` | Whether autocompletion is enabled in the code editor. | `false` | ✓ |
-| `lockedLines` (`lockedLines`) | `number[]` | Array of line numbers that should be locked from editing. | `[]` | ✓ |
-| `showExecutionTime` (`showExecutionTime`) | `boolean` | Whether to display the execution time in the controls. | `false` | ✓ |
-| `executionTime` (`executionTime`) | `number` | The execution time in milliseconds of the last code run. | `0` | ✓ |
-| `showExecutionCount` (`showExecutionCount`) | `boolean` | Whether to display the execution count in the run button. | `false` | ✓ |
-| `executionCount` (`executionCount`) | `number` | The number of times the code has been executed. | `0` | ✓ |
-| `results` (`results`) | `any` | The results from the last code execution. | `[]` | ✓ |
-| `diagnostics` (`diagnostics`) | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✓ |
+| `WebwriterCodeTypescript.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeTypescript.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeTypescript.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeTypescript.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
 
 *Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
 
 ## Editing config
 | Name | Value |
@@ -242,11 +342,17 @@ npm install @webwriter/code
 
 *The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
 
-*No public methods, slots, events, custom CSS properties, or CSS parts.*
+*No public slots, events, or custom CSS properties.*
 
 
-## `CodePython` (`<webwriter-code-python>`)
+## `WebwriterCodePython` (`<webwriter-code-python>`)
 Code widget for Python with execution capabilities using Pyodide.
+
+The interpreter and standard library are bundled; add-on packages downloaded by Pyodide need network access.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
 
 ### Usage
 
@@ -272,20 +378,41 @@ npm install @webwriter/code
 ## Fields
 | Name (Attribute Name) | Type | Description | Default | Reflects |
 | :-------------------: | :--: | :---------: | :-----: | :------: |
-| `code` (`code`) | `String` | The source code content displayed in the editor. | - | ✓ |
-| `visible` (`visible`) | `boolean` | Whether the code editor is visible to the user. | `true` | ✓ |
-| `autoRun` (`autoRun`) | `boolean` | Whether to automatically run the code when the component is first loaded. | `false` | ✓ |
-| `runnable` (`runnable`) | `boolean` | Whether the code execution is allowed and the run button is enabled. | `true` | ✓ |
-| `autocomplete` (`autocomplete`) | `boolean` | Whether autocompletion is enabled in the code editor. | `false` | ✓ |
-| `lockedLines` (`lockedLines`) | `number[]` | Array of line numbers that should be locked from editing. | `[]` | ✓ |
-| `showExecutionTime` (`showExecutionTime`) | `boolean` | Whether to display the execution time in the controls. | `false` | ✓ |
-| `executionTime` (`executionTime`) | `number` | The execution time in milliseconds of the last code run. | `0` | ✓ |
-| `showExecutionCount` (`showExecutionCount`) | `boolean` | Whether to display the execution count in the run button. | `false` | ✓ |
-| `executionCount` (`executionCount`) | `number` | The number of times the code has been executed. | `0` | ✓ |
-| `results` (`results`) | `any` | The results from the last code execution. | `[]` | ✓ |
-| `diagnostics` (`diagnostics`) | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✓ |
+| `WebwriterCodePython.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodePython.convertTo` | - | - | - | ✗ |
+| `WebwriterCodePython.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodePython.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
 
 *Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
 
 ## Editing config
 | Name | Value |
@@ -294,11 +421,17 @@ npm install @webwriter/code
 
 *The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
 
-*No public methods, slots, events, custom CSS properties, or CSS parts.*
+*No public slots, events, or custom CSS properties.*
 
 
-## `CodeWebAssembly` (`<webwriter-code-webassembly>`)
+## `WebwriterCodeWebassembly` (`<webwriter-code-webassembly>`)
 Code widget for WebAssembly with compilation and execution capabilities.
+
+Assembles WebAssembly Text Format (WAT) with WABT.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
 
 ### Usage
 
@@ -324,20 +457,41 @@ npm install @webwriter/code
 ## Fields
 | Name (Attribute Name) | Type | Description | Default | Reflects |
 | :-------------------: | :--: | :---------: | :-----: | :------: |
-| `code` (`code`) | `String` | The source code content displayed in the editor. | - | ✓ |
-| `visible` (`visible`) | `boolean` | Whether the code editor is visible to the user. | `true` | ✓ |
-| `autoRun` (`autoRun`) | `boolean` | Whether to automatically run the code when the component is first loaded. | `false` | ✓ |
-| `runnable` (`runnable`) | `boolean` | Whether the code execution is allowed and the run button is enabled. | `true` | ✓ |
-| `autocomplete` (`autocomplete`) | `boolean` | Whether autocompletion is enabled in the code editor. | `false` | ✓ |
-| `lockedLines` (`lockedLines`) | `number[]` | Array of line numbers that should be locked from editing. | `[]` | ✓ |
-| `showExecutionTime` (`showExecutionTime`) | `boolean` | Whether to display the execution time in the controls. | `false` | ✓ |
-| `executionTime` (`executionTime`) | `number` | The execution time in milliseconds of the last code run. | `0` | ✓ |
-| `showExecutionCount` (`showExecutionCount`) | `boolean` | Whether to display the execution count in the run button. | `false` | ✓ |
-| `executionCount` (`executionCount`) | `number` | The number of times the code has been executed. | `0` | ✓ |
-| `results` (`results`) | `any` | The results from the last code execution. | `[]` | ✓ |
-| `diagnostics` (`diagnostics`) | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✓ |
+| `WebwriterCodeWebassembly.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeWebassembly.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeWebassembly.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeWebassembly.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
 
 *Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
 
 ## Editing config
 | Name | Value |
@@ -346,8 +500,953 @@ npm install @webwriter/code
 
 *The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
 
-*No public methods, slots, events, custom CSS properties, or CSS parts.*
+*No public slots, events, or custom CSS properties.*
+
+
+## `WebwriterCodeSql` (`<webwriter-code-sql>`)
+Code widget for SQLite with tabular query results.
+
+Uses SQLite via sql.js. Each run starts with an empty in-memory database; use the same cell to create tables, insert data and query it. Each query result shows up to 500 rows in its own table.
+
+Signals: `output` (string), `failed` (boolean) and `table` (`{columns, rows}`, the first query result, or null).
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+### Usage
+
+Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
+```html
+<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-sql.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-sql.js"></script>
+<webwriter-code-sql></webwriter-code-sql>
+```
+
+Or use with a bundler (e.g. [Vite](https://vite.dev)):
+
+```
+npm install @webwriter/code
+```
+
+```html
+<link href="@webwriter/code/widgets/webwriter-code-sql.css" rel="stylesheet">
+<script type="module" src="@webwriter/code/widgets/webwriter-code-sql.js"></script>
+<webwriter-code-sql></webwriter-code-sql>
+```
+
+## Fields
+| Name (Attribute Name) | Type | Description | Default | Reflects |
+| :-------------------: | :--: | :---------: | :-----: | :------: |
+| `WebwriterCodeSql.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeSql.convertTo` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ ...this.signals, table: computed(() => this.#table.get()) }` | ✗ |
+| `WebwriterCodeSql.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeSql.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
+
+*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
+
+## Editing config
+| Name | Value |
+| :--: | :---------: |
+
+
+*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
+
+*No public slots, events, or custom CSS properties.*
+
+
+## `WebwriterCodeLua` (`<webwriter-code-lua>`)
+Code widget for Lua 5.4, powered by Wasmoon.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
+
+### Usage
+
+Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
+```html
+<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-lua.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-lua.js"></script>
+<webwriter-code-lua></webwriter-code-lua>
+```
+
+Or use with a bundler (e.g. [Vite](https://vite.dev)):
+
+```
+npm install @webwriter/code
+```
+
+```html
+<link href="@webwriter/code/widgets/webwriter-code-lua.css" rel="stylesheet">
+<script type="module" src="@webwriter/code/widgets/webwriter-code-lua.js"></script>
+<webwriter-code-lua></webwriter-code-lua>
+```
+
+## Fields
+| Name (Attribute Name) | Type | Description | Default | Reflects |
+| :-------------------: | :--: | :---------: | :-----: | :------: |
+| `WebwriterCodeLua.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeLua.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeLua.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeLua.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
+
+*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
+
+## Editing config
+| Name | Value |
+| :--: | :---------: |
+
+
+*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
+
+*No public slots, events, or custom CSS properties.*
+
+
+## `WebwriterCodeProlog` (`<webwriter-code-prolog>`)
+Code widget for Prolog facts, rules and queries, powered by Tau Prolog.
+
+Enter facts and rules in the editor and the goal in the Query field. The goal is saved in the `goal` attribute.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
+
+### Usage
+
+Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
+```html
+<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-prolog.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-prolog.js"></script>
+<webwriter-code-prolog></webwriter-code-prolog>
+```
+
+Or use with a bundler (e.g. [Vite](https://vite.dev)):
+
+```
+npm install @webwriter/code
+```
+
+```html
+<link href="@webwriter/code/widgets/webwriter-code-prolog.css" rel="stylesheet">
+<script type="module" src="@webwriter/code/widgets/webwriter-code-prolog.js"></script>
+<webwriter-code-prolog></webwriter-code-prolog>
+```
+
+## Fields
+| Name (Attribute Name) | Type | Description | Default | Reflects |
+| :-------------------: | :--: | :---------: | :-----: | :------: |
+| `WebwriterCodeProlog.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeProlog.convertTo` | - | - | - | ✗ |
+| `goal` (`goal`) | `string` | The Prolog goal evaluated when Run is pressed. | `""` | ✓ |
+| `WebwriterCodeProlog.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeProlog.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
+
+*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
+
+## Editing config
+| Name | Value |
+| :--: | :---------: |
+
+
+*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
+
+*No public slots, events, or custom CSS properties.*
+
+
+## `WebwriterCodeScheme` (`<webwriter-code-scheme>`)
+Code widget for Scheme, powered by BiwaScheme.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
+
+### Usage
+
+Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
+```html
+<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-scheme.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-scheme.js"></script>
+<webwriter-code-scheme></webwriter-code-scheme>
+```
+
+Or use with a bundler (e.g. [Vite](https://vite.dev)):
+
+```
+npm install @webwriter/code
+```
+
+```html
+<link href="@webwriter/code/widgets/webwriter-code-scheme.css" rel="stylesheet">
+<script type="module" src="@webwriter/code/widgets/webwriter-code-scheme.js"></script>
+<webwriter-code-scheme></webwriter-code-scheme>
+```
+
+## Fields
+| Name (Attribute Name) | Type | Description | Default | Reflects |
+| :-------------------: | :--: | :---------: | :-----: | :------: |
+| `WebwriterCodeScheme.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeScheme.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeScheme.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeScheme.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
+
+*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
+
+## Editing config
+| Name | Value |
+| :--: | :---------: |
+
+
+*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
+
+*No public slots, events, or custom CSS properties.*
+
+
+## `WebwriterCodeC` (`<webwriter-code-c>`)
+Code widget for C.
+
+C and C++ share one compiler (Clang) and sysroot. They target WASI, with C++ exceptions disabled in the bundled sysroot.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
+
+### Usage
+
+Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
+```html
+<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-c.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-c.js"></script>
+<webwriter-code-c></webwriter-code-c>
+```
+
+Or use with a bundler (e.g. [Vite](https://vite.dev)):
+
+```
+npm install @webwriter/code
+```
+
+```html
+<link href="@webwriter/code/widgets/webwriter-code-c.css" rel="stylesheet">
+<script type="module" src="@webwriter/code/widgets/webwriter-code-c.js"></script>
+<webwriter-code-c></webwriter-code-c>
+```
+
+## Fields
+| Name (Attribute Name) | Type | Description | Default | Reflects |
+| :-------------------: | :--: | :---------: | :-----: | :------: |
+| `WebwriterCodeC.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeC.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeC.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeC.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
+
+*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
+
+## Editing config
+| Name | Value |
+| :--: | :---------: |
+
+
+*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
+
+*No public slots, events, or custom CSS properties.*
+
+
+## `WebwriterCodeCpp` (`<webwriter-code-cpp>`)
+Code widget for C++.
+
+C and C++ share one compiler (Clang) and sysroot. They target WASI, with C++ exceptions disabled in the bundled sysroot.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
+
+### Usage
+
+Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
+```html
+<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-cpp.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-cpp.js"></script>
+<webwriter-code-cpp></webwriter-code-cpp>
+```
+
+Or use with a bundler (e.g. [Vite](https://vite.dev)):
+
+```
+npm install @webwriter/code
+```
+
+```html
+<link href="@webwriter/code/widgets/webwriter-code-cpp.css" rel="stylesheet">
+<script type="module" src="@webwriter/code/widgets/webwriter-code-cpp.js"></script>
+<webwriter-code-cpp></webwriter-code-cpp>
+```
+
+## Fields
+| Name (Attribute Name) | Type | Description | Default | Reflects |
+| :-------------------: | :--: | :---------: | :-----: | :------: |
+| `WebwriterCodeCpp.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeCpp.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeCpp.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeCpp.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
+
+*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
+
+## Editing config
+| Name | Value |
+| :--: | :---------: |
+
+
+*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
+
+*No public slots, events, or custom CSS properties.*
+
+
+## `WebwriterCodeCsharp` (`<webwriter-code-csharp>`)
+Code widget for C#.
+
+Uses Roslyn and the browser .NET 10 framework and exposes console output.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
+
+### Usage
+
+Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
+```html
+<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-csharp.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-csharp.js"></script>
+<webwriter-code-csharp></webwriter-code-csharp>
+```
+
+Or use with a bundler (e.g. [Vite](https://vite.dev)):
+
+```
+npm install @webwriter/code
+```
+
+```html
+<link href="@webwriter/code/widgets/webwriter-code-csharp.css" rel="stylesheet">
+<script type="module" src="@webwriter/code/widgets/webwriter-code-csharp.js"></script>
+<webwriter-code-csharp></webwriter-code-csharp>
+```
+
+## Fields
+| Name (Attribute Name) | Type | Description | Default | Reflects |
+| :-------------------: | :--: | :---------: | :-----: | :------: |
+| `WebwriterCodeCsharp.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeCsharp.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeCsharp.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeCsharp.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
+
+*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
+
+## Editing config
+| Name | Value |
+| :--: | :---------: |
+
+
+*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
+
+*No public slots, events, or custom CSS properties.*
+
+
+## `WebwriterCodePhp` (`<webwriter-code-php>`)
+Code widget for PHP.
+
+Runs PHP 8.4 from WordPress Playground.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
+
+### Usage
+
+Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
+```html
+<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-php.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-php.js"></script>
+<webwriter-code-php></webwriter-code-php>
+```
+
+Or use with a bundler (e.g. [Vite](https://vite.dev)):
+
+```
+npm install @webwriter/code
+```
+
+```html
+<link href="@webwriter/code/widgets/webwriter-code-php.css" rel="stylesheet">
+<script type="module" src="@webwriter/code/widgets/webwriter-code-php.js"></script>
+<webwriter-code-php></webwriter-code-php>
+```
+
+## Fields
+| Name (Attribute Name) | Type | Description | Default | Reflects |
+| :-------------------: | :--: | :---------: | :-----: | :------: |
+| `WebwriterCodePhp.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodePhp.convertTo` | - | - | - | ✗ |
+| `WebwriterCodePhp.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodePhp.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
+
+*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
+
+## Editing config
+| Name | Value |
+| :--: | :---------: |
+
+
+*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
+
+*No public slots, events, or custom CSS properties.*
+
+
+## `WebwriterCodeGo` (`<webwriter-code-go>`)
+Code widget for Go.
+
+Go 1.27.4 compiler and linker, with a subset of the standard library.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
+
+### Usage
+
+Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
+```html
+<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-go.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-go.js"></script>
+<webwriter-code-go></webwriter-code-go>
+```
+
+Or use with a bundler (e.g. [Vite](https://vite.dev)):
+
+```
+npm install @webwriter/code
+```
+
+```html
+<link href="@webwriter/code/widgets/webwriter-code-go.css" rel="stylesheet">
+<script type="module" src="@webwriter/code/widgets/webwriter-code-go.js"></script>
+<webwriter-code-go></webwriter-code-go>
+```
+
+## Fields
+| Name (Attribute Name) | Type | Description | Default | Reflects |
+| :-------------------: | :--: | :---------: | :-----: | :------: |
+| `WebwriterCodeGo.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeGo.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeGo.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeGo.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
+
+*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
+
+## Editing config
+| Name | Value |
+| :--: | :---------: |
+
+
+*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
+
+*No public slots, events, or custom CSS properties.*
+
+
+## `WebwriterCodeRust` (`<webwriter-code-rust>`)
+Code widget for Rust.
+
+Runs rustc's Miri interpreter via LiveCodes on a single source file with the bundled standard library. Offline HTML export needs network access to fetch the toolchain from its CDN; the saved HTML runs with networking disabled.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
+
+### Usage
+
+Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
+```html
+<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-rust.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-rust.js"></script>
+<webwriter-code-rust></webwriter-code-rust>
+```
+
+Or use with a bundler (e.g. [Vite](https://vite.dev)):
+
+```
+npm install @webwriter/code
+```
+
+```html
+<link href="@webwriter/code/widgets/webwriter-code-rust.css" rel="stylesheet">
+<script type="module" src="@webwriter/code/widgets/webwriter-code-rust.js"></script>
+<webwriter-code-rust></webwriter-code-rust>
+```
+
+## Fields
+| Name (Attribute Name) | Type | Description | Default | Reflects |
+| :-------------------: | :--: | :---------: | :-----: | :------: |
+| `WebwriterCodeRust.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeRust.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeRust.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeRust.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
+
+*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
+
+## Editing config
+| Name | Value |
+| :--: | :---------: |
+
+
+*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
+
+*No public slots, events, or custom CSS properties.*
+
+
+## `WebwriterCodeShell` (`<webwriter-code-shell>`)
+Code widget for Bash.
+
+Bash-compatible shell via just-bash, with a virtual filesystem and bundled commands.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
+
+### Usage
+
+Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
+```html
+<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-shell.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-shell.js"></script>
+<webwriter-code-shell></webwriter-code-shell>
+```
+
+Or use with a bundler (e.g. [Vite](https://vite.dev)):
+
+```
+npm install @webwriter/code
+```
+
+```html
+<link href="@webwriter/code/widgets/webwriter-code-shell.css" rel="stylesheet">
+<script type="module" src="@webwriter/code/widgets/webwriter-code-shell.js"></script>
+<webwriter-code-shell></webwriter-code-shell>
+```
+
+## Fields
+| Name (Attribute Name) | Type | Description | Default | Reflects |
+| :-------------------: | :--: | :---------: | :-----: | :------: |
+| `WebwriterCodeShell.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeShell.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeShell.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeShell.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
+
+*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
+
+## Editing config
+| Name | Value |
+| :--: | :---------: |
+
+
+*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
+
+*No public slots, events, or custom CSS properties.*
+
+
+## `WebwriterCodeHaskell` (`<webwriter-code-haskell>`)
+Code widget for Haskell, powered by MicroHs.
+
+Runs a single `Main` module with `main :: IO ()`. The compiler includes MicroHs's base library and loads optional packages such as QuickCheck, Parsec and mtl on demand; offline HTML includes all 43 optional packages so readers can change imports after export. MicroHs supports extended Haskell 2010, with gaps including Template Haskell and type families. The cell captures text output; canvas and audio APIs are not available.
+
+Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
+
+Signals: `output` (string) is the text of the last run, or its error messages; `failed` (boolean) is true after an error.
+
+### Usage
+
+Use with a CDN (e.g. [jsdelivr](https://jsdelivr.com)):
+```html
+<link href="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-haskell.css" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@webwriter/code/widgets/webwriter-code-haskell.js"></script>
+<webwriter-code-haskell></webwriter-code-haskell>
+```
+
+Or use with a bundler (e.g. [Vite](https://vite.dev)):
+
+```
+npm install @webwriter/code
+```
+
+```html
+<link href="@webwriter/code/widgets/webwriter-code-haskell.css" rel="stylesheet">
+<script type="module" src="@webwriter/code/widgets/webwriter-code-haskell.js"></script>
+<webwriter-code-haskell></webwriter-code-haskell>
+```
+
+## Fields
+| Name (Attribute Name) | Type | Description | Default | Reflects |
+| :-------------------: | :--: | :---------: | :-----: | :------: |
+| `WebwriterCodeHaskell.convertFrom` | - | - | - | ✗ |
+| `WebwriterCodeHaskell.convertTo` | - | - | - | ✗ |
+| `WebwriterCodeHaskell.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
+| `WebwriterCodeHaskell.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
+| `msg` | - | - | - | ✗ |
+| `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ output: computed(() => this.#output.get()), failed: computed(() => this.#failed.get()), }` | ✗ |
+| `executionTime` | `number` | The execution time in milliseconds of the last code run. | `0` | ✗ |
+| `executionCount` | `number` | The number of times the code has been executed. | `0` | ✗ |
+| `results` | `CodeResult[]` | The results from the last code execution. | `[]` | ✗ |
+| `diagnostics` | `Diagnostic[]` | Compilation or runtime errors from the last code execution. | `[]` | ✗ |
+| `code` | - | The authored source in the JSON data block, or in a legacy code attribute. | - | ✗ |
+| `lockedLines` | `number[]` | The authored, one-based line numbers locked for readers. | - | ✗ |
+| `showExecutionCount` | - | Whether the run button displays the execution count. | - | ✗ |
+
+*Fields including [properties](https://developer.mozilla.org/en-US/docs/Glossary/Property/JavaScript) and [attributes](https://developer.mozilla.org/en-US/docs/Glossary/Attribute) define the current state of the widget and offer customization options.*
+
+## Methods
+| Name | Description | Parameters |
+| :--: | :---------: | :-------: |
+| `offlineAssets` | - | `element: Element`
+| `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
+| `toPre` | The program as a `pre` element with a `code` child (conversion). | -
+| `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
+| `exportSource` | The program as a source file with the language's extension (export). Locked lines are not part of the file. | -
+| `resetExecutionCount` | - | -
+
+*[Methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions) allow programmatic access to the widget.*
+
+## CSS parts
+| Name | Description |
+| :--: | :---------: |
+| editor | The code editor. |
+| output | The area for results, console lines and tables. |
+
+*[CSS parts](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_shadow_parts) allow freely styling internals of the widget with CSS.*
+
+## Editing config
+| Name | Value |
+| :--: | :---------: |
+
+
+*The [editing config](https://webwriter.app/docs/packages/configuring/#editingconfig) defines how explorable authoring tools such as [WebWriter](https://webwriter.app) treat the widget.*
+
+*No public slots, events, or custom CSS properties.*
 
 
 ---
-*Generated with @webwriter/build@1.8.1*
+*Generated with @webwriter/build@1.15.0*

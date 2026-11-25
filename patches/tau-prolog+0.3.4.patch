@@ -1,0 +1,95 @@
+diff --git a/node_modules/tau-prolog/package.json b/node_modules/tau-prolog/package.json
+--- a/node_modules/tau-prolog/package.json
++++ b/node_modules/tau-prolog/package.json
+@@ -3,6 +3,7 @@
+ 	"version": "0.3.4",
+ 	"description": "An open source Prolog interpreter in JavaScript",
+ 	"main": "./modules/core.js",
++	"browser": { "fs": false, "path": false, "readline-sync": false },
+ 	"scripts": {
+ 		"taupl": "node taupl.js"
+ 	},
+diff --git a/node_modules/tau-prolog/modules/core.js b/node_modules/tau-prolog/modules/core.js
+--- a/node_modules/tau-prolog/modules/core.js
++++ b/node_modules/tau-prolog/modules/core.js
+@@ -129,7 +129,7 @@
+ 	};
+ 
+ 	// Virtual file system for browser
+-	tau_file_system = {
++	var tau_file_system = {
+ 		// Current files
+ 		files: new TauDirectory("/", "/", null),
+ 		// Open file
+@@ -169,7 +169,7 @@
+ 	};
+ 
+ 	// User input for browser
+-	tau_user_input = {
++	var tau_user_input = {
+ 		buffer: "",
+ 		get: function( length, _ ) {
+ 			var text;
+@@ -191,7 +191,7 @@
+ 	};
+ 
+ 	// User output for browser
+-	tau_user_output = {
++	var tau_user_output = {
+ 		put: function( text, _ ) {
+ 			console.log( text );
+ 			return true;
+@@ -202,7 +202,7 @@
+ 	};
+ 
+ 	// User error for browser
+-	tau_user_error = {
++	var tau_user_error = {
+ 		put: function( text, _ ) {
+ 			(console.error || console.log)( text );
+ 			return true;
+@@ -213,7 +213,7 @@
+ 	};
+ 
+ 	// Virtual file system for Node.js
+-	nodejs_file_system = {
++	var nodejs_file_system = {
+ 		// Open file
+ 		open: function( path, type, mode ) {
+ 			var fd, fs = require('fs');
+@@ -281,7 +281,7 @@
+ 	};
+ 
+ 	// User input for Node.js
+-	nodejs_user_input = {
++	var nodejs_user_input = {
+ 		buffer: "",
+ 		get: function( length, _ ) {
+ 			var text;
+@@ -298,7 +298,7 @@
+ 	};
+ 
+ 	// User output for Node.js
+-	nodejs_user_output = {
++	var nodejs_user_output = {
+ 		put: function( text, _ ) {
+ 			process.stdout.write( text );
+ 			return true;
+@@ -309,7 +309,7 @@
+ 	};
+ 
+ 	// User error for Node.js
+-	nodejs_user_error = {
++	var nodejs_user_error = {
+ 		put: function( text, _ ) {
+ 			process.stderr.write( text );
+ 			return true;
+@@ -3614,7 +3614,7 @@
+ 	var pl = {
+ 		
+ 		// Environment
+-		__env: nodejs_flag ? global : window,
++		__env: globalThis,
+ 		
+ 		// Modules
+ 		modules: {},

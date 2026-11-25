@@ -1,0 +1,26 @@
+diff --git a/node_modules/biwascheme/release/biwascheme.mjs b/node_modules/biwascheme/release/biwascheme.mjs
+--- a/node_modules/biwascheme/release/biwascheme.mjs
++++ b/node_modules/biwascheme/release/biwascheme.mjs
+@@ -9806,7 +9806,7 @@
+ const current_error = current_output;
+ 
+ // To use webscheme_lib, jQuery must be loaded beforehand
+-const $$1 = window.jQuery;
++const $$1 = globalThis.window?.jQuery;
+ 
+ define_libfunc("read-line", 0, 1, function (ar) {
+   var port = ar[0] || Port.current_input;
+@@ -10696,8 +10696,10 @@
+ BiwaScheme$1.Dumper = Dumper;
+ 
+ // TODO: ideally this should just be `window.BiwaScheme = BiwaScheme` but it will break test/spec.html (grep with `register_tests`)
+-window.BiwaScheme = window.BiwaScheme || {};
+-Object.assign(window.BiwaScheme, BiwaScheme$1);
+-execute_user_program();
++if (typeof window !== "undefined") {
++  window.BiwaScheme = window.BiwaScheme || {};
++  Object.assign(window.BiwaScheme, BiwaScheme$1);
++  execute_user_program();
++}
+ 
+ export default BiwaScheme$1;
