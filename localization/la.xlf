@@ -40,33 +40,43 @@
 <target>Numerum exsecutionum repone</target></trans-unit>
 <trans-unit id="s024e6b84f7720a0c">
   <source>Hide execution count</source>
+  <target>Numerum exsecutionum cela</target>
 </trans-unit>
 <trans-unit id="s059bf2737f0583e5">
   <source>Press Escape, then Tab to leave the editor.</source>
+  <target>Preme Escape, deinde Tab, ut ex editore exeas.</target>
 </trans-unit>
 <trans-unit id="s787fe0d56a1f0c3b">
   <source>The file is not a text file, or it is larger than 1 MB.</source>
+  <target>Fasciculus non est textus aut maior est quam 1 MB.</target>
 </trans-unit>
 <trans-unit id="s948bca3498023f4b">
   <source>Downloading runtime</source>
+  <target>Ambitus exsecutionis detrahitur</target>
 </trans-unit>
 <trans-unit id="s3cafc7acb8373fbe">
   <source>Running…</source>
+  <target>Exsequitur…</target>
 </trans-unit>
 <trans-unit id="s146e77012a225a95">
   <source>Enter a Prolog query.</source>
+  <target>Interrogationem Prolog insere.</target>
 </trans-unit>
 <trans-unit id="sc74b7675f65c3e23">
   <source>Query</source>
+  <target>Interrogatio</target>
 </trans-unit>
 <trans-unit id="sf344934d54179398">
   <source>Query result</source>
+  <target>Responsum interrogationis</target>
 </trans-unit>
 <trans-unit id="s5f40c8d75226c663">
   <source>No rows</source>
+  <target>Versus nulli</target>
 </trans-unit>
 <trans-unit id="sc77f43432f2a92e5">
   <source>Only the first 500 rows are shown.</source>
+  <target>Soli primi 500 versus ostenduntur.</target>
 </trans-unit>
 </body>
 </file>

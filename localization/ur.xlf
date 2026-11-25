@@ -40,33 +40,43 @@
 <target>عمل درآمد کی تعداد دوبارہ ترتیب دیں</target></trans-unit>
 <trans-unit id="s024e6b84f7720a0c">
   <source>Hide execution count</source>
+  <target>چلانے کی تعداد چھپائیں</target>
 </trans-unit>
 <trans-unit id="s059bf2737f0583e5">
   <source>Press Escape, then Tab to leave the editor.</source>
+  <target>ایڈیٹر چھوڑنے کے لیے Escape پھر Tab دبائیں۔</target>
 </trans-unit>
 <trans-unit id="s787fe0d56a1f0c3b">
   <source>The file is not a text file, or it is larger than 1 MB.</source>
+  <target>فائل متنی فائل نہیں یا 1 MB سے بڑی ہے۔</target>
 </trans-unit>
 <trans-unit id="s948bca3498023f4b">
   <source>Downloading runtime</source>
+  <target>رن ٹائم ڈاؤن لوڈ ہو رہا ہے</target>
 </trans-unit>
 <trans-unit id="s3cafc7acb8373fbe">
   <source>Running…</source>
+  <target>چل رہا ہے…</target>
 </trans-unit>
 <trans-unit id="s146e77012a225a95">
   <source>Enter a Prolog query.</source>
+  <target>ایک Prolog استفسار درج کریں۔</target>
 </trans-unit>
 <trans-unit id="sc74b7675f65c3e23">
   <source>Query</source>
+  <target>استفسار</target>
 </trans-unit>
 <trans-unit id="sf344934d54179398">
   <source>Query result</source>
+  <target>استفسار کا نتیجہ</target>
 </trans-unit>
 <trans-unit id="s5f40c8d75226c663">
   <source>No rows</source>
+  <target>کوئی قطار نہیں</target>
 </trans-unit>
 <trans-unit id="sc77f43432f2a92e5">
   <source>Only the first 500 rows are shown.</source>
+  <target>صرف پہلی 500 قطاریں دکھائی گئی ہیں۔</target>
 </trans-unit>
 </body>
 </file>

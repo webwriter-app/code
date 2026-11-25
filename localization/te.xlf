@@ -40,33 +40,43 @@
 <target>అమలుల సంఖ్యను రీసెట్ చేయి</target></trans-unit>
 <trans-unit id="s024e6b84f7720a0c">
   <source>Hide execution count</source>
+  <target>అమలు సంఖ్యను దాచు</target>
 </trans-unit>
 <trans-unit id="s059bf2737f0583e5">
   <source>Press Escape, then Tab to leave the editor.</source>
+  <target>ఎడిటర్ నుంచి బయటకు రావడానికి Escape, ఆపై Tab నొక్కండి.</target>
 </trans-unit>
 <trans-unit id="s787fe0d56a1f0c3b">
   <source>The file is not a text file, or it is larger than 1 MB.</source>
+  <target>ఇది టెక్స్ట్ ఫైల్ కాదు లేదా 1 MB కంటే పెద్దది.</target>
 </trans-unit>
 <trans-unit id="s948bca3498023f4b">
   <source>Downloading runtime</source>
+  <target>రన్‌టైమ్ డౌన్‌లోడ్ అవుతోంది</target>
 </trans-unit>
 <trans-unit id="s3cafc7acb8373fbe">
   <source>Running…</source>
+  <target>అమలవుతోంది…</target>
 </trans-unit>
 <trans-unit id="s146e77012a225a95">
   <source>Enter a Prolog query.</source>
+  <target>Prolog క్వెరీని నమోదు చేయండి.</target>
 </trans-unit>
 <trans-unit id="sc74b7675f65c3e23">
   <source>Query</source>
+  <target>క్వెరీ</target>
 </trans-unit>
 <trans-unit id="sf344934d54179398">
   <source>Query result</source>
+  <target>క్వెరీ ఫలితం</target>
 </trans-unit>
 <trans-unit id="s5f40c8d75226c663">
   <source>No rows</source>
+  <target>వరుసలు లేవు</target>
 </trans-unit>
 <trans-unit id="sc77f43432f2a92e5">
   <source>Only the first 500 rows are shown.</source>
+  <target>మొదటి 500 వరుసలు మాత్రమే చూపబడతాయి.</target>
 </trans-unit>
 </body>
 </file>

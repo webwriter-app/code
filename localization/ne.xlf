@@ -40,33 +40,43 @@
 <target>कार्यान्वयन संख्या रिसेट गर्नुहोस्</target></trans-unit>
 <trans-unit id="s024e6b84f7720a0c">
   <source>Hide execution count</source>
+  <target>चलाइएको सङ्ख्या लुकाउनुहोस्</target>
 </trans-unit>
 <trans-unit id="s059bf2737f0583e5">
   <source>Press Escape, then Tab to leave the editor.</source>
+  <target>सम्पादकबाट निस्कन Escape र त्यसपछि Tab थिच्नुहोस्।</target>
 </trans-unit>
 <trans-unit id="s787fe0d56a1f0c3b">
   <source>The file is not a text file, or it is larger than 1 MB.</source>
+  <target>फाइल पाठ फाइल होइन वा 1 MB भन्दा ठूलो छ।</target>
 </trans-unit>
 <trans-unit id="s948bca3498023f4b">
   <source>Downloading runtime</source>
+  <target>रनटाइम डाउनलोड हुँदैछ</target>
 </trans-unit>
 <trans-unit id="s3cafc7acb8373fbe">
   <source>Running…</source>
+  <target>चल्दैछ…</target>
 </trans-unit>
 <trans-unit id="s146e77012a225a95">
   <source>Enter a Prolog query.</source>
+  <target>Prolog क्वेरी प्रविष्ट गर्नुहोस्।</target>
 </trans-unit>
 <trans-unit id="sc74b7675f65c3e23">
   <source>Query</source>
+  <target>क्वेरी</target>
 </trans-unit>
 <trans-unit id="sf344934d54179398">
   <source>Query result</source>
+  <target>क्वेरीको परिणाम</target>
 </trans-unit>
 <trans-unit id="s5f40c8d75226c663">
   <source>No rows</source>
+  <target>कुनै पङ्क्ति छैन</target>
 </trans-unit>
 <trans-unit id="sc77f43432f2a92e5">
   <source>Only the first 500 rows are shown.</source>
+  <target>पहिला 500 पङ्क्ति मात्र देखाइन्छन्।</target>
 </trans-unit>
 </body>
 </file>

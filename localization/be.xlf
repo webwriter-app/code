@@ -40,33 +40,43 @@
 <target>Скінуць колькасць выкананняў</target></trans-unit>
 <trans-unit id="s024e6b84f7720a0c">
   <source>Hide execution count</source>
+  <target>Схаваць колькасць запускаў</target>
 </trans-unit>
 <trans-unit id="s059bf2737f0583e5">
   <source>Press Escape, then Tab to leave the editor.</source>
+  <target>Каб выйсці з рэдактара, націсніце Escape, потым Tab.</target>
 </trans-unit>
 <trans-unit id="s787fe0d56a1f0c3b">
   <source>The file is not a text file, or it is larger than 1 MB.</source>
+  <target>Файл не тэкставы або яго памер большы за 1 МБ.</target>
 </trans-unit>
 <trans-unit id="s948bca3498023f4b">
   <source>Downloading runtime</source>
+  <target>Спампоўваецца асяроддзе выканання</target>
 </trans-unit>
 <trans-unit id="s3cafc7acb8373fbe">
   <source>Running…</source>
+  <target>Выконваецца…</target>
 </trans-unit>
 <trans-unit id="s146e77012a225a95">
   <source>Enter a Prolog query.</source>
+  <target>Увядзіце запыт Prolog.</target>
 </trans-unit>
 <trans-unit id="sc74b7675f65c3e23">
   <source>Query</source>
+  <target>Запыт</target>
 </trans-unit>
 <trans-unit id="sf344934d54179398">
   <source>Query result</source>
+  <target>Вынік запыту</target>
 </trans-unit>
 <trans-unit id="s5f40c8d75226c663">
   <source>No rows</source>
+  <target>Радкоў няма</target>
 </trans-unit>
 <trans-unit id="sc77f43432f2a92e5">
   <source>Only the first 500 rows are shown.</source>
+  <target>Паказаны толькі першыя 500 радкоў.</target>
 </trans-unit>
 </body>
 </file>

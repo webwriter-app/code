@@ -60,6 +60,46 @@
 <trans-unit id="sddaa4748444ecc76">
   <source>Hide code</source>
 <target>隱藏程式碼</target></trans-unit>
+<trans-unit id="s024e6b84f7720a0c">
+  <source>Hide execution count</source>
+  <target>隱藏執行次數</target>
+</trans-unit>
+<trans-unit id="s059bf2737f0583e5">
+  <source>Press Escape, then Tab to leave the editor.</source>
+  <target>按 Escape 鍵後再按 Tab 鍵離開編輯器。</target>
+</trans-unit>
+<trans-unit id="s787fe0d56a1f0c3b">
+  <source>The file is not a text file, or it is larger than 1 MB.</source>
+  <target>此檔案不是文字檔，或大小超過 1 MB。</target>
+</trans-unit>
+<trans-unit id="s948bca3498023f4b">
+  <source>Downloading runtime</source>
+  <target>正在下載執行環境</target>
+</trans-unit>
+<trans-unit id="s3cafc7acb8373fbe">
+  <source>Running…</source>
+  <target>執行中…</target>
+</trans-unit>
+<trans-unit id="sc74b7675f65c3e23">
+  <source>Query</source>
+  <target>查詢</target>
+</trans-unit>
+<trans-unit id="s146e77012a225a95">
+  <source>Enter a Prolog query.</source>
+  <target>輸入 Prolog 查詢。</target>
+</trans-unit>
+<trans-unit id="sf344934d54179398">
+  <source>Query result</source>
+  <target>查詢結果</target>
+</trans-unit>
+<trans-unit id="s5f40c8d75226c663">
+  <source>No rows</source>
+  <target>沒有資料列</target>
+</trans-unit>
+<trans-unit id="sc77f43432f2a92e5">
+  <source>Only the first 500 rows are shown.</source>
+  <target>僅顯示前 500 列。</target>
+</trans-unit>
 </body>
   </file>
 </xliff>
