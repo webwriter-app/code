@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <title>LUA</title>
+  <g transform="translate(1.500 7) scale(1.141 1.25)"
+     fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0 0v8h4.1"/>
+    <path transform="translate(6.35)" d="M0 0v5.7C0 7.2 0.9 8 2.4 8s2.4-0.8 2.4-2.3V0"/>
+    <path transform="translate(13.4)" d="M0 8L2.5 0 5 8M1 5h3"/>
+  </g>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <title>GO</title>
+  <g transform="translate(4.312 7) scale(1.230 1.25)"
+     fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 1C4.3 0.3 3.6 0 2.6 0 0.8 0 0 1.4 0 4s0.8 4 2.6 4C3.6 8 4.4 7.7 5 7V4H2.9"/>
+    <path transform="translate(7.5)" d="M2.5 0C0.8 0 0 1.4 0 4s0.8 4 2.5 4S5 6.6 5 4 4.2 0 2.5 0Z"/>
+  </g>
+</svg>

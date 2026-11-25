@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <title>PL</title>
+  <g transform="translate(4.989 7) scale(1.230 1.25)"
+     fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0 8V0h2.7c1.4 0 2.1 0.8 2.1 2.1s-0.7 2.1-2.1 2.1H0"/>
+    <path transform="translate(7.3)" d="M0 0v8h4.1"/>
+  </g>
+</svg>

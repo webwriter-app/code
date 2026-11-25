@@ -35,12 +35,49 @@
 <trans-unit id="s9c355ae1ea6d408f">
   <source>Show execution time</source>
 <target>Erakutsi exekuzio-denbora</target></trans-unit>
-<trans-unit id="s780d4c126df3ab65">
-  <source>Show execution count</source>
-<target>Erakutsi exekuzio kopurua</target></trans-unit>
 <trans-unit id="se3a0e370891f1769">
   <source>Reset execution count</source>
 <target>Berrezarri exekuzio kopurua</target></trans-unit>
+<trans-unit id="s024e6b84f7720a0c">
+  <source>Hide execution count</source>
+  <target>Ezkutatu exekuzio kopurua</target>
+</trans-unit>
+<trans-unit id="s059bf2737f0583e5">
+  <source>Press Escape, then Tab to leave the editor.</source>
+  <target>Sakatu Escape eta, ondoren, Tab editoretik irteteko.</target>
+</trans-unit>
+<trans-unit id="s787fe0d56a1f0c3b">
+  <source>The file is not a text file, or it is larger than 1 MB.</source>
+  <target>Fitxategia ez da testu-fitxategia edo 1 MB baino handiagoa da.</target>
+</trans-unit>
+<trans-unit id="s948bca3498023f4b">
+  <source>Downloading runtime</source>
+  <target>Exekuzio-ingurunea deskargatzen</target>
+</trans-unit>
+<trans-unit id="s3cafc7acb8373fbe">
+  <source>Running…</source>
+  <target>Exekutatzen…</target>
+</trans-unit>
+<trans-unit id="s146e77012a225a95">
+  <source>Enter a Prolog query.</source>
+  <target>Sartu Prolog kontsulta bat.</target>
+</trans-unit>
+<trans-unit id="sc74b7675f65c3e23">
+  <source>Query</source>
+  <target>Kontsulta</target>
+</trans-unit>
+<trans-unit id="sf344934d54179398">
+  <source>Query result</source>
+  <target>Kontsultaren emaitza</target>
+</trans-unit>
+<trans-unit id="s5f40c8d75226c663">
+  <source>No rows</source>
+  <target>Ez dago errenkadarik</target>
+</trans-unit>
+<trans-unit id="sc77f43432f2a92e5">
+  <source>Only the first 500 rows are shown.</source>
+  <target>Lehen 500 errenkadak bakarrik erakusten dira.</target>
+</trans-unit>
 </body>
 </file>
 </xliff>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <title>WAT</title>
+  <g transform="translate(1.500 7) scale(1.040 1.25)"
+     fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0 0l1.3 8L3 3l1.7 5L6 0"/>
+    <path transform="translate(8.25)" d="M0 8L2.5 0 5 8M1 5h3"/>
+    <path transform="translate(15.5)" d="M0 0h4.7M2.35 0v8"/>
+  </g>
+</svg>
