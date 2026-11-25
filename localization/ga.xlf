@@ -35,12 +35,49 @@
 <trans-unit id="s9c355ae1ea6d408f">
   <source>Show execution time</source>
 <target>Taispeáin am rite</target></trans-unit>
-<trans-unit id="s780d4c126df3ab65">
-  <source>Show execution count</source>
-<target>Taispeáin líon na ritheanna</target></trans-unit>
 <trans-unit id="se3a0e370891f1769">
   <source>Reset execution count</source>
 <target>Athshocraigh líon na ritheanna</target></trans-unit>
+<trans-unit id="s024e6b84f7720a0c">
+  <source>Hide execution count</source>
+  <target>Folaigh líon na ritheanna</target>
+</trans-unit>
+<trans-unit id="s059bf2737f0583e5">
+  <source>Press Escape, then Tab to leave the editor.</source>
+  <target>Brúigh Escape agus ansin Tab chun an t-eagarthóir a fhágáil.</target>
+</trans-unit>
+<trans-unit id="s787fe0d56a1f0c3b">
+  <source>The file is not a text file, or it is larger than 1 MB.</source>
+  <target>Ní comhad téacs é, nó tá sé níos mó ná 1 MB.</target>
+</trans-unit>
+<trans-unit id="s948bca3498023f4b">
+  <source>Downloading runtime</source>
+  <target>An timpeallacht rite á híoslódáil</target>
+</trans-unit>
+<trans-unit id="s3cafc7acb8373fbe">
+  <source>Running…</source>
+  <target>Ag rith…</target>
+</trans-unit>
+<trans-unit id="s146e77012a225a95">
+  <source>Enter a Prolog query.</source>
+  <target>Cuir isteach iarratas Prolog.</target>
+</trans-unit>
+<trans-unit id="sc74b7675f65c3e23">
+  <source>Query</source>
+  <target>Iarratas</target>
+</trans-unit>
+<trans-unit id="sf344934d54179398">
+  <source>Query result</source>
+  <target>Toradh an iarratais</target>
+</trans-unit>
+<trans-unit id="s5f40c8d75226c663">
+  <source>No rows</source>
+  <target>Níl aon ró ann</target>
+</trans-unit>
+<trans-unit id="sc77f43432f2a92e5">
+  <source>Only the first 500 rows are shown.</source>
+  <target>Ní thaispeántar ach an chéad 500 ró.</target>
+</trans-unit>
 </body>
 </file>
 </xliff>

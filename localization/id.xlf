@@ -14,10 +14,6 @@
         <source>Execution</source>
         <target>Eksekusi</target>
       </trans-unit>
-      <trans-unit id="sac95ed73c22266b9">
-        <source>Allow Code execution</source>
-        <target>Izinkan eksekusi kode</target>
-      </trans-unit>
       <trans-unit id="sb1db8c15648f4579">
         <source>Run on load</source>
         <target>Jalankan saat memuat</target>
@@ -30,10 +26,6 @@
         <source>Autocompletion</source>
         <target>Pelengkapan otomatis</target>
       </trans-unit>
-      <trans-unit id="s83f26d02dd7aa681">
-        <source>Visible</source>
-        <target>Terlihat</target>
-      </trans-unit>
       <trans-unit id="sca1a826088564455">
         <source>Results</source>
         <target>Hasil</target>
@@ -41,10 +33,6 @@
       <trans-unit id="s9c355ae1ea6d408f">
         <source>Show execution time</source>
         <target>Tampilkan waktu eksekusi</target>
-      </trans-unit>
-      <trans-unit id="s780d4c126df3ab65">
-        <source>Show execution count</source>
-        <target>Tampilkan jumlah eksekusi</target>
       </trans-unit>
       <trans-unit id="se3a0e370891f1769">
         <source>Reset execution count</source>
@@ -60,6 +48,46 @@
 <trans-unit id="sddaa4748444ecc76">
   <source>Hide code</source>
 <target>Sembunyikan kode</target></trans-unit>
+<trans-unit id="s024e6b84f7720a0c">
+  <source>Hide execution count</source>
+  <target>Sembunyikan jumlah eksekusi</target>
+</trans-unit>
+<trans-unit id="s059bf2737f0583e5">
+  <source>Press Escape, then Tab to leave the editor.</source>
+  <target>Tekan Escape, lalu Tab untuk keluar dari editor.</target>
+</trans-unit>
+<trans-unit id="s787fe0d56a1f0c3b">
+  <source>The file is not a text file, or it is larger than 1 MB.</source>
+  <target>File bukan berkas teks atau ukurannya lebih dari 1 MB.</target>
+</trans-unit>
+<trans-unit id="s948bca3498023f4b">
+  <source>Downloading runtime</source>
+  <target>Mengunduh lingkungan eksekusi</target>
+</trans-unit>
+<trans-unit id="s3cafc7acb8373fbe">
+  <source>Running…</source>
+  <target>Sedang berjalan…</target>
+</trans-unit>
+<trans-unit id="s146e77012a225a95">
+  <source>Enter a Prolog query.</source>
+  <target>Masukkan kueri Prolog.</target>
+</trans-unit>
+<trans-unit id="sc74b7675f65c3e23">
+  <source>Query</source>
+  <target>Kueri</target>
+</trans-unit>
+<trans-unit id="sf344934d54179398">
+  <source>Query result</source>
+  <target>Hasil kueri</target>
+</trans-unit>
+<trans-unit id="s5f40c8d75226c663">
+  <source>No rows</source>
+  <target>Tidak ada baris</target>
+</trans-unit>
+<trans-unit id="sc77f43432f2a92e5">
+  <source>Only the first 500 rows are shown.</source>
+  <target>Hanya 500 baris pertama yang ditampilkan.</target>
+</trans-unit>
 </body>
   </file>
 </xliff>
