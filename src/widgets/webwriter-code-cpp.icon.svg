@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <title>C++</title>
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.5 8.25C6.65 7.375 5.9 7 4.85 7 2.75 7 1.75 8.75 1.75 12s1 5 3.1 5c1.05 0 1.8-.375 2.65-1.25"/>
+    <path d="M10.5 12h4.5m-2.25-2.25v4.5M17.5 12H22m-2.25-2.25v4.5"/>
+  </g>
+</svg>

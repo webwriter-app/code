@@ -44,6 +44,7 @@ export async function loadWidgets(...languages: string[]) {
   await Promise.all(
     languages.map(async (language) => {
       const tag = "webwriter-code-" + language;
+      if (customElements.get(tag)) return;
       if (!loaded.has(tag)) {
         loaded.add(tag);
         const script = document.createElement("script");

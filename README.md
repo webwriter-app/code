@@ -1,7 +1,7 @@
 # Code (`@webwriter/code@4.0.0`)
 [License: MIT](LICENSE) | Version: 4.0.0
 
-Write and run code in HTML, JavaScript, TypeScript, Python, Java, WebAssembly, SQL, Lua, Prolog, Scheme, C#, C, C++, PHP, Go, Rust, Bash, and Haskell.
+Write and run code in languages such as HTML, JavaScript, Python, and Rust.
 
 ## Snippets
 [Snippets](https://webwriter.app/docs/snippets/snippets/) are examples and templates using the package's widgets.
@@ -64,9 +64,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeJavascript.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeJavascript.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeJavascript.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeJavascript.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeJavascript.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -85,7 +82,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -115,11 +111,11 @@ npm install @webwriter/code
 ## `WebwriterCodeHtml` (`<webwriter-code-html>`)
 Code widget for HTML with live preview functionality.
 
-Renders the preview in a sandboxed iframe. External resources referenced by the authored HTML need their usual network access.
+Renders the preview with the shared self-contained HTML sandbox, with a fresh isolated frame for each Run. The runner is bundled into the widget and works offline and in standalone exports; resources referenced by the authored HTML must also be embedded for offline use. Hosts enforcing CSP must authorize the shared runner hash. Inline event attributes and document.write are not supported under the editor policy.
 
 Conversions: a `pre` element converts both ways, and a source file with the language's extension is imported or exported (the import replaces the program and clears locked lines; an export drops locked lines and run results).
 
-Signals: `output` (string) and `failed` (boolean) exist for every widget but stay empty and false for HTML, because the preview page is not run through the shared runner.
+Signals: `output` (string) and `failed` (boolean) exist for every widget but stay empty and false for HTML, because iframe output is not captured as console text or worker errors.
 
 ### Usage
 
@@ -147,9 +143,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeHtml.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeHtml.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeHtml.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeHtml.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeHtml.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -167,7 +160,6 @@ npm install @webwriter/code
 ## Methods
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -230,9 +222,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeJava.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeJava.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeJava.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeJava.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeJava.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -251,7 +240,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -313,9 +301,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeTypescript.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeTypescript.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeTypescript.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeTypescript.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeTypescript.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -334,7 +319,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -396,9 +380,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodePython.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodePython.convertTo` | - | - | - | ✗ |
-| `WebwriterCodePython.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodePython.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodePython.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -417,7 +398,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -479,9 +459,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeWebassembly.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeWebassembly.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeWebassembly.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeWebassembly.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeWebassembly.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -500,7 +477,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -563,9 +539,6 @@ npm install @webwriter/code
 | `WebwriterCodeSql.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeSql.convertTo` | - | - | - | ✗ |
 | `signals` | `Record<string, { get(): unknown }>` | Signals other widgets can read: `output` (string) is the text of the last run's output, or its error messages;<br>`failed` (boolean) is true when the last run ended with an error or logged one to the console. | `{ ...this.signals, table: computed(() => this.#table.get()) }` | ✗ |
-| `WebwriterCodeSql.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeSql.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeSql.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -583,7 +556,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -643,9 +615,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeLua.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeLua.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeLua.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeLua.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeLua.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -664,7 +633,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -727,9 +695,6 @@ npm install @webwriter/code
 | `WebwriterCodeProlog.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeProlog.convertTo` | - | - | - | ✗ |
 | `goal` (`goal`) | `string` | The Prolog goal evaluated when Run is pressed. | `""` | ✓ |
-| `WebwriterCodeProlog.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeProlog.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeProlog.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -748,7 +713,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -808,9 +772,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeScheme.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeScheme.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeScheme.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeScheme.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeScheme.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -829,7 +790,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -891,9 +851,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeC.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeC.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeC.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeC.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeC.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -912,7 +869,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -974,9 +930,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeCpp.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeCpp.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeCpp.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeCpp.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeCpp.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -995,7 +948,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -1057,9 +1009,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeCsharp.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeCsharp.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeCsharp.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeCsharp.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeCsharp.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -1078,7 +1027,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -1140,9 +1088,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodePhp.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodePhp.convertTo` | - | - | - | ✗ |
-| `WebwriterCodePhp.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodePhp.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodePhp.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -1161,7 +1106,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -1223,9 +1167,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeGo.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeGo.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeGo.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeGo.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeGo.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -1244,7 +1185,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -1306,9 +1246,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeRust.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeRust.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeRust.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeRust.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeRust.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -1327,7 +1264,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -1389,9 +1325,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeShell.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeShell.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeShell.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeShell.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeShell.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -1410,7 +1343,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -1472,9 +1404,6 @@ npm install @webwriter/code
 | :-------------------: | :--: | :---------: | :-----: | :------: |
 | `WebwriterCodeHaskell.convertFrom` | - | - | - | ✗ |
 | `WebwriterCodeHaskell.convertTo` | - | - | - | ✗ |
-| `WebwriterCodeHaskell.settings` | - | - | `declarations` | ✗ |
-| `settingsCore` | - | - | `new SettingsCore(this, { ...options, root: () => this.renderRoot, rendered: () => this.updateComplete })` | ✗ |
-| `options` | - | - | - | ✗ |
 | `WebwriterCodeHaskell.optionGroups` | `object` | - | `{ execution: { label: drawerText({ en: "Execution", de: "Ausführung" }, (msg) => msg("Execution")) }, editor: { label: (widget: DrawerTexts) => ({ _: widget.msg("Editor") }) }, results: { label: drawerText({ en: "Results", de: "Ergebnisse" }, (msg) => msg("Results")) }, }` | ✗ |
 | `WebwriterCodeHaskell.actions` | `object` | - | `{ resetExecutionCount: { group: "results", label: drawerText( { en: "Reset execution count", de: "Anzahl der Ausführungen zurücksetzen" }, (msg) => msg("Reset execution count"), ), }, }` | ✗ |
 | `msg` | - | - | - | ✗ |
@@ -1493,7 +1422,6 @@ npm install @webwriter/code
 | Name | Description | Parameters |
 | :--: | :---------: | :-------: |
 | `offlineAssets` | - | `element: Element`
-| `finalize` | - | -
 | `loadPre` | Takes the program from a `pre` element (conversion). Declines when the fragment has none. | `fragment: DocumentFragment`
 | `toPre` | The program as a `pre` element with a `code` child (conversion). | -
 | `importSource` | Reads a source file and returns the function that replaces the program with it (import). | `file: File`
@@ -1521,4 +1449,4 @@ npm install @webwriter/code
 
 
 ---
-*Generated with @webwriter/build@1.14.0*
+*Generated with @webwriter/build@1.15.0*
