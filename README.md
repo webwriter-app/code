@@ -1,5 +1,5 @@
-# Code (`@webwriter/code@4.1.0`)
-[License: MIT](LICENSE) | Version: 4.1.0
+# Code (`@webwriter/code@4.1.1`)
+[License: MIT](LICENSE) | Version: 4.1.1
 
 Write and run code in languages such as HTML, JavaScript, Python, and Rust.
 
